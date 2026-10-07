@@ -2,423 +2,332 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Nemu Life OS - Nivek</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Gestor Personal - Nivel & Diario</title>
   <style>
-    :root {
-      --bg-diario: #e8ecef;
-      --glass-card: rgba(255, 255, 255, 0.65);
-      --glass-border: rgba(255, 255, 255, 0.8);
-      --text-dark: #1e293b;
-      --red-brand: #d6002f;
-      --cream-paper: #f8f6f0;
-      --dark-ink: #111111;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; transition: all 0.25s ease; }
+    
     body {
-      background-color: var(--bg-diario);
+      background: radial-gradient(circle at top, #1e1b4b 0%, #0f172a 60%, #020617 100%);
+      color: #f8fafc;
+      margin: 0;
+      padding: 16px;
       min-height: 100vh;
+    }
+
+    .container { max-width: 550px; margin: 0 auto; }
+
+    /* SECCIÓN ROJA: NIVEL Y PERFIL (Inspirada en Foto 1) */
+    .level-banner {
+      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+      border: 2px solid #f87171;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 25px rgba(220, 38, 38, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .level-banner::after {
+      content: '';
+      position: absolute;
+      top: -30%; right: -20%;
+      width: 180px; height: 180px;
+      background: rgba(255, 255, 255, 0.12);
+      transform: rotate(45deg);
+      pointer-events: none;
+    }
+
+    .level-header {
       display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    /* Vistas de contenido */
-    .view {
-      display: none;
-      padding: 20px 16px 90px 16px;
-      min-height: 100vh;
-    }
-
-    .view.active {
-      display: block;
-      animation: fadeIn 0.25s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ========================================================
-       PESTAÑA 1: DIARIO (Estilo Glassmorphism / Montañas suaves)
-       ======================================================== */
-    #tab-diario {
-      background: linear-gradient(180deg, #dde4ea 0%, #cbd5e1 100%);
-    }
-
-    .diario-header {
-      margin-bottom: 20px;
-    }
-
-    .diario-subtitle {
-      font-size: 0.75rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #64748b;
-      font-weight: 700;
-    }
-
-    .diario-title {
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: #0f172a;
-      letter-spacing: -0.5px;
-    }
-
-    .glass-box {
-      background: var(--glass-card);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--glass-border);
-      border-radius: 20px;
-      padding: 18px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-      margin-bottom: 18px;
-    }
-
-    .glass-input {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.9);
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-size: 0.95rem;
-      color: var(--text-dark);
-      outline: none;
-      resize: vertical;
-      margin-top: 10px;
-    }
-
-    .glass-input:focus {
-      background: #ffffff;
-      border-color: #94a3b8;
-    }
-
-    .glass-btn {
-      background: #0f172a;
-      color: #ffffff;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 30px;
-      font-weight: 600;
-      font-size: 0.85rem;
-      margin-top: 12px;
-      width: 100%;
-      cursor: pointer;
-      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.2);
-    }
-
-    .entry-card {
-      background: rgba(255, 255, 255, 0.85);
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-    }
-
-    .entry-date {
-      font-size: 0.75rem;
-      color: #94a3b8;
-      font-weight: bold;
-      margin-bottom: 4px;
-    }
-
-    .entry-body {
-      font-size: 0.9rem;
-      color: #334155;
-      line-height: 1.4;
-      white-space: pre-wrap;
-    }
-
-    /* ========================================================
-       PESTAÑA 2: NIVEK (Estilo Editorial Rojo Japonés / Nobunaga)
-       ======================================================== */
-    #tab-nivek {
-      background-color: var(--red-brand);
-      color: var(--cream-paper);
-    }
-
-    .nivek-hero {
-      text-align: center;
-      padding: 24px 0 16px 0;
-      border-bottom: 2px solid rgba(255,255,255,0.2);
-      margin-bottom: 20px;
-    }
-
-    .nivek-kanji {
-      font-size: 0.9rem;
-      letter-spacing: 6px;
-      opacity: 0.85;
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
-
-    .nivek-title {
-      font-size: 3.5rem;
+    .level-title {
+      font-size: 1.6rem;
       font-weight: 900;
-      letter-spacing: 4px;
-      line-height: 1;
       text-transform: uppercase;
-      font-family: Impact, "Arial Black", sans-serif;
+      letter-spacing: 1.5px;
+      margin: 0;
+      color: #fff;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.4);
     }
 
-    .nivek-stats-bar {
+    .stats-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 10px;
-      margin-bottom: 16px;
+      margin-top: 15px;
     }
 
     .stat-card {
-      background: rgba(0, 0, 0, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 12px;
-      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 10px;
+      border-radius: 12px;
       text-align: center;
     }
 
-    .stat-label {
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      opacity: 0.8;
+    .stat-value { font-size: 1.3rem; font-weight: bold; color: #fef08a; }
+    .stat-label { font-size: 0.7rem; text-transform: uppercase; opacity: 0.85; }
+
+    /* SECCIÓN DIARIO: GLASSMORPHISM & NEÓN (Inspirada en Fotos 2 y 3) */
+    .glass-card {
+      background: rgba(30, 41, 59, 0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
     }
 
-    .stat-num {
-      font-size: 1.4rem;
-      font-weight: 800;
-      margin-top: 2px;
-    }
-
-    .editorial-card {
-      background: var(--cream-paper);
-      color: var(--dark-ink);
-      border-radius: 4px;
-      padding: 16px;
-      margin-bottom: 14px;
-      border: 2px solid var(--dark-ink);
-      box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.4);
-    }
-
-    .editorial-badge {
-      display: inline-block;
-      background: var(--red-brand);
+    input, select {
+      width: 100%;
+      padding: 12px 16px;
+      margin-top: 8px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(15, 23, 42, 0.85);
       color: #fff;
-      font-size: 0.65rem;
-      font-weight: bold;
-      padding: 2px 8px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      margin-bottom: 8px;
+      font-size: 0.95rem;
+      outline: none;
     }
 
-    .editorial-headline {
-      font-size: 1.2rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: -0.5px;
-      margin-bottom: 6px;
+    input:focus, select:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
     }
 
-    .editorial-desc {
-      font-size: 0.85rem;
-      line-height: 1.4;
-      color: #333333;
-    }
-
-    /* ========================================================
-       BARRA INFERIOR DE NAVEGACIÓN (2 Pestañas Fijas)
-       ======================================================== */
-    .bottom-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 72px;
-      background: rgba(15, 23, 42, 0.92);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      padding: 0 20px;
-      z-index: 999;
-    }
-
-    .tab-btn {
-      flex: 1;
-      max-width: 140px;
-      height: 44px;
-      border-radius: 22px;
+    button.save-btn {
+      width: 100%;
+      background: linear-gradient(90deg, #2563eb, #06b6d4);
       border: none;
-      background: transparent;
-      color: #94a3b8;
-      font-weight: 700;
-      font-size: 0.85rem;
-      letter-spacing: 0.5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
+      color: #fff;
+      font-weight: bold;
+      padding: 14px;
+      border-radius: 12px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      margin-top: 14px;
+      box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
+      font-size: 1rem;
     }
 
-    .tab-btn.active {
-      background: #ffffff;
+    button.save-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(6, 182, 212, 0.6);
+    }
+
+    /* FILTROS TIPO PÍLDORA (Foto 2) */
+    .pills-container {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+    }
+
+    .pill {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #94a3b8;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .pill.active {
+      background: #38bdf8;
       color: #0f172a;
-      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+      font-weight: bold;
+      border-color: #38bdf8;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
     }
 
-    .tab-btn.active.nivek-active {
-      background: var(--red-brand);
-      color: #ffffff;
-      box-shadow: 0 4px 14px rgba(214, 0, 47, 0.5);
+    /* LISTA CON EFECTO DE BRILLO AZUL (Foto 3) */
+    .item {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      padding: 14px 16px;
+      border-radius: 14px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
+
+    .item:hover {
+      border-color: rgba(56, 189, 248, 0.6);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);
+      transform: scale(1.01);
+    }
+
+    .item.completed {
+      opacity: 0.5;
+      border-color: rgba(34, 197, 94, 0.4);
+    }
+
+    .item.completed strong { text-decoration: line-through; }
+
+    .badge {
+      font-size: 0.75rem;
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-top: 4px;
+      display: inline-block;
+    }
+
+    .delete-btn {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    .delete-btn:hover { background: #ef4444; color: #fff; }
   </style>
 </head>
 <body>
 
-  <!-- ================= VISTA 1: DIARIO ================= -->
-  <div id="tab-diario" class="view active">
-    <div class="diario-header">
-      <div class="diario-subtitle">Nemu Life OS</div>
-      <div class="diario-title">Diario & Reflexión</div>
-    </div>
-
-    <div class="glass-box">
-      <label style="font-size: 0.8rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 1px;">Entrada de hoy</label>
-      <textarea id="diaryInput" class="glass-input" rows="3" placeholder="¿Cómo te sientes hoy? Anota tus ideas, desahogo o bitácora..."></textarea>
-      <button class="glass-btn" onclick="saveEntry()">Guardar en Bitácora</button>
-    </div>
-
-    <div style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: #64748b; margin-bottom: 10px;">
-      Registros Anteriores
-    </div>
-    <div id="entriesList"></div>
-  </div>
-
-  <!-- ================= VISTA 2: NIVEK ================= -->
-  <div id="tab-nivek" class="view">
-    <div class="nivek-hero">
-      <div class="nivek-kanji">人生のオペレーティングシステム</div>
-      <div class="nivek-title">NIVEK</div>
-    </div>
-
-    <div class="nivek-stats-bar">
-      <div class="stat-card">
-        <div class="stat-label">Enfoque Actual</div>
-        <div class="stat-num">MARCA</div>
+  <div class="container">
+    
+    <!-- SECCIÓN DE NIVEL (ESTILO ROJO ETIQUETA) -->
+    <div class="level-banner">
+      <div class="level-header">
+        <h1 class="level-title">NIVEL <span id="userLevel">1</span></h1>
+        <span style="font-weight: bold; font-size: 0.9rem; background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 8px;">🔥 Racha: <span id="streakDays">1</span>d</span>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Estado</div>
-        <div class="stat-num">ACTIVO</div>
+      
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="totalItems">0</div>
+          <div class="stat-label">Registros</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="doneItems">0</div>
+          <div class="stat-label">Listos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="xpPoints">0</div>
+          <div class="stat-label">Puntos XP</div>
+        </div>
       </div>
     </div>
 
-    <div class="editorial-card">
-      <span class="editorial-badge">Pilar 01</span>
-      <div class="editorial-headline">Dirección Creativa</div>
-      <div class="editorial-desc">Diseño visual, narrativa de marca personal, estética y lore de proyectos en desarrollo.</div>
+    <!-- SECCIÓN DIARIO (FORMULARIO Y FILTROS GLASS/NEÓN) -->
+    <div class="glass-card">
+      <input type="text" id="title" placeholder="¿Qué quieres registrar hoy en tu diario?">
+      <select id="category">
+        <option value="Tarea">📝 Tarea</option>
+        <option value="Idea">💡 Idea</option>
+        <option value="Hábito">⚡ Hábito</option>
+        <option value="Nota">📌 Nota</option>
+      </select>
+      <button class="save-btn" onclick="addItem()">Guardar en Diario</button>
     </div>
 
-    <div class="editorial-card">
-      <span class="editorial-badge">Pilar 02</span>
-      <div class="editorial-headline">Investigación & Análisis</div>
-      <div class="editorial-desc">Mapeo de conceptos, rigor metodológico y estructuración de proyectos de fondo.</div>
+    <!-- FILTROS EN PÍLDORA -->
+    <div class="pills-container">
+      <button class="pill active" onclick="filterCategory('Todas', this)">Todas</button>
+      <button class="pill" onclick="filterCategory('Tarea', this)">📝 Tareas</button>
+      <button class="pill" onclick="filterCategory('Idea', this)">💡 Ideas</button>
+      <button class="pill" onclick="filterCategory('Hábito', this)">⚡ Hábitos</button>
+      <button class="pill" onclick="filterCategory('Nota', this)">📌 Notas</button>
     </div>
 
-    <div class="editorial-card">
-      <span class="editorial-badge">Pilar 03</span>
-      <div class="editorial-headline">Logística & Ocio</div>
-      <div class="editorial-desc">Desconexión estratégica: deporte, descanso ergonómico y balance personal.</div>
-    </div>
+    <!-- LISTA DE REGISTROS -->
+    <div id="list"></div>
+
   </div>
-
-  <!-- ================= BARRA DE NAVEGACIÓN INFERIOR ================= -->
-  <nav class="bottom-bar">
-    <button class="tab-btn active" id="btn-diario" onclick="switchTab('diario')">
-      <span>📖</span> Diario
-    </button>
-    <button class="tab-btn" id="btn-nivek" onclick="switchTab('nivek')">
-      <span>⚡</span> Nivek
-    </button>
-  </nav>
 
   <script>
-    // Cambio entre pestañas
-    function switchTab(tab) {
-      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(b => {
-        b.classList.remove('active');
-        b.classList.remove('nivek-active');
-      });
+    let items = JSON.parse(localStorage.getItem('my_app_data')) || [];
+    let currentFilter = 'Todas';
 
-      if (tab === 'diario') {
-        document.getElementById('tab-diario').classList.add('active');
-        document.getElementById('btn-diario').classList.add('active');
-      } else {
-        document.getElementById('tab-nivek').classList.add('active');
-        const btnNivek = document.getElementById('btn-nivek');
-        btnNivek.classList.add('active');
-        btnNivek.classList.add('nivek-active');
-      }
+    function updateLevelStats() {
+      const completed = items.filter(i => i.done).length;
+      const total = items.length;
+      const xp = completed * 50 + total * 10;
+      const level = Math.floor(xp / 150) + 1;
+
+      document.getElementById('totalItems').innerText = total;
+      document.getElementById('doneItems').innerText = completed;
+      document.getElementById('xpPoints').innerText = xp;
+      document.getElementById('userLevel').innerText = level;
     }
 
-    // Almacenamiento local del diario en el dispositivo
-    function loadEntries() {
-      const entries = JSON.parse(localStorage.getItem('nivek_diary_entries') || '[]');
-      const container = document.getElementById('entriesList');
-      if (entries.length === 0) {
-        container.innerHTML = '<div style="color: #64748b; font-size: 0.85rem; text-align: center; padding: 20px;">Aún no hay registros guardados.</div>';
-        return;
-      }
-      container.innerHTML = entries.map((e, index) => `
-        <div class="entry-card">
-          <div style="display: flex; justify-content: space-between;">
-            <span class="entry-date">${e.date}</span>
-            <span onclick="deleteEntry(${index})" style="cursor: pointer; color: #ef4444; font-size: 0.75rem; font-weight: bold;">Borrar</span>
+    function saveAndRender() {
+      localStorage.setItem('my_app_data', JSON.stringify(items));
+      updateLevelStats();
+
+      const list = document.getElementById('list');
+      list.innerHTML = '';
+
+      const filteredItems = currentFilter === 'Todas' 
+        ? items 
+        : items.filter(item => item.category === currentFilter);
+
+      filteredItems.forEach((item, index) => {
+        const realIndex = items.indexOf(item);
+        list.innerHTML += `
+          <div class="item ${item.done ? 'completed' : ''}">
+            <div onclick="toggleItem(${realIndex})" style="flex-grow: 1; cursor: pointer;">
+              <div><strong>${item.title}</strong></div>
+              <span class="badge">${item.category}</span>
+              <span style="font-size: 0.7rem; opacity: 0.6; margin-left: 8px;">${item.date || ''}</span>
+            </div>
+            <button class="delete-btn" onclick="deleteItem(${realIndex})">✕</button>
           </div>
-          <div class="entry-body">${e.text}</div>
-        </div>
-      `).join('');
+        `;
+      });
     }
 
-    function saveEntry() {
-      const input = document.getElementById('diaryInput');
-      const text = input.value.trim();
-      if (!text) return;
+    function addItem() {
+      const title = document.getElementById('title').value.trim();
+      const category = document.getElementById('category').value;
+      if (!title) return;
       
-      const entries = JSON.parse(localStorage.getItem('nivek_diary_entries') || '[]');
-      const now = new Date();
-      const dateStr = now.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+      items.unshift({ 
+        title, 
+        category, 
+        done: false, 
+        date: new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }) 
+      });
       
-      entries.unshift({ text, date: dateStr });
-      localStorage.setItem('nivek_diary_entries', JSON.stringify(entries));
-      input.value = '';
-      loadEntries();
+      document.getElementById('title').value = '';
+      saveAndRender();
     }
 
-    function deleteEntry(index) {
-      const entries = JSON.parse(localStorage.getItem('nivek_diary_entries') || '[]');
-      entries.splice(index, 1);
-      localStorage.setItem('nivek_diary_entries', JSON.stringify(entries));
-      loadEntries();
+    function toggleItem(index) {
+      items[index].done = !items[index].done;
+      saveAndRender();
     }
 
-    // Inicializar
-    loadEntries();
+    function deleteItem(index) {
+      items.splice(index, 1);
+      saveAndRender();
+    }
+
+    function filterCategory(cat, btn) {
+      currentFilter = cat;
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      saveAndRender();
+    }
+
+    saveAndRender();
   </script>
 </body>
 </html>
