@@ -3,16 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mi Gestor Anime - Diario & Licencia Hunter</title>
+  <title>Mi Diario Galáctico - Liquid Glass & Licencia Hunter</title>
   <style>
-    * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; transition: all 0.25s ease; }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
     
+    /* VARS MODO OSCURO (GALAXIA PROFUNDA) */
+    :root {
+      --bg-galaxy: radial-gradient(circle at 20% 20%, #1e1b4b 0%, #090d16 50%, #020617 100%),
+                  radial-gradient(circle at 80% 80%, rgba(147, 51, 234, 0.25) 0%, transparent 50%);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --glass-bg: rgba(15, 23, 42, 0.55);
+      --glass-border: rgba(255, 255, 255, 0.18);
+      --glass-reflection: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.02) 100%);
+      --glass-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+      --accent-glow: #38bdf8;
+      --input-bg: rgba(15, 23, 42, 0.75);
+      --card-item-bg: rgba(15, 23, 42, 0.7);
+    }
+
+    /* VARS MODO CLARO (GALAXIA NEBULOSA / LUMINOSA) */
+    body.light-mode {
+      --bg-galaxy: radial-gradient(circle at 30% 20%, #e0e7ff 0%, #c7d2fe 40%, #a5b4fc 100%),
+                  radial-gradient(circle at 80% 70%, rgba(244, 114, 182, 0.3) 0%, transparent 60%);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --glass-bg: rgba(255, 255, 255, 0.45);
+      --glass-border: rgba(255, 255, 255, 0.65);
+      --glass-reflection: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.1) 100%);
+      --glass-shadow: 0 12px 35px 0 rgba(99, 102, 241, 0.2);
+      --accent-glow: #6366f1;
+      --input-bg: rgba(255, 255, 255, 0.75);
+      --card-item-bg: rgba(255, 255, 255, 0.65);
+    }
+
     body {
-      background: #090d16;
-      background-image: 
-        radial-gradient(circle at 50% 0%, rgba(220, 38, 38, 0.18) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(56, 189, 248, 0.12) 0%, transparent 50%);
-      color: #f8fafc;
+      background: var(--bg-galaxy);
+      background-attachment: fixed;
+      color: var(--text-main);
       margin: 0;
       padding: 16px;
       min-height: 100vh;
@@ -20,16 +48,57 @@
 
     .container { max-width: 520px; margin: 0 auto; }
 
-    /* NAVEGACIÓN PRINCIPAL POR PESTAÑAS */
+    /* BARRA SUPERIOR CON TOGGLE DE MODOS Y CONFIGURACIÓN */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .theme-mode-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--glass-shadow);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .theme-toggle-btn {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: 16px;
+      cursor: pointer;
+      font-weight: bold;
+      backdrop-filter: blur(12px);
+      box-shadow: var(--glass-shadow);
+      font-size: 0.85rem;
+    }
+
+    .theme-toggle-btn:hover {
+      transform: scale(1.05);
+      border-color: var(--accent-glow);
+    }
+
+    /* PESTAÑAS DE NAVEGACIÓN LIQUID GLASS */
     .nav-tabs {
       display: flex;
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 16px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
       padding: 6px;
       margin-bottom: 20px;
       gap: 6px;
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(16px);
+      box-shadow: var(--glass-shadow);
     }
 
     .nav-btn {
@@ -37,10 +106,10 @@
       padding: 12px;
       border: none;
       background: transparent;
-      color: #94a3b8;
+      color: var(--text-muted);
       font-weight: bold;
       font-size: 0.95rem;
-      border-radius: 12px;
+      border-radius: 14px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -51,22 +120,171 @@
     .nav-btn.active {
       background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
       color: #fff;
-      box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+      box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
     }
 
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    /* =======================================
-       ESTILO LICENCIA DE CAZADOR (HUNTER X HUNTER)
-       ======================================= */
+    /* ESTILO LIQUID GLASS APLICADO A CONTENEDORES */
+    .liquid-glass-card {
+      background: var(--glass-bg);
+      background-image: var(--glass-reflection);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--glass-shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .section-title {
+      font-size: 0.9rem;
+      font-weight: 800;
+      margin: 0 0 12px 0;
+      color: var(--accent-glow);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* 6 ESTADOS DE ÁNIMO CON EMOJIS TIPO IPHONE */
+    .mood-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .mood-btn {
+      background: var(--input-bg);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+      padding: 12px 6px;
+      border-radius: 16px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+
+    .mood-btn .iphone-emoji {
+      font-size: 1.8rem;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
+
+    .mood-btn:hover {
+      border-color: var(--accent-glow);
+      transform: translateY(-2px);
+    }
+
+    .mood-btn.selected {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      border-color: #38bdf8;
+      color: #fff;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.6);
+    }
+
+    /* FORMULARIO */
+    input[type="text"] {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid var(--glass-border);
+      background: var(--input-bg);
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--accent-glow);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    button.add-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #dc2626, #ea580c);
+      border: none;
+      color: #fff;
+      font-weight: bold;
+      padding: 14px;
+      border-radius: 14px;
+      cursor: pointer;
+      margin-top: 12px;
+      box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
+      font-size: 1rem;
+    }
+
+    button.add-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(220, 38, 38, 0.6);
+    }
+
+    /* LISTA DE NOTAS EN DIARIO */
+    .item {
+      background: var(--card-item-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--glass-border);
+      padding: 14px 16px;
+      border-radius: 16px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--glass-shadow);
+    }
+
+    .item:hover {
+      border-color: var(--accent-glow);
+      transform: scale(1.01);
+    }
+
+    .item.completed {
+      opacity: 0.5;
+      border-color: rgba(34, 197, 94, 0.4);
+    }
+
+    .item.completed strong { text-decoration: line-through; }
+
+    .badge {
+      font-size: 0.75rem;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-glow);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 4px 10px;
+      border-radius: 8px;
+      margin-top: 4px;
+      display: inline-block;
+      font-weight: bold;
+    }
+
+    .delete-btn {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+      padding: 6px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .delete-btn:hover { background: #ef4444; color: #fff; }
+
+    /* LICENCIA DE CAZADOR (HXH) LIQUID GLASS */
     .hunter-card {
-      background: #f8fafc;
+      background: rgba(248, 250, 252, 0.9);
       color: #0f172a;
-      border-radius: 20px;
+      border-radius: 22px;
       padding: 20px;
       border: 4px solid #dc2626;
-      box-shadow: 0 12px 35px rgba(220, 38, 38, 0.35), 0 0 0 2px #0f172a;
+      box-shadow: 0 15px 40px rgba(220, 38, 38, 0.35);
       position: relative;
       overflow: hidden;
     }
@@ -82,13 +300,7 @@
       border-bottom: 3px solid #0f172a;
     }
 
-    .license-title {
-      font-size: 1.15rem;
-      font-weight: 900;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin: 0;
-    }
+    .license-title { font-size: 1.15rem; font-weight: 900; letter-spacing: 2px; }
 
     .license-id {
       font-family: monospace;
@@ -109,285 +321,121 @@
     }
 
     .hunter-avatar {
-      width: 100px;
-      height: 120px;
+      width: 100px; height: 120px;
       background: linear-gradient(135deg, #1e293b, #0f172a);
       border: 3px solid #dc2626;
-      border-radius: 12px;
+      border-radius: 14px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       color: #fff;
-      text-align: center;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
     }
 
-    .hunter-avatar .star-icon {
-      font-size: 2.2rem;
-      color: #fef08a;
-      text-shadow: 0 0 10px rgba(250, 204, 21, 0.6);
-    }
+    .hunter-avatar .star-icon { font-size: 2.2rem; color: #fef08a; }
 
-    .hunter-details {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+    .hunter-details { display: flex; flex-direction: column; gap: 8px; }
 
     .hunter-field {
-      display: flex;
-      justify-content: space-between;
+      display: flex; justify-content: space-between;
       border-bottom: 2px dashed #cbd5e1;
-      padding-bottom: 4px;
-      font-size: 0.88rem;
+      padding-bottom: 4px; font-size: 0.88rem;
     }
 
-    .hunter-field .label {
-      font-weight: 800;
-      color: #475569;
-      text-transform: uppercase;
-      font-size: 0.7rem;
-    }
-
+    .hunter-field .label { font-weight: 800; color: #475569; text-transform: uppercase; font-size: 0.7rem; }
     .hunter-field .value { font-weight: 900; color: #0f172a; }
     .hunter-field .value.highlight { color: #dc2626; font-size: 1.1rem; }
 
     .hunter-stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-top: 16px;
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 8px; margin-top: 16px;
     }
 
     .hunter-stat-box {
-      background: #e2e8f0;
-      border: 2px solid #94a3b8;
-      border-radius: 10px;
-      padding: 8px;
-      text-align: center;
+      background: #e2e8f0; border: 2px solid #94a3b8;
+      border-radius: 12px; padding: 8px; text-align: center;
     }
 
     .hunter-stat-box .num { font-size: 1.15rem; font-weight: 900; color: #dc2626; }
-    .hunter-stat-box .lbl { font-size: 0.65rem; font-weight: 800; color: #475569; text-transform: uppercase; }
+    .hunter-stat-box .lbl { font-size: 0.65rem; font-weight: 800; color: #475569; }
 
     .hunter-footer-seal {
-      margin-top: 16px;
-      background: #0f172a;
-      color: #f8fafc;
-      padding: 8px;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 0.75rem;
-      font-weight: bold;
-      letter-spacing: 1px;
-      border-left: 4px solid #22c55e;
+      margin-top: 16px; background: #0f172a; color: #f8fafc;
+      padding: 8px; border-radius: 10px; text-align: center;
+      font-size: 0.75rem; font-weight: bold; border-left: 4px solid #22c55e;
     }
-
-    /* =======================================
-       ESTILO DIARIO & 6 BOTONES DE ESTADO ANIME
-       ======================================= */
-    .section-title {
-      font-size: 0.95rem;
-      font-weight: 800;
-      margin: 0 0 10px 0;
-      color: #38bdf8;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    /* Grid de 6 botones de estado Anime */
-    .anime-status-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-
-    .anime-status-btn {
-      background: rgba(30, 41, 59, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: #cbd5e1;
-      padding: 10px 4px;
-      border-radius: 12px;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      font-size: 0.78rem;
-      font-weight: 700;
-    }
-
-    .anime-status-btn span.emoji { font-size: 1.3rem; }
-
-    .anime-status-btn:hover {
-      border-color: #38bdf8;
-      background: rgba(56, 189, 248, 0.15);
-    }
-
-    .anime-status-btn.selected {
-      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-      border-color: #38bdf8;
-      color: #fff;
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
-    }
-
-    /* Formulario para agregar registro */
-    .diary-card {
-      background: rgba(30, 41, 59, 0.65);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      border-radius: 18px;
-      padding: 16px;
-      margin-bottom: 20px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    }
-
-    input[type="text"] {
-      width: 100%;
-      padding: 12px 14px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      background: rgba(15, 23, 42, 0.85);
-      color: #fff;
-      font-size: 0.95rem;
-      outline: none;
-    }
-
-    input[type="text"]:focus {
-      border-color: #38bdf8;
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
-    }
-
-    button.add-btn {
-      width: 100%;
-      background: linear-gradient(90deg, #dc2626, #ea580c);
-      border: none;
-      color: #fff;
-      font-weight: bold;
-      padding: 12px;
-      border-radius: 12px;
-      cursor: pointer;
-      margin-top: 12px;
-      box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
-      font-size: 0.95rem;
-    }
-
-    button.add-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(220, 38, 38, 0.6);
-    }
-
-    /* Lista de Registros */
-    .item {
-      background: rgba(15, 23, 42, 0.8);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(56, 189, 248, 0.2);
-      padding: 12px 14px;
-      border-radius: 14px;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .item:hover {
-      border-color: rgba(56, 189, 248, 0.6);
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
-    }
-
-    .item.completed {
-      opacity: 0.5;
-      border-color: rgba(34, 197, 94, 0.4);
-    }
-
-    .item.completed strong { text-decoration: line-through; }
-
-    .badge {
-      font-size: 0.72rem;
-      background: rgba(56, 189, 248, 0.15);
-      color: #38bdf8;
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      padding: 3px 8px;
-      border-radius: 6px;
-      margin-top: 4px;
-      display: inline-block;
-    }
-
-    .delete-btn {
-      background: rgba(239, 68, 68, 0.2);
-      border: 1px solid #ef4444;
-      color: #fca5a5;
-      padding: 6px 10px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.8rem;
-    }
-
-    .delete-btn:hover { background: #ef4444; color: #fff; }
   </style>
 </head>
 <body>
 
   <div class="container">
     
-    <!-- PESTAÑAS DE NAVEGACIÓN -->
+    <!-- BARRA SUPERIOR MODO / HORARIO -->
+    <div class="top-bar">
+      <div class="theme-mode-badge" id="themeStatusBadge">
+        <span>⏰</span> <span id="themeStatusText">Modo Automático</span>
+      </div>
+      <button class="theme-toggle-btn" onclick="toggleManualTheme()">
+        <span id="themeToggleIcon">🌙</span> Cambiar Modo
+      </button>
+    </div>
+
+    <!-- PESTAÑAS PRINCIPALES -->
     <div class="nav-tabs">
-      <button class="nav-btn active" onclick="switchTab('diario', this)">📖 Diario</button>
-      <button class="nav-btn" onclick="switchTab('nivel', this)">💳 Licencia Nivel</button>
+      <button class="nav-btn active" onclick="switchTab('diario', this)">📖 Diario Liquid</button>
+      <button class="nav-btn" onclick="switchTab('nivel', this)">💳 Licencia Hunter</button>
     </div>
 
     <!-- PESTAÑA 1: DIARIO -->
     <div id="diario-tab" class="tab-content active">
       
-      <div class="diary-card">
-        <div class="section-title">Elige el Estado de tu Entrada:</div>
+      <div class="liquid-glass-card">
+        <div class="section-title">¿Cómo te sientes hoy? (Estado de Ánimo)</div>
         
-        <!-- 6 Botones de Estado Anime -->
-        <div class="anime-status-grid">
-          <button class="anime-status-btn selected" onclick="selectStatus('⚔️ Misión', this)">
-            <span class="emoji">⚔️</span>
-            <span>Misión</span>
+        <!-- 6 ESTADOS DE ÁNIMO CON EMOJIS TIPO IPHONE -->
+        <div class="mood-grid">
+          <button class="mood-btn selected" onclick="selectMood('😊 Feliz', this)">
+            <span class="iphone-emoji">😊</span>
+            <span>Feliz</span>
           </button>
-          <button class="anime-status-btn" onclick="selectStatus('💡 Idea', this)">
-            <span class="emoji">💡</span>
-            <span>Idea Ninja</span>
+          <button class="mood-btn" onclick="selectMood('😐 Normal', this)">
+            <span class="iphone-emoji">😐</span>
+            <span>Normal</span>
           </button>
-          <button class="anime-status-btn" onclick="selectStatus('⚡ Entreno', this)">
-            <span class="emoji">⚡</span>
-            <span>Entreno Ki</span>
+          <button class="mood-btn" onclick="selectMood('😢 Triste', this)">
+            <span class="iphone-emoji">😢</span>
+            <span>Triste</span>
           </button>
-          <button class="anime-status-btn" onclick="selectStatus('📜 Pergamino', this)">
-            <span class="emoji">📜</span>
-            <span>Pergamino</span>
+          <button class="mood-btn" onclick="selectMood('🔥 Motivado', this)">
+            <span class="iphone-emoji">🔥</span>
+            <span>Motivado</span>
           </button>
-          <button class="anime-status-btn" onclick="selectStatus('🍥 Ramen', this)">
-            <span class="emoji">🍥</span>
-            <span>Ramen</span>
+          <button class="mood-btn" onclick="selectMood('😴 Cansado', this)">
+            <span class="iphone-emoji">😴</span>
+            <span>Cansado</span>
           </button>
-          <button class="anime-status-btn" onclick="selectStatus('🔮 Visión', this)">
-            <span class="emoji">🔮</span>
-            <span>Visión</span>
+          <button class="mood-btn" onclick="selectMood('😤 Molesto', this)">
+            <span class="iphone-emoji">😤</span>
+            <span>Molesto</span>
           </button>
         </div>
 
-        <!-- Formulario para agregar la nota -->
-        <input type="text" id="title" placeholder="Escribe lo que quieres registrar en tu diario...">
-        <button class="add-btn" onclick="addItem()">Guardar en Diario</button>
+        <!-- FORMULARIO PARA AGREGAR REGISTRO -->
+        <input type="text" id="title" placeholder="Escribe tu entrada del diario...">
+        <button class="add-btn" onclick="addItem()">Guardar Registro</button>
       </div>
 
-      <!-- Lista de Notas del Diario -->
+      <!-- LISTA DE ENTRADAS -->
       <div id="list"></div>
     </div>
 
-    <!-- PESTAÑA 2: NIVEL (LICENCIA DE CAZADOR HUNTER X HUNTER) -->
+    <!-- PESTAÑA 2: NIVEL Y LICENCIA HUNTER -->
     <div id="nivel-tab" class="tab-content">
       
       <div class="hunter-card">
         <div class="license-header">
           <div class="license-title">LICENCIA DE CAZADOR</div>
-          <div class="license-id">#HXH-2026-889</div>
+          <div class="license-id">#HXH-2026-990</div>
         </div>
 
         <div class="hunter-card-body">
@@ -398,7 +446,7 @@
 
           <div class="hunter-details">
             <div class="hunter-field">
-              <span class="label">Nivel de Cazador</span>
+              <span class="label">Nivel Cazador</span>
               <span class="value highlight" id="userLevel">1</span>
             </div>
             <div class="hunter-field">
@@ -423,7 +471,7 @@
           </div>
           <div class="hunter-stat-box">
             <div class="num" id="doneItems">0</div>
-            <div class="lbl">Misiones</div>
+            <div class="lbl">Completados</div>
           </div>
           <div class="hunter-stat-box">
             <div class="num" id="completionRate">0%</div>
@@ -432,7 +480,7 @@
         </div>
 
         <div class="hunter-footer-seal">
-          ESTADO: LICENCIA OFICIAL ACTIVA Y AUTORIZADA
+          ESTADO: LICENCIA ACTIVADA Y OFICIAL
         </div>
       </div>
 
@@ -442,7 +490,35 @@
 
   <script>
     let items = JSON.parse(localStorage.getItem('my_app_data')) || [];
-    let selectedCategory = '⚔️ Misión';
+    let selectedMood = '😊 Feliz';
+    let isManualTheme = false;
+
+    // CONFIGURACIÓN MODO AUTO Y HORARIO (7 AM - 5 PM CLARO, 5 PM - 7 AM OSCURO)
+    function applyAutoTheme() {
+      if (isManualTheme) return;
+
+      const hour = new Date().getHours();
+      const isDayTime = hour >= 7 && hour < 17; // 7:00 a 16:59 modo claro
+
+      if (isDayTime) {
+        document.body.classList.add('light-mode');
+        document.getElementById('themeStatusText').innerText = 'Claro (7am-5pm)';
+        document.getElementById('themeToggleIcon').innerText = '☀️';
+      } else {
+        document.body.classList.remove('light-mode');
+        document.getElementById('themeStatusText').innerText = 'Oscuro (5pm-7am)';
+        document.getElementById('themeToggleIcon').innerText = '🌙';
+      }
+    }
+
+    function toggleManualTheme() {
+      isManualTheme = true;
+      document.body.classList.toggle('light-mode');
+      const isLight = document.body.classList.contains('light-mode');
+      
+      document.getElementById('themeStatusText').innerText = isLight ? 'Claro (Manual)' : 'Oscuro (Manual)';
+      document.getElementById('themeToggleIcon').innerText = isLight ? '☀️' : '🌙';
+    }
 
     function switchTab(tabName, btn) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -452,9 +528,9 @@
       btn.classList.add('active');
     }
 
-    function selectStatus(status, btn) {
-      selectedCategory = status;
-      document.querySelectorAll('.anime-status-btn').forEach(b => b.classList.remove('selected'));
+    function selectMood(mood, btn) {
+      selectedMood = mood;
+      document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
     }
 
@@ -466,9 +542,9 @@
       const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
 
       let rank = "Novato";
-      if (level >= 3) rank = "Cazador de 1 Estrella ⭐";
-      if (level >= 6) rank = "Cazador de 2 Estrellas ⭐⭐";
-      if (level >= 10) rank = "Cazador de Elite 🏆";
+      if (level >= 3) rank = "Cazador 1 Estrella ⭐";
+      if (level >= 6) rank = "Cazador 2 Estrellas ⭐⭐";
+      if (level >= 10) rank = "Cazador Élite 🏆";
 
       document.getElementById('totalItems').innerText = total;
       document.getElementById('doneItems').innerText = completed;
@@ -505,7 +581,7 @@
       
       items.unshift({ 
         title, 
-        category: selectedCategory, 
+        category: selectedMood, 
         done: false, 
         date: new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }) 
       });
@@ -524,6 +600,8 @@
       saveAndRender();
     }
 
+    // Inicialización de tema automático y renderizado
+    applyAutoTheme();
     saveAndRender();
   </script>
 </body>
