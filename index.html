@@ -67,3 +67,176 @@
         }
         
         /* Efecto de presionar el botón 3D */
+        .btn-mood:active { top: 6px; box-shadow: 0 0px 0 transparent !important; }
+
+        /* Sombras 3D personalizadas para cada emoción */
+        .btn-feliz { border-color: #34c759; box-shadow: 0 6px 0 #1e7a35; }
+        .btn-normal { border-color: #ffcc00; box-shadow: 0 6px 0 #b38f00; }
+        .btn-triste { border-color: #007aff; box-shadow: 0 6px 0 #004d9e; }
+        .btn-decepcionado { border-color: #af52de; box-shadow: 0 6px 0 #6e2594; }
+        .btn-jodido { border-color: #ff3b30; box-shadow: 0 6px 0 #991c15; }
+        
+        .emoji { font-size: 24px; margin-right: 12px; vertical-align: middle; }
+
+        /* Área de texto 3D invertida (hundida) */
+        .nota-input {
+            width: 100%;
+            height: 120px;
+            background-color: #0a0a0a;
+            color: white;
+            border: 2px solid #333;
+            border-radius: 18px;
+            padding: 15px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: none;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            box-shadow: inset 0 5px 10px rgba(0,0,0,0.8);
+            transition: border-color 0.3s;
+        }
+        .nota-input:focus { border-color: #ff3b30; outline: none; }
+
+        /* Botón Rojo 3D para Enviar */
+        .btn-rojo {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(145deg, #ff453a, #d62828);
+            border: none;
+            border-radius: 18px;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 6px 0 #8b0000, 0 12px 20px rgba(255, 59, 48, 0.4);
+            transition: all 0.1s ease;
+        }
+        .btn-rojo:active { top: 6px; box-shadow: 0 0px 0 #8b0000, 0 4px 6px rgba(255, 59, 48, 0.4); }
+
+    </style>
+</head>
+<body>
+
+    <div id="app-content">
+        <div class="header">
+            <h1>Bienvenido, Nivek</h1>
+            <p id="saludo-tiempo">Nemu está en línea.</p>
+        </div>
+
+        <!-- Casillero de Emociones -->
+        <div class="widget">
+            <h2 id="pregunta-mood">¿Cómo te sientes hoy?</h2>
+            <button class="btn-mood btn-feliz" onclick="registrarEmocion('Feliz')">
+                <span class="emoji">😁</span> Feliz
+            </button>
+            <button class="btn-mood btn-normal" onclick="registrarEmocion('Normal')">
+                <span class="emoji">😐</span> Normal
+            </button>
+            <button class="btn-mood btn-triste" onclick="registrarEmocion('Triste')">
+                <span class="emoji">😔</span> Triste
+            </button>
+            <button class="btn-mood btn-decepcionado" onclick="registrarEmocion('Decepcionado')">
+                <span class="emoji">😞</span> Decepcionado
+            </button>
+            <button class="btn-mood btn-jodido" onclick="registrarEmocion('Jodido en la v*rga')">
+                <span class="emoji">🤬</span> Jodido en la v*rga
+            </button>
+        </div>
+
+        <!-- Nuevo Casillero de Notas Mentales -->
+        <div class="widget">
+            <h2>Descarga tus pensamientos</h2>
+            <textarea id="nota-texto" class="nota-input" placeholder="Escribe aquí tu nota mental..."></textarea>
+            <button id="btn-enviar-nota" class="btn-rojo" onclick="enviarNota()">Guardar Nota Mental</button>
+        </div>
+    </div>
+
+    <script>
+        const tuCorreo = "albankevine845@gmail.com"; // Tu correo destino
+        const appContent = document.getElementById('app-content');
+        
+        // Lógica de hora
+        const hora = new Date().getHours();
+        const preguntaEl = document.getElementById('pregunta-mood');
+        const saludoEl = document.getElementById('saludo-tiempo');
+        let preguntaOriginal = "";
+
+        if (hora >= 5 && hora < 12) {
+            saludoEl.innerText = "Reporte matutino - 6 AM";
+            preguntaOriginal = "¿Cómo te sientes esta mañana?";
+        } else if (hora >= 12 && hora < 17) {
+            saludoEl.innerText = "Reporte de mediodía - 12 PM";
+            preguntaOriginal = "¿Cómo te sientes a esta hora?";
+        } else {
+            saludoEl.innerText = "Reporte de cierre - 5 PM";
+            preguntaOriginal = "¿Cómo terminas el día?";
+        }
+        preguntaEl.innerText = preguntaOriginal;
+
+        // Función para enviar Emociones
+        function registrarEmocion(estado) {
+            appContent.classList.add('difuminado'); // Aplica efecto borroso
+            
+            fetch("https://formsubmit.co/ajax/" + tuCorreo, {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({
+                    _subject: "Nemu Reporte: Nivek se siente " + estado,
+                    Mensaje: "Hora del reporte: " + new Date().toLocaleTimeString(),
+                    Estado: estado
+                })
+            }).then(() => {
+                preguntaEl.innerText = "¡Reporte guardado! 🤍";
+                preguntaEl.style.color = "#34c759";
+                appContent.classList.remove('difuminado'); // Quita efecto borroso
+                setTimeout(() => { 
+                    preguntaEl.innerText = preguntaOriginal; 
+                    preguntaEl.style.color = "white";
+                }, 3000);
+            }).catch(() => {
+                appContent.classList.remove('difuminado');
+            });
+        }
+
+        // Nueva Función para enviar Notas Mentales
+        function enviarNota() {
+            const campoTexto = document.getElementById('nota-texto');
+            const texto = campoTexto.value;
+            const btnRojo = document.getElementById('btn-enviar-nota');
+
+            // Si está vacío, no hace nada
+            if (texto.trim() === "") return;
+
+            // Inicia el difuminado y cambia el botón
+            appContent.classList.add('difuminado');
+            btnRojo.innerText = "Enviando al sistema...";
+
+            fetch("https://formsubmit.co/ajax/" + tuCorreo, {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({
+                    _subject: "nota mental partida",
+                    Contenido: texto,
+                    Hora: new Date().toLocaleTimeString()
+                })
+            }).then(() => {
+                // Éxito
+                campoTexto.value = ""; // Limpia la caja
+                btnRojo.innerText = "¡Nota Guardada! ✔️";
+                appContent.classList.remove('difuminado'); // Quita efecto borroso
+                
+                setTimeout(() => { 
+                    btnRojo.innerText = "Guardar Nota Mental"; 
+                }, 3000);
+            }).catch(() => {
+                // Error
+                btnRojo.innerText = "Error de conexión";
+                appContent.classList.remove('difuminado');
+                setTimeout(() => { btnRojo.innerText = "Guardar Nota Mental"; }, 3000);
+            });
+        }
+    </script>
+</body>
+</html>
