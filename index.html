@@ -44,4 +44,849 @@
       --text-main: #1a202c;
       --text-dim: #4a5568;
       --accent-cyan: #0088cc;
-      --card-shadow: rgba(31, 38, 135,
+      --card-shadow: rgba(31, 38, 135, 0.15);
+      --blob-1: rgba(0, 195, 255, 0.25);
+      --blob-2: rgba(255, 105, 180, 0.2); /* Rosa suave diurno */
+      --nav-bg: rgba(255, 255, 255, 0.75);
+      --input-bg: rgba(255, 255, 255, 0.5);
+      --bio-bg: rgba(255, 255, 255, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg-grad);
+      color: var(--text-main);
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.8s ease, color 0.5s ease;
+      min-height: 100vh;
+    }
+
+    /* --- ESTRELLAS DE FONDO --- */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background-image: 
+        radial-gradient(white, rgba(255,255,255,.2) 1px, transparent 2px),
+        radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px);
+      background-size: 100px 100px, 150px 150px;
+      background-position: 0 0, 50px 50px;
+      opacity: 0.15;
+      z-index: -2;
+      pointer-events: none;
+      transition: opacity 0.8s ease;
+    }
+
+    body.theme-light::before {
+      opacity: 0.05; /* Menos visible de día */
+      background-image: 
+        radial-gradient(#4facfe, rgba(79, 172, 254,.2) 2px, transparent 3px);
+    }
+
+    /* --- EFECTO LIQUID GLASS (Nebulosas animadas) --- */
+    .liquid-bg {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: -1;
+      overflow: hidden;
+    }
+    
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: float 14s infinite ease-in-out alternate;
+      transition: background 0.8s ease;
+    }
+
+    .blob-1 {
+      width: 380px; height: 380px;
+      background: var(--blob-1);
+      top: -10%; left: -20%;
+    }
+
+    .blob-2 {
+      width: 320px; height: 320px;
+      background: var(--blob-2);
+      bottom: 5%; right: -15%;
+      animation-delay: -7s;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(50px, 70px) scale(1.15); }
+    }
+
+    /* --- CONTENEDOR PRINCIPAL Y VISTAS --- */
+    .app-viewport {
+      max-width: 440px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: 20px 16px 110px 16px;
+    }
+
+    .tab-view {
+      display: none;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .tab-view.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* --- ENCABEZADOS Y TEXTOS --- */
+    .nemu-header {
+      margin-bottom: 24px;
+      padding-left: 4px;
+    }
+
+    .nemu-header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(to right, var(--text-main), var(--accent-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nemu-header .subtitle {
+      margin: 4px 0 0 0;
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: var(--text-dim);
+    }
+
+    /* --- TARJETAS GLASSMORPHISM MEJORADAS --- */
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid var(--glass-border);
+      border-top: 1px solid var(--glass-highlight);
+      border-radius: 22px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 15px 35px var(--card-shadow);
+      transition: background 0.5s ease, border 0.5s ease, box-shadow 0.5s ease;
+    }
+
+    .glass-card h3 {
+      margin: 0 0 16px 0;
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+
+    /* --- SELECTOR DE ÁNIMO --- */
+    .mood-selector {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .mood-btn {
+      flex: 1;
+      font-size: 1.5rem;
+      padding: 12px 0;
+      border-radius: 14px;
+      border: 1px solid var(--glass-border);
+      background: rgba(128, 128, 128, 0.05);
+      cursor: pointer;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.15);
+      transition: all 0.15s ease;
+    }
+
+    body.theme-light .mood-btn {
+      background: rgba(255, 255, 255, 0.5);
+      box-shadow: 0 4px 0 rgba(0,0,0,0.05);
+    }
+
+    .mood-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 0px 0 rgba(0,0,0,0.15);
+      background: rgba(0, 242, 254, 0.12);
+      border-color: var(--accent-blue);
+    }
+
+    .chip-container {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+
+    .chip-container::-webkit-scrollbar { display: none; }
+
+    .mood-chip {
+      background: rgba(128, 128, 128, 0.1);
+      border-radius: 16px;
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      border: 1px solid var(--glass-border);
+      white-space: nowrap;
+      color: var(--text-main);
+    }
+
+    /* --- NOTAS MENTALES Y BOTÓN 3D --- */
+    textarea {
+      width: 100%;
+      height: 100px;
+      background: var(--input-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 14px;
+      color: var(--text-main);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 300;
+      resize: none;
+      outline: none;
+      margin-bottom: 14px;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.1);
+      transition: background 0.5s ease;
+    }
+
+    textarea:focus {
+      border-color: var(--accent-blue);
+    }
+
+    .btn-3d {
+      width: 100%;
+      padding: 16px;
+      border-radius: 16px;
+      border: none;
+      background: linear-gradient(135deg, var(--btn-grad-start), var(--btn-grad-end));
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      box-shadow: 0 6px 0 var(--btn-shadow), 0 12px 20px var(--card-shadow);
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
+    }
+
+    .btn-3d:active {
+      transform: translateY(6px);
+      box-shadow: 0 0px 0 var(--btn-shadow), 0 4px 6px rgba(0,0,0,0.2);
+    }
+
+    /* --- TARJETA LICENCIA DE CAZADOR (Siempre Oscura para mantener estilo ID) --- */
+    .hunter-card-wrap {
+      perspective: 1000px;
+      margin-bottom: 16px;
+    }
+
+    .hunter-card {
+      position: relative;
+      background: linear-gradient(145deg, #1b222c, #0d1117); /* Siempre oscura */
+      border-radius: 20px;
+      padding: 3px; 
+      box-shadow: 0 15px 35px var(--card-shadow), inset 0 0 1px rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(79, 172, 254, 0.2);
+      color: #f0f6fc; /* Forzar texto blanco */
+    }
+
+    .hunter-card-inner {
+      background: radial-gradient(circle at top right, #1a2332 0%, #090c12 80%);
+      border-radius: 17px;
+      padding: 18px;
+    }
+
+    .hunter-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+    }
+
+    .hunter-badge {
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: #00f2fe;
+    }
+
+    .hunter-serial {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: #8b949e;
+    }
+
+    .hunter-body {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .hunter-avatar-slot {
+      width: 78px; height: 92px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #1a222f, #0d121a);
+      border: 1px solid rgba(0, 242, 254, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 3px 8px rgba(0,0,0,0.8), 0 0 15px rgba(0, 242, 254, 0.15);
+      flex-shrink: 0;
+    }
+
+    .avatar-ph {
+      font-size: 2.8rem;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    }
+
+    .hunter-meta h2 {
+      margin: 0 0 2px 0;
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .hunter-title {
+      display: block;
+      font-size: 0.72rem;
+      color: #4facfe;
+      letter-spacing: 0.8px;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .hunter-spec-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .hunter-spec-grid div {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding-bottom: 4px;
+    }
+
+    .hunter-spec-grid label {
+      font-size: 0.65rem;
+      color: #8b949e;
+    }
+
+    .hunter-spec-grid span {
+      font-size: 0.75rem;
+      font-weight: 700;
+      font-family: monospace;
+    }
+
+    .hunter-card-footer {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .micro-chip {
+      width: 32px; height: 20px;
+      background: linear-gradient(135deg, #ffd700, #b8860b);
+      border-radius: 4px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.6);
+      border: 1px solid #eebb00;
+    }
+
+    .hunter-code {
+      font-family: monospace;
+      font-size: 0.7rem;
+      color: #8b949e;
+    }
+
+    /* --- TARJETA DE PERFIL BIOMÉTRICO --- */
+    .bio-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .bio-item {
+      background: var(--bio-bg);
+      border: 1px solid var(--glass-border);
+      padding: 10px 12px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      transition: background 0.5s ease;
+    }
+
+    .bio-item span {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .bio-item strong {
+      font-size: 0.95rem;
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    /* --- PILARES DE GESTIÓN --- */
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin: 24px 0 12px 4px;
+    }
+
+    .pillar-card {
+      padding: 16px;
+      border-left: 4px solid var(--accent-blue);
+      border-radius: 16px;
+    }
+
+    .pillar-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pillar-header h4 {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .pillar-desc {
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: var(--text-dim);
+      margin: 8px 0 12px 0;
+      line-height: 1.5;
+    }
+
+    .pillar-tags {
+      display: flex;
+      gap: 8px;
+    }
+
+    .status-tag, .metric-tag {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: rgba(128, 128, 128, 0.1);
+    }
+
+    .status-tag.active-tag {
+      background: rgba(0, 242, 254, 0.15);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 242, 254, 0.3);
+    }
+
+    /* --- BARRA FLOTANTE DE PESTAÑAS --- */
+    .bottom-nav {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 32px);
+      max-width: 400px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 1px solid var(--glass-border);
+      border-top: 1px solid var(--glass-highlight);
+      border-radius: 30px;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 12px;
+      box-shadow: 0 15px 40px var(--card-shadow);
+      z-index: 100;
+      transition: background 0.5s ease;
+    }
+
+    .nav-tab {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 24px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .nav-tab.active {
+      color: var(--accent-cyan);
+      background: rgba(128, 128, 128, 0.1);
+      box-shadow: inset 0 1px 1px var(--glass-highlight);
+    }
+
+    .nav-icon {
+      font-size: 1.3rem;
+    }
+
+    .nav-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ELEMENTOS DE FONDO LIQUID GLASS -->
+  <div class="liquid-bg">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+  </div>
+
+  <main class="app-viewport">
+
+    <!-- ==================== PESTAÑA: DIARIO ==================== -->
+    <section id="tab-diario" class="tab-view active">
+      <header class="nemu-header">
+        <h1 id="nemu-greeting">Hola, Nivek</h1>
+        <p id="nemu-time" class="subtitle">Calculando hora espacial...</p>
+      </header>
+
+      <!-- Mood Tracker -->
+      <div class="card glass-card">
+        <h3>Estado de Ánimo</h3>
+        <div class="mood-selector">
+          <button class="mood-btn" data-mood="🔥">🔥</button>
+          <button class="mood-btn" data-mood="⚡">⚡</button>
+          <button class="mood-btn" data-mood="🌿">🌿</button>
+          <button class="mood-btn" data-mood="🌧️">🌧️</button>
+          <button class="mood-btn" data-mood="🌀">🌀</button>
+        </div>
+        <div id="mood-history" class="chip-container"></div>
+      </div>
+
+      <!-- Notas Mentales -->
+      <div class="card glass-card">
+        <h3>Notas Mentales</h3>
+        <textarea id="mental-notes-input" placeholder="Captura rápida de pensamientos o tareas..."></textarea>
+        <button id="send-notes-btn" class="btn-3d">Guardar y Sincronizar</button>
+      </div>
+    </section>
+
+    <!-- ==================== PESTAÑA: NIVEK ==================== -->
+    <section id="tab-nivek" class="tab-view">
+      
+      <!-- Tarjeta Hunter -->
+      <div class="hunter-card-wrap">
+        <div class="hunter-card">
+          <div class="hunter-card-inner">
+            <div class="hunter-top-bar">
+              <span class="hunter-badge">HUNTER LICENSE</span>
+              <span class="hunter-serial">№ 2000-0519-EC</span>
+            </div>
+
+            <div class="hunter-body">
+              <div class="hunter-avatar-slot">
+                <div class="avatar-ph">🥷</div>
+              </div>
+              <div class="hunter-meta">
+                <h2>NIVEK</h2>
+                <span class="hunter-title">ESTUDIANTE DE PSICOLOGÍA</span>
+                <div class="hunter-spec-grid">
+                  <div><label>CÉDULA</label><span>0931935795</span></div>
+                  <div><label>UBICACIÓN</label><span>GUASMO NORTE, GYE</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="hunter-card-footer">
+              <div class="micro-chip"></div>
+              <span class="hunter-code">KX-9418 // KIDO CORP CORE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Perfil Biométrico y Datos -->
+      <div class="card glass-card">
+        <h3>Perfil Biométrico</h3>
+        <div class="bio-grid">
+          <div class="bio-item">
+            <span>📏 Altura</span>
+            <strong>1.85 m</strong>
+          </div>
+          <div class="bio-item">
+            <span>⚖️ Peso</span>
+            <strong>120 kg</strong>
+          </div>
+          <div class="bio-item">
+            <span>💊 Medicación</span>
+            <strong>Losartán 100 mg</strong>
+          </div>
+          <div class="bio-item">
+            <span>♉ Signo</span>
+            <strong>Tauro</strong>
+          </div>
+          <div class="bio-item">
+            <span>⛪ Fe</span>
+            <strong>Católico</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pilares -->
+      <div class="pillars-container">
+        <h3 class="section-title">Ejes Operativos</h3>
+
+        <article class="card glass-card pillar-card">
+          <div class="pillar-header">
+            <span>❤️‍🔥</span>
+            <h4>Salud & Vitalidad</h4>
+          </div>
+          <p class="pillar-desc">Entrenamiento físico, acondicionamiento y balance neuromuscular.</p>
+          <div class="pillar-tags">
+            <span class="status-tag">En Progreso</span>
+            <span class="metric-tag">Fuerza / Cardio</span>
+          </div>
+        </article>
+
+        <article class="card glass-card pillar-card">
+          <div class="pillar-header">
+            <span>🧠</span>
+            <h4>Estudio & Investigación</h4>
+          </div>
+          <p class="pillar-desc">Exploración conceptual, lecturas avanzadas y desarrollo analítico.</p>
+          <div class="pillar-tags">
+            <span class="status-tag active-tag">Activo</span>
+            <span class="metric-tag">Investigación</span>
+          </div>
+        </article>
+
+        <article class="card glass-card pillar-card">
+          <div class="pillar-header">
+            <span>⚡</span>
+            <h4>Trabajo & Proyectos</h4>
+          </div>
+          <p class="pillar-desc">Dirección de iniciativas creativas, sistemas y flujos de automatización.</p>
+          <div class="pillar-tags">
+            <span class="status-tag">Planificación</span>
+            <span class="metric-tag">Kido Corp</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Barra de Navegación Inferior -->
+    <nav class="bottom-nav">
+      <button class="nav-tab active" data-target="tab-diario">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Diario</span>
+      </button>
+      <button class="nav-tab" data-target="tab-nivek">
+        <span class="nav-icon">🃏</span>
+        <span class="nav-label">Nivek</span>
+      </button>
+    </nav>
+
+  </main>
+
+   <script>
+    const KidoApp = (() => {
+      // 1. GESTOR DE TEMA (CLARO/OSCURO) Y RELOJ
+      const ThemeManager = {
+        init() {
+          this.updateTimeAndTheme();
+          // Actualizar la hora cada minuto
+          setInterval(() => this.updateTimeAndTheme(), 60000);
+        },
+        updateTimeAndTheme() {
+          const now = new Date();
+          const hours = now.getHours();
+          const minutes = now.getMinutes().toString().padStart(2, '0');
+          const ampm = hours >= 12 ? 'PM' : 'AM';
+          const displayHours = hours % 12 || 12;
+          
+          // Lógica de tema: de 6:00 AM a 6:59 PM es de día (Claro)
+          if (hours >= 6 && hours < 19) {
+            document.body.classList.add('theme-light');
+          } else {
+            document.body.classList.remove('theme-light');
+          }
+
+          // Saludo Nemu
+          let greeting = 'Buenas noches';
+          if (hours >= 5 && hours < 12) greeting = 'Buenos días';
+          else if (hours >= 12 && hours < 19) greeting = 'Buenas tardes';
+          
+          const titleEl = document.getElementById('nemu-greeting');
+          const timeEl = document.getElementById('nemu-time');
+          
+          if (titleEl) titleEl.textContent = `${greeting}, Nivek`;
+          if (timeEl) timeEl.textContent = `Son las ${displayHours}:${minutes} ${ampm}. Bitácora activa.`;
+        }
+      };
+
+      // 2. GESTOR DE ALMACENAMIENTO LOCAL
+      const Storage = {
+        KEYS: { MOODS: 'kido_mood_history' },
+        get(key) {
+          try { return JSON.parse(localStorage.getItem(key)) || []; } 
+          catch (e) { return []; }
+        },
+        save(key, data) {
+          try { localStorage.setItem(key, JSON.stringify(data)); } 
+          catch (e) { console.error('Error de cuota', e); }
+        }
+      };
+
+      // 3. SINCRONIZACIÓN ASÍNCRONA
+      const Network = {
+        ENDPOINT: 'https://formsubmit.co/ajax/Albankevine845@gmail.com',
+        async send(payload) {
+          try {
+            const res = await fetch(this.ENDPOINT, {
+              method: 'POST',
+              headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify(payload)
+            });
+            return await res.json();
+          } catch (err) {
+            console.warn('Sin conexión. Datos conservados localmente.', err);
+            return null;
+          }
+        }
+      };
+
+      // 4. CONTROLADOR DE REGISTRO EMOCIONAL
+      const MoodTracker = {
+        init() {
+          this.buttons = document.querySelectorAll('.mood-btn');
+          this.historyContainer = document.getElementById('mood-history');
+          this.bindEvents();
+          this.renderHistory();
+        },
+        bindEvents() {
+          this.buttons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              if (navigator.vibrate) navigator.vibrate(20);
+              this.recordMood(e.currentTarget.dataset.mood);
+            });
+          });
+        },
+        async recordMood(mood) {
+          const entry = { mood, timestamp: new Date().toISOString() };
+          const history = Storage.get(Storage.KEYS.MOODS);
+          history.unshift(entry);
+          Storage.save(Storage.KEYS.MOODS, history.slice(0, 8));
+          this.renderHistory();
+
+          await Network.send({
+            _subject: `Kido App: Estado de Ánimo (${mood})`,
+            mood: mood,
+            timestamp: entry.timestamp
+          });
+        },
+        renderHistory() {
+          if (!this.historyContainer) return;
+          const history = Storage.get(Storage.KEYS.MOODS);
+          this.historyContainer.innerHTML = history.map(item => `
+            <span class="mood-chip">${item.mood}</span>
+          `).join('');
+        }
+      };
+
+      // 5. CONTROLADOR DE NOTAS MENTALES
+      const MentalNotes = {
+        init() {
+          this.input = document.getElementById('mental-notes-input');
+          this.btn = document.getElementById('send-notes-btn');
+          if (this.btn) {
+            this.btn.addEventListener('click', () => this.submit());
+          }
+        },
+        async submit() {
+          const text = this.input.value.trim();
+          if (!text) return;
+
+          if (navigator.vibrate) navigator.vibrate(40);
+          const originalText = this.btn.textContent;
+          this.btn.textContent = 'Enviando...';
+          this.btn.disabled = true;
+
+          await Network.send({
+            _subject: 'Kido App: Nota Mental',
+            note: text,
+            timestamp: new Date().toISOString()
+          });
+
+          this.input.value = '';
+          this.btn.textContent = '¡Guardado!';
+          setTimeout(() => {
+            this.btn.textContent = originalText;
+            this.btn.disabled = false;
+          }, 1500);
+        }
+      };
+
+      // 6. CONTROLADOR DE PESTAÑAS (NAVEGACIÓN)
+      const Navigation = {
+        init() {
+          const tabs = document.querySelectorAll('.nav-tab');
+          const views = document.querySelectorAll('.tab-view');
+
+          tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+              const targetId = tab.dataset.target;
+
+              tabs.forEach(t => t.classList.remove('active'));
+              tab.classList.add('active');
+
+              views.forEach(view => {
+                view.classList.toggle('active', view.id === targetId);
+              });
+
+              if (navigator.vibrate) navigator.vibrate(25);
+            });
+          });
+        }
+      };
+
+      return {
+        init() {
+          document.addEventListener('DOMContentLoaded', () => {
+            ThemeManager.init();
+            MoodTracker.init();
+            MentalNotes.init();
+            Navigation.init();
+          });
+        }
+      };
+    })();
+
+    KidoApp.init();
+  </script>
+</body>
+</html>
