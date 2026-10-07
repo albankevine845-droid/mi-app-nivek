@@ -6,13 +6,8 @@
   <title>Nemu Life OS - Nivek</title>
   
   <style>
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; transition: all 0.25s ease; }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; }
     
-    @keyframes floatEmoji {
-      0% { transform: translateY(0px); }
-      100% { transform: translateY(-5px); }
-    }
-
     /* FONDO MEJORADO: LIQUID SPACE (MODO OSCURO) */
     :root {
       --bg-galaxy: radial-gradient(at 0% 0%, #0f172a 0%, transparent 50%), 
@@ -20,16 +15,19 @@
                    radial-gradient(at 100% 100%, #020617 0%, transparent 50%), 
                    radial-gradient(at 0% 100%, #172554 0%, transparent 50%),
                    #0f172a;
-      
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --glass-bg: rgba(15, 23, 42, 0.5);
       --glass-border: rgba(255, 255, 255, 0.1);
-      --glass-reflection: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 100%);
       --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
       --accent-glow: #38bdf8;
       --input-bg: rgba(15, 23, 42, 0.7);
       --card-item-bg: rgba(15, 23, 42, 0.6);
+      
+      /* Efectos de selección (Oscuro) */
+      --btn-select-bg: linear-gradient(145deg, rgba(56, 189, 248, 0.15), rgba(37, 99, 235, 0.25));
+      --btn-select-border: rgba(56, 189, 248, 0.8);
+      --btn-select-shadow: 0 8px 20px rgba(56, 189, 248, 0.3), inset 0 0 10px rgba(56, 189, 248, 0.2);
     }
 
     /* FONDO MEJORADO: SOFT AURORA (MODO CLARO) */
@@ -39,130 +37,188 @@
                    radial-gradient(at 100% 100%, #f3e8ff 0%, transparent 50%), 
                    radial-gradient(at 0% 100%, #dbeafe 0%, transparent 50%),
                    #f8fafc;
-      
       --text-main: #0f172a;
       --text-muted: #475569;
       --glass-bg: rgba(255, 255, 255, 0.6);
       --glass-border: rgba(0, 0, 0, 0.05);
-      --glass-reflection: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.2) 100%);
       --glass-shadow: 0 8px 32px 0 rgba(30, 58, 138, 0.1);
       --accent-glow: #2563eb;
       --input-bg: rgba(255, 255, 255, 0.8);
       --card-item-bg: rgba(255, 255, 255, 0.7);
+      
+      /* Efectos de selección (Claro) */
+      --btn-select-bg: linear-gradient(145deg, rgba(37, 99, 235, 0.1), rgba(29, 78, 216, 0.15));
+      --btn-select-border: rgba(37, 99, 235, 0.8);
+      --btn-select-shadow: 0 8px 20px rgba(37, 99, 235, 0.2), inset 0 0 10px rgba(37, 99, 235, 0.1);
     }
 
-    body { background: var(--bg-galaxy); background-attachment: fixed; color: var(--text-main); margin: 0; padding: 16px; min-height: 100vh; padding-bottom: 90px; }
+    body { background: var(--bg-galaxy); background-attachment: fixed; color: var(--text-main); margin: 0; padding: 16px; min-height: 100vh; padding-bottom: 90px; transition: background 0.5s ease, color 0.5s ease; }
     .container { max-width: 520px; margin: 0 auto; }
 
-    /* CABECERA Y BOTÓN */
+    /* CABECERA */
     .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
     .app-logo-title { font-size: 1.15rem; font-weight: 900; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
-    .discreet-mode-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-main); font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(12px); box-shadow: var(--glass-shadow); opacity: 0.85; }
-    .discreet-mode-btn:hover { opacity: 1; transform: scale(1.05); border-color: var(--accent-glow); }
+    .discreet-mode-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-main); font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(12px); box-shadow: var(--glass-shadow); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .discreet-mode-btn:active { transform: scale(0.85); }
 
-    /* PESTAÑAS PRINCIPALES */
+    /* PESTAÑAS (ANIMACIÓN SUAVE) */
     .nav-tabs { display: flex; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 16px; padding: 6px; margin-bottom: 20px; gap: 6px; backdrop-filter: blur(12px); box-shadow: var(--glass-shadow); }
-    .nav-btn { flex: 1; padding: 12px; border: none; background: transparent; color: var(--text-muted); font-weight: 800; font-size: 0.9rem; border-radius: 12px; cursor: pointer; }
-    .nav-btn.active { background: var(--text-main); color: var(--bg-galaxy); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .nav-btn { flex: 1; padding: 12px; border: none; background: transparent; color: var(--text-muted); font-weight: 800; font-size: 0.9rem; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; }
+    .nav-btn.active { background: var(--text-main); color: var(--bg-galaxy); box-shadow: 0 4px 15px rgba(0,0,0,0.15); transform: translateY(-2px); }
     body:not(.light-mode) .nav-btn.active { color: #0f172a; }
-    .tab-content { display: none; } .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    .tab-content { display: none; } .tab-content.active { display: block; animation: fadeIn 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* BANNER Y WIDGETS */
-    .datetime-card { background: var(--glass-bg); background-image: var(--glass-reflection); border: 1px solid var(--glass-border); border-radius: 20px; padding: 16px; margin-bottom: 14px; text-align: center; backdrop-filter: blur(12px); box-shadow: var(--glass-shadow); }
+    /* RELOJ */
+    .datetime-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px; padding: 16px; margin-bottom: 14px; text-align: center; backdrop-filter: blur(12px); box-shadow: var(--glass-shadow); }
     .datetime-title { font-size: 0.75rem; font-weight: 800; color: var(--accent-glow); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; }
     .clock-display { font-size: 1.6rem; font-weight: 900; letter-spacing: 1px; }
     .date-display { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; font-weight: 600; }
     
-    /* REGISTRO DIARIO (SOLO 2 BOTONES) */
-    .liquid-glass-card { background: var(--glass-bg); background-image: var(--glass-reflection); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 20px; margin-bottom: 20px; box-shadow: var(--glass-shadow); }
+    /* ÁREA DE REGISTRO */
+    .liquid-glass-card { background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 20px; margin-bottom: 20px; box-shadow: var(--glass-shadow); }
     .section-title { font-size: 0.85rem; font-weight: 800; margin: 0 0 14px 0; color: var(--accent-glow); text-transform: uppercase; letter-spacing: 1px; }
+    
+    /* EFECTOS PREMIUM EN MOOD BUTTONS */
     .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
-    .mood-btn { background: var(--input-bg); border: 1px solid var(--glass-border); color: var(--text-main); padding: 10px 4px; border-radius: 14px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.75rem; font-weight: 700; }
-    .mood-btn .iphone-emoji { font-size: 1.6rem; }
-    .mood-btn.selected { background: var(--text-main); border-color: var(--text-main); color: var(--bg-galaxy); box-shadow: 0 0 15px rgba(255,255,255,0.2); }
-    body:not(.light-mode) .mood-btn.selected { color: #0f172a; }
+    .mood-btn { 
+      background: var(--input-bg); 
+      border: 2px solid transparent; 
+      color: var(--text-main); 
+      padding: 12px 4px; 
+      border-radius: 14px; 
+      cursor: pointer; 
+      display: flex; flex-direction: column; align-items: center; gap: 4px; 
+      font-size: 0.75rem; font-weight: 700; 
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    }
+    .mood-btn .iphone-emoji { font-size: 1.6rem; transition: transform 0.3s ease; }
     
-    input[type="text"] { width: 100%; padding: 16px; border-radius: 14px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main); font-size: 1rem; outline: none; box-shadow: inset 0 2px 6px rgba(0,0,0,0.1); }
+    /* Animación al Seleccionar */
+    .mood-btn.selected { 
+      background: var(--btn-select-bg); 
+      border-color: var(--btn-select-border); 
+      box-shadow: var(--btn-select-shadow); 
+      transform: translateY(-5px) scale(1.03); 
+    }
+    .mood-btn.selected .iphone-emoji { transform: scale(1.15) translateY(-2px); }
     
-    /* Contenedor de los 2 botones únicos */
+    input[type="text"] { width: 100%; padding: 16px; border-radius: 14px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main); font-size: 1rem; outline: none; transition: border-color 0.3s ease; }
+    input[type="text"]:focus { border-color: var(--accent-glow); }
+    
+    /* EFECTOS TÁCTILES EN BOTONES DE ACCIÓN */
     .action-buttons { display: flex; gap: 10px; margin-top: 14px; }
-    .action-btn { flex: 1; padding: 14px 8px; border: none; border-radius: 14px; font-weight: 800; font-size: 0.85rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+    .action-btn { 
+      flex: 1; padding: 14px 8px; border: none; border-radius: 14px; font-weight: 800; font-size: 0.85rem; 
+      cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #fff; 
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2); 
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative; overflow: hidden;
+    }
     .btn-thought { background: linear-gradient(135deg, #3b82f6, #2563eb); }
     .btn-location { background: linear-gradient(135deg, #10b981, #059669); }
-    .action-btn span:first-child { font-size: 1.3rem; }
+    .action-btn span:first-child { font-size: 1.3rem; transition: transform 0.2s ease; }
+    
+    /* Animación de "Pulsación Física" (Press) */
+    .action-btn:active { 
+      transform: scale(0.92) translateY(2px); 
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+    }
+    .action-btn:active span:first-child { transform: scale(0.9); }
 
-    /* LISTA DE REGISTROS */
-    .item { background: var(--card-item-bg); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); padding: 16px; border-radius: 16px; margin-bottom: 12px; box-shadow: var(--glass-shadow); }
+    /* LISTA */
+    .item { background: var(--card-item-bg); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); padding: 16px; border-radius: 16px; margin-bottom: 12px; box-shadow: var(--glass-shadow); transition: transform 0.2s ease; }
+    .item:hover { transform: translateX(4px); border-color: var(--glass-border); }
     .item-header { display: flex; justify-content: space-between; align-items: flex-start; }
     .item-title { font-weight: bold; font-size: 0.95rem; line-height: 1.3; }
     .item-details { font-size: 0.75rem; color: var(--text-muted); margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
     .badge { font-size: 0.7rem; background: var(--glass-border); color: var(--text-main); padding: 4px 8px; border-radius: 8px; display: inline-block; font-weight: bold; margin-top: 8px; }
-    .delete-btn { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; padding: 4px 10px; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: bold; margin-left: 10px; }
+    .delete-btn { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; padding: 4px 10px; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: bold; margin-left: 10px; transition: transform 0.2s; }
+    .delete-btn:active { transform: scale(0.8); }
 
     /* ========================================================
-       NUEVA TARJETA NERV UN (MEJORADA Y LIMPIA)
+       TARJETA NERV UN (REPLICA ESTRICTA DE LA FOTO)
        ======================================================== */
     .nerv-card {
-      background: #f8fafc;
-      color: #0f172a;
-      border-radius: 16px;
-      padding: 0;
-      border: 2px solid #334155;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+      background: #fdfdfd;
+      color: #000;
+      border-radius: 8px;
+      padding: 12px 16px 30px 16px;
+      border: 1px solid #ccc;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
       position: relative;
-      overflow: hidden;
-      font-family: "Helvetica Neue", Arial, sans-serif;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      /* Textura ligera de papel para realismo */
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
     }
     
-    /* Cinta de Peligro Superior */
-    .hazard-stripe {
-      height: 12px;
-      width: 100%;
-      background: repeating-linear-gradient(45deg, #eab308, #eab308 10px, #0f172a 10px, #0f172a 20px);
+    .hole-punch {
+      position: absolute; top: 10px; right: 10px; width: 14px; height: 14px;
+      background: var(--bg-galaxy); border-radius: 50%; border: 1px solid #bbb;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); z-index: 2;
     }
 
-    .nerv-content { padding: 20px; position: relative; z-index: 1; }
-    
-    .nerv-card::after {
-      content: "NERV";
+    /* Marca de agua UN GIGANTE detrás de todo */
+    .nerv-card::before {
+      content: "UN";
       position: absolute;
-      font-size: 110px;
+      font-size: 150px;
       color: rgba(0, 0, 0, 0.04);
       top: 50%; left: 50%;
-      transform: translate(-50%, -50%) rotate(-15deg);
+      transform: translate(-50%, -50%);
       font-weight: 900;
-      letter-spacing: -2px;
-      z-index: 0;
+      letter-spacing: -10px;
       pointer-events: none;
+      z-index: 0;
     }
 
-    .nerv-header-area { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; border-bottom: 3px solid #0f172a; padding-bottom: 8px; }
-    .nerv-brand { font-size: 2.8rem; font-weight: 900; letter-spacing: -2px; line-height: 0.8; color: #dc2626; }
-    .nerv-brand sup { font-size: 1.2rem; color: #0f172a; }
-    .clearance-badge { background: #0f172a; color: #fff; padding: 4px 10px; font-family: monospace; font-weight: bold; font-size: 0.75rem; letter-spacing: 1px; border-radius: 4px; }
+    .nerv-layout { display: flex; gap: 14px; position: relative; z-index: 1; }
 
-    .nerv-grid { display: grid; grid-template-columns: 100px 1fr; gap: 16px; position: relative; z-index: 1; }
+    /* Lado Izquierdo: Foto y Código */
+    .nerv-left { width: 95px; flex-shrink: 0; }
+    .nerv-photo { width: 100%; height: 130px; background: #e2e8f0; border: 1px solid #777; display: flex; justify-content: center; align-items: center; font-size: 4rem; }
+    .nerv-id-number { font-family: monospace; font-size: 0.75rem; font-weight: bold; letter-spacing: 0px; margin-top: 6px; }
+    .nerv-jp-text { font-size: 0.8rem; font-weight: 900; margin-top: 2px; }
 
-    .nerv-photo { width: 100%; height: 120px; background: #e2e8f0; border: 2px solid #94a3b8; display: flex; justify-content: center; align-items: center; font-size: 4rem; border-radius: 8px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.1); }
+    /* Lado Derecho: Textos, Códigos de barras y Logo */
+    .nerv-right { flex: 1; display: flex; flex-direction: column; gap: 8px; }
     
-    .nerv-data { display: flex; flex-direction: column; gap: 8px; }
-    .data-row { border-bottom: 1px dashed #cbd5e1; padding-bottom: 4px; display: flex; flex-direction: column; }
-    .data-label { font-size: 0.65rem; font-weight: 800; color: #64748b; text-transform: uppercase; }
-    .data-value { font-size: 1.1rem; font-weight: 900; font-family: monospace; letter-spacing: -0.5px; }
+    .nerv-header-title { font-size: 2.8rem; font-weight: 400; letter-spacing: -2px; line-height: 0.85; margin-top: 2px; display: flex; align-items: flex-start; }
+    .nerv-header-title sup { font-size: 1.1rem; font-weight: bold; margin-left: 2px; letter-spacing: 0; }
+
+    /* Código de Barras Superior */
+    .barcode-top {
+      height: 25px; width: 100%;
+      background: repeating-linear-gradient(90deg, #000, #000 2px, transparent 2px, transparent 4px, #000 4px, #000 6px, transparent 6px, transparent 9px);
+      border: 1px solid #fff;
+    }
+
+    /* Recuadro de Nombre */
+    .nerv-name-box { border: 2px solid #000; padding: 4px 6px; font-family: monospace; font-size: 1.1rem; letter-spacing: 0.5px; }
+
+    .nerv-bottom-section { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; }
     
-    .nerv-bottom-stats { margin-top: 16px; background: #f1f5f9; border: 1px solid #cbd5e1; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; position: relative; z-index: 1; }
-    .stat-box { text-align: center; }
-    .stat-box span { display: block; }
-    .stat-box span:first-child { font-size: 0.65rem; color: #64748b; font-weight: 800; }
-    .stat-box span:last-child { font-size: 1.2rem; font-weight: 900; color: #dc2626; font-family: monospace; }
+    /* Códigos de barras estilo Evangelion abajo */
+    .evangelion-codes { display: flex; gap: 4px; align-items: flex-end; }
+    .evangelion-codes div { background: #000; }
+    
+    /* Logo NERV y Lema a la derecha */
+    .nerv-logo-area { display: flex; align-items: center; gap: 4px; }
+    .nerv-logo-text { font-size: 1.7rem; font-weight: bold; letter-spacing: -1.5px; line-height: 1; }
+    .nerv-motto { font-size: 0.28rem; font-weight: 900; line-height: 1.2; max-width: 65px; letter-spacing: 0.5px; }
+
+    /* Banda negra inferior */
+    .mag-stripe-thick { position: absolute; bottom: 25px; left: 0; right: 0; height: 35px; background: #000; z-index: 1; }
+
+    /* Stats Integrados discretamente */
+    .nerv-stats { font-family: monospace; font-size: 0.65rem; font-weight: bold; margin-top: 6px; border-top: 1px dashed #999; padding-top: 4px; }
+    
   </style>
 </head>
 <body>
 
   <div class="container">
     
-    <!-- CABECERA -->
     <div class="top-header">
       <div class="app-logo-title">
         <span>🌌</span> <span>MI DIARIO GALÁCTICO</span>
@@ -170,13 +226,11 @@
       <button class="discreet-mode-btn" id="discreetBtn" onclick="toggleManualTheme()" title="Cambiar Tema">🌙</button>
     </div>
 
-    <!-- PESTAÑAS -->
     <div class="nav-tabs">
       <button class="nav-btn active" onclick="switchTab('diario', this)">📖 Diario</button>
-      <button class="nav-btn" onclick="switchTab('nivel', this)">🛡️ ID Access</button>
+      <button class="nav-btn" onclick="switchTab('nivel', this)">💳 Credencial</button>
     </div>
 
-    <!-- PESTAÑA 1: DIARIO -->
     <div id="diario-tab" class="tab-content active">
       <div class="datetime-card">
         <div class="datetime-title">Reloj del Sistema</div>
@@ -185,7 +239,7 @@
       </div>
 
       <div class="liquid-glass-card">
-        <div class="section-title">Ingresar Nuevo Registro</div>
+        <div class="section-title">Registro de Sistema</div>
         
         <div class="mood-grid">
           <button class="mood-btn selected" onclick="selectMood('😊 Feliz', this)"><span class="iphone-emoji">😊</span><span>Feliz</span></button>
@@ -198,13 +252,11 @@
         
         <input type="text" id="title" placeholder="¿Qué estás pensando?">
         
-        <!-- LOS 2 ÚNICOS BOTONES DE ACCIÓN -->
         <div class="action-buttons">
           <button class="action-btn btn-thought" onclick="addThought()">
             <span>💭</span>
             <span>Guardar Pensamiento</span>
           </button>
-          
           <button class="action-btn btn-location" onclick="addLocation()">
             <span>📍</span>
             <span>Guardar Ubicación</span>
@@ -215,47 +267,49 @@
       <div id="list"></div>
     </div>
 
-    <!-- PESTAÑA 2: ID NERV UN (MEJORADA Y SIN LETRAS AL FINAL) -->
+    <!-- PESTAÑA 2: ID NERV UN (REPLICA DE LA FOTO) -->
     <div id="nivel-tab" class="tab-content">
       <div class="nerv-card">
-        <div class="hazard-stripe"></div>
-        <div class="nerv-content">
+        <div class="hole-punch"></div>
+        
+        <div class="nerv-layout">
           
-          <div class="nerv-header-area">
-            <div class="nerv-brand">NERV<sup>UN</sup></div>
-            <div class="clearance-badge">CLEARANCE: A-1</div>
-          </div>
-
-          <div class="nerv-grid">
+          <div class="nerv-left">
             <div class="nerv-photo">😎</div>
-            <div class="nerv-data">
-              <div class="data-row">
-                <span class="data-label">Identificación ID</span>
-                <span class="data-value">0931-935-795</span>
+            <div class="nerv-id-number">0931-935-795</div>
+            <div class="nerv-jp-text">ケビン • ニベク</div>
+            <div class="nerv-stats">
+              LVL: <span id="userLevel">1</span><br>
+              XP: <span id="xpPoints">0</span><br>
+              RK: <span id="userRank" style="font-size:0.6rem;">NOVATO</span>
+            </div>
+          </div>
+          
+          <div class="nerv-right">
+            <div class="nerv-header-title">NERV<sup>UN</sup></div>
+            <div class="barcode-top"></div>
+            <div class="nerv-name-box">Nivek (Kevin Albán)</div>
+            
+            <div class="nerv-bottom-section">
+              <div class="evangelion-codes">
+                 <div style="width:4px; height:18px;"></div>
+                 <div style="width:8px; height:28px;"></div>
+                 <div style="width:5px; height:14px;"></div>
+                 <div style="width:3px; height:22px;"></div>
+                 <div style="width:6px; height:26px; margin-left:4px;"></div>
+                 <div style="width:2px; height:10px;"></div>
               </div>
-              <div class="data-row">
-                <span class="data-label">Nombre Clave</span>
-                <span class="data-value" style="color: #2563eb;">NIVEK (Kevin)</span>
+              
+              <div class="nerv-logo-area">
+                <div class="nerv-logo-text">NERV</div>
+                <div class="nerv-motto">GOD'S IN HIS HEAVEN.<br>ALL'S RIGHT WITH THE WORLD.</div>
               </div>
             </div>
           </div>
 
-          <div class="nerv-bottom-stats">
-            <div class="stat-box">
-              <span>NIVEL</span>
-              <span id="userLevel">1</span>
-            </div>
-            <div class="stat-box">
-              <span>EXPERIENCIA</span>
-              <span id="xpPoints">0 XP</span>
-            </div>
-            <div class="stat-box">
-              <span>RANGO ACTUAL</span>
-              <span id="userRank">NOVATO</span>
-            </div>
-          </div>
-          
         </div>
+
+        <div class="mag-stripe-thick"></div>
       </div>
     </div>
 
@@ -272,7 +326,6 @@
       const optionsDate = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
       const dateStr = now.toLocaleDateString('es-ES', optionsDate);
       const timeStr = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
       document.getElementById('liveClock').innerText = timeStr;
       document.getElementById('liveDate').innerText = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
     }
@@ -314,39 +367,28 @@
       btn.classList.add('selected');
     }
 
-    // BOTÓN 1: SOLO GUARDAR PENSAMIENTO (SIN GPS)
+    // BOTÓN 1: PENSAMIENTO
     function addThought() {
       const title = document.getElementById('title').value.trim();
       if (!title) {
         alert("Por favor escribe tu pensamiento antes de guardar.");
         return;
       }
-
       const now = new Date();
       const dateStr = now.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
       const timeStr = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
 
-      items.unshift({ 
-        title: title, 
-        category: selectedMood, 
-        date: dateStr, 
-        time: timeStr, 
-        location: 'Sin ubicación', 
-        done: false 
-      });
-      
+      items.unshift({ title: title, category: selectedMood, date: dateStr, time: timeStr, location: 'Sin ubicación', done: false });
       document.getElementById('title').value = '';
       saveAndRender();
     }
 
-    // BOTÓN 2: SOLO GUARDAR UBICACIÓN
+    // BOTÓN 2: UBICACIÓN
     function addLocation() {
       if (!("geolocation" in navigator)) {
         alert('GPS no soportado en este dispositivo.');
         return;
       }
-
-      // Cambiar temporalmente el botón a estado "Cargando"
       const locBtn = document.querySelector('.btn-location');
       const originalHtml = locBtn.innerHTML;
       locBtn.innerHTML = '<span>⏳</span><span>Buscando...</span>';
@@ -361,28 +403,19 @@
           const dateStr = now.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
           const timeStr = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
 
-          items.unshift({ 
-            title: '📍 Punto de Control Guardado', 
-            category: 'Ubicación GPS', 
-            date: dateStr, 
-            time: timeStr, 
-            location: locationStr, 
-            done: false 
-          });
-          
+          items.unshift({ title: '📍 Punto de Control Guardado', category: 'Ubicación GPS', date: dateStr, time: timeStr, location: locationStr, done: false });
           locBtn.innerHTML = originalHtml;
           saveAndRender();
-          alert('Ubicación registrada correctamente.');
         },
         (error) => {
           locBtn.innerHTML = originalHtml;
-          alert('No se pudo obtener la ubicación. Verifica los permisos de GPS.');
+          alert('No se pudo obtener la ubicación. Verifica tu GPS.');
         },
         { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
       );
     }
 
-    // RENDERIZAR LISTA Y ACTUALIZAR TARJETA NERV
+    // RENDER
     function saveAndRender() {
       localStorage.setItem('my_app_data', JSON.stringify(items));
       const list = document.getElementById('list');
@@ -404,7 +437,6 @@
         `;
       });
 
-      // Gamificación
       const completed = items.filter(i => i.done).length;
       const total = items.length;
       const xp = completed * 50 + total * 10;
@@ -417,7 +449,7 @@
 
       document.getElementById('userLevel').innerText = level;
       document.getElementById('userRank').innerText = rank;
-      document.getElementById('xpPoints').innerText = xp + ' XP';
+      document.getElementById('xpPoints').innerText = xp;
     }
 
     function deleteItem(index) {
