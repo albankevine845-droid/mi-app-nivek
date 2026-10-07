@@ -105,6 +105,7 @@
     details[open].mini-menu summary::after { transform: rotate(180deg); }
     .loc-coords { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--glass-border); font-family: monospace; font-size: 0.7rem; color: var(--text-main); opacity: 0.9; letter-spacing: 0.5px; }
 
+    /* TARJETA LICENCIA HUNTER */
     .hunter-license-wrapper { display: flex; justify-content: center; padding: 10px 0; }
     .hunter-license { width: 100%; max-width: 310px; aspect-ratio: 0.58; background: #fdfdfd; border: 3px solid #111; border-radius: 14px; padding: 6px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
     .hl-inner { width: 100%; height: 100%; border: 3px solid #111; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; }
@@ -118,30 +119,45 @@
     .hl-box-large { height: 40px; font-size: 1.4rem; justify-content: center; margin-bottom: 2px; }
     .hl-box-small { height: 24px; font-size: 0.78rem; justify-content: space-between; }
 
-    /* ========================================================
-       NUEVO DASHBOARD: BLOQUES DE DETALLES Y CORAZÓN
-       ======================================================== */
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-      margin-top: 20px;
-      padding-bottom: 10px;
-    }
-    
-    .dash-card {
-      background: var(--glass-bg);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: var(--glass-shadow);
-    }
-    .dash-card h3 { margin: 0 0 12px 0; font-size: 0.85rem; color: var(--accent-glow); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px dashed var(--glass-border); padding-bottom: 6px; }
-    .dash-card p, .dash-card li { font-size: 0.8rem; color: var(--text-main); margin-bottom: 6px; line-height: 1.4; }
-    .dash-card ul { padding-left: 20px; margin: 0; }
+    /* DASHBOARD Y CORAZÓN EKG */
+    .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 20px; padding-bottom: 10px; }
+    .dash-card { background: var(--glass-bg); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 16px; box-shadow: var(--glass-shadow); position: relative; }
+    .dash-card h3 { margin: 0 0 12px 0; font-size: 0.85rem; color: var(--accent-glow); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px dashed var(--glass-border); padding-bottom: 6px; position: relative; z-index: 2; }
+    .dash-card p, .dash-card li { font-size: 0.8rem; color: var(--text-main); margin-bottom: 6px; line-height: 1.4; position: relative; z-index: 2; }
+    .dash-card ul { padding-left: 20px; margin: 0; position: relative; z-index: 2; }
 
-    /* Animaciones del Corazón */
+    /* Efecto EKG (Electrocardiograma) Animado en el fondo */
+    .health-card {
+      overflow: hidden;
+    }
+    .health-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: -100%; bottom: 0;
+      /* Línea SVG de latido cardiaco incrustada */
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='150' viewBox='0 0 400 150'%3E%3Cpath d='M0 75 L 150 75 L 165 45 L 180 120 L 200 15 L 215 100 L 230 75 L 400 75' stroke='%23ef4444' stroke-width='4' fill='none' stroke-opacity='0.4' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x center;
+      background-size: 300px auto;
+      z-index: 0;
+      pointer-events: none;
+      animation: slide-ekg 0.7s infinite linear;
+      /* Desvanece los bordes para estilo de pantalla monitor */
+      -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+      mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    }
+
+    /* Estado de Calma (Línea EKG verde y lenta) */
+    .health-card.calm::before {
+      animation-duration: 1.5s;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='150' viewBox='0 0 400 150'%3E%3Cpath d='M0 75 L 150 75 L 165 45 L 180 120 L 200 15 L 215 100 L 230 75 L 400 75' stroke='%2310b981' stroke-width='4' fill='none' stroke-opacity='0.4' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x center;
+      background-size: 300px auto;
+    }
+
+    @keyframes slide-ekg {
+      0% { background-position: 0 center; }
+      100% { background-position: -300px center; }
+    }
+
+    /* Animaciones del Corazón (Sincronizadas con la línea EKG) */
     @keyframes heartbeat-altered {
       0% { transform: scale(1); }
       15% { transform: scale(1.3); }
@@ -155,35 +171,19 @@
       100% { transform: scale(1); }
     }
 
-    .heart-wrapper { display: flex; justify-content: center; margin-bottom: 16px; margin-top: 10px; }
-    .heart-icon {
-      font-size: 3.5rem;
-      animation: heartbeat-altered 0.7s infinite;
-      filter: drop-shadow(0 0 12px rgba(220, 38, 38, 0.8));
-      transition: filter 0.5s ease;
-    }
-    .heart-icon.calm {
-      animation: heartbeat-calm 1.5s infinite ease-in-out;
-      filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.5));
-    }
+    .heart-wrapper { display: flex; justify-content: center; margin-bottom: 16px; margin-top: 10px; position: relative; z-index: 2; }
+    .heart-icon { font-size: 3.5rem; animation: heartbeat-altered 0.7s infinite; filter: drop-shadow(0 0 12px rgba(220, 38, 38, 0.8)); transition: filter 0.5s ease; }
+    .heart-icon.calm { animation: heartbeat-calm 1.5s infinite ease-in-out; filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.5)); }
 
     /* Checkbox de Pastilla */
-    .custom-check { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; background: rgba(0,0,0,0.1); padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border); transition: all 0.3s; }
-    body.light-mode .custom-check { background: rgba(255,255,255,0.4); }
+    .custom-check { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; background: rgba(0,0,0,0.25); padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border); transition: all 0.3s; position: relative; z-index: 2; backdrop-filter: blur(4px); }
+    body.light-mode .custom-check { background: rgba(255,255,255,0.7); }
     .custom-check:hover { background: var(--input-bg); }
     .custom-check input { display: none; }
-    
-    .check-box {
-      width: 22px; height: 22px;
-      border: 2px solid var(--accent-glow);
-      border-radius: 6px; display: flex; align-items: center; justify-content: center;
-      margin-top: 2px; transition: all 0.3s ease; flex-shrink: 0;
-    }
+    .check-box { width: 22px; height: 22px; border: 2px solid var(--accent-glow); border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-top: 2px; transition: all 0.3s ease; flex-shrink: 0; }
     .custom-check input:checked + .check-box { background: var(--accent-glow); }
     .custom-check input:checked + .check-box::after { content: '✔'; color: #fff; font-size: 0.8rem; font-weight: bold; }
-    
     .check-text { font-size: 0.85rem; color: var(--text-main); line-height: 1.4; }
-    
   </style>
 </head>
 <body>
@@ -199,7 +199,6 @@
       <button class="nav-btn" onclick="switchTab('nivel', this)">💳 Licencia</button>
     </div>
 
-    <!-- PESTAÑA 1: DIARIO -->
     <div id="diario-tab" class="tab-content active">
       <div class="datetime-card">
         <div class="datetime-title">Reloj del Sistema</div>
@@ -234,9 +233,7 @@
       <div id="list"></div>
     </div>
 
-    <!-- PESTAÑA 2: LICENCIA Y DASHBOARD -->
     <div id="nivel-tab" class="tab-content">
-      <!-- Tarjeta Hunter x Hunter -->
       <div class="hunter-license-wrapper">
         <div class="hunter-license">
           <div class="hl-inner">
@@ -258,11 +255,10 @@
         </div>
       </div>
 
-      <!-- NUEVO DASHBOARD -->
       <div class="dashboard-grid">
         
-        <!-- Bloque 1: Monitoreo de Salud -->
-        <div class="dash-card">
+        <!-- Bloque 1: Monitoreo de Salud con Fondo EKG -->
+        <div class="dash-card health-card" id="healthCard">
           <h3>❤️ Monitoreo de Salud</h3>
           <div class="heart-wrapper">
             <div class="heart-icon" id="heartIcon">❤️</div>
@@ -274,14 +270,12 @@
           </label>
         </div>
 
-        <!-- Bloque 2: Detalles de mí -->
         <div class="dash-card">
           <h3>👤 Detalles de Mí</h3>
           <p><strong>Enfoque Actual:</strong> Psicología y Dirección General de Kido Corp.</p>
           <p><strong>Meta del Trimestre:</strong> Mantener consistencia en la bitácora y fortalecer la marca personal.</p>
         </div>
 
-        <!-- Bloque 3: Grid Dividido para Tareas y Gastos -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
           <div class="dash-card" style="margin: 0;">
             <h3 style="font-size: 0.75rem;">📋 Cosas que hacer</h3>
@@ -299,7 +293,6 @@
           </div>
         </div>
 
-        <!-- Bloque 4: Notas del Mes -->
         <div class="dash-card">
           <h3>📌 Notas Importantes del Mes</h3>
           <p style="opacity: 0.85; font-style: italic;">"Recuerda mantener el balance entre el estudio, el desarrollo de Kido Corp y tu descanso físico."</p>
@@ -314,37 +307,42 @@
     let selectedMood = '😊 Feliz';
     let isManualTheme = false;
 
-    // INICIALIZACIÓN DE SALUD (Pastilla)
+    // INICIALIZACIÓN DE SALUD (Pastilla y Monitor EKG)
     function initPillState() {
       const todayStr = new Date().toLocaleDateString();
       const savedDate = localStorage.getItem('nivek_pill_date');
       const check = document.getElementById('pillCheck');
       const heart = document.getElementById('heartIcon');
+      const healthCard = document.getElementById('healthCard');
       
       if(savedDate === todayStr) {
         check.checked = true;
         heart.classList.add('calm');
+        healthCard.classList.add('calm');
       } else {
         check.checked = false;
         heart.classList.remove('calm');
+        healthCard.classList.remove('calm');
       }
     }
 
     function togglePill() {
       const check = document.getElementById('pillCheck');
       const heart = document.getElementById('heartIcon');
+      const healthCard = document.getElementById('healthCard');
       const todayStr = new Date().toLocaleDateString();
       
       if(check.checked) {
         localStorage.setItem('nivek_pill_date', todayStr);
         heart.classList.add('calm');
+        healthCard.classList.add('calm');
       } else {
         localStorage.removeItem('nivek_pill_date');
         heart.classList.remove('calm');
+        healthCard.classList.remove('calm');
       }
     }
 
-    // RELOJ
     function updateLiveClock() {
       const now = new Date();
       const optionsDate = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
@@ -494,7 +492,6 @@
 
     function deleteItem(index) { items.splice(index, 1); saveAndRender(); }
     
-    // Iniciar sistema
     applyAutoTheme(); 
     saveAndRender();
     initPillState();
