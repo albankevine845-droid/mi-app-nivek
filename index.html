@@ -5,15 +5,123 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Kido App</title>
+    <title>Kido App - Nemu</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background-color: #1e1e1e; color: white; margin: 0; }
-        button { padding: 15px 30px; font-size: 18px; background-color: #4CAF50; color: white; border: none; border-radius: 10px; margin-top: 20px;}
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0d0d0d;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header { margin-top: 40px; margin-bottom: 30px; }
+        /* Letras cool y llamativas */
+        .header h1 { 
+            font-size: 28px; 
+            background: -webkit-linear-gradient(#ff3b30, #ff9500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+        .header p { color: #8e8e93; font-size: 16px; margin: 0; }
+
+        /* Estilo del casillero tipo iOS Widget */
+        .mood-widget {
+            background-color: #1c1c1e;
+            border-radius: 25px;
+            padding: 25px 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid #333;
+            margin: 0 auto;
+            max-width: 400px;
+        }
+        
+        .mood-widget h2 { font-size: 22px; margin-top: 0; margin-bottom: 25px; font-weight: 600; }
+
+        /* Botones de emociones */
+        .btn-mood {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 12px;
+            font-size: 18px;
+            font-weight: 500;
+            color: white;
+            background-color: #2c2c2e;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+        .btn-mood:active { transform: scale(0.96); opacity: 0.8; }
+        
+        /* Colores para cada emoción */
+        .btn-feliz { border-left: 6px solid #34c759; }
+        .btn-normal { border-left: 6px solid #ffcc00; }
+        .btn-triste { border-left: 6px solid #007aff; }
+        .btn-decepcionado { border-left: 6px solid #af52de; }
+        .btn-jodido { border-left: 6px solid #ff3b30; }
+        
+        .emoji { font-size: 22px; margin-right: 10px; vertical-align: middle; }
     </style>
 </head>
 <body>
-    <h1>Bienvenido, Nivek</h1>
-    <p>La base de tu aplicación está en línea.</p>
-    <button onclick="alert('¡Conexión exitosa en tu dispositivo!')">Hacer prueba</button>
+
+    <div class="header">
+        <h1>Bienvenido, Nivek</h1>
+        <p id="saludo-tiempo">Nemu está en línea.</p>
+    </div>
+
+    <div class="mood-widget">
+        <h2 id="pregunta-mood">¿Cómo te sientes hoy?</h2>
+        
+        <button class="btn-mood btn-feliz" onclick="registrarEmocion('Feliz')">
+            <span class="emoji">😁</span> Feliz
+        </button>
+        <button class="btn-mood btn-normal" onclick="registrarEmocion('Normal')">
+            <span class="emoji">😐</span> Normal
+        </button>
+        <button class="btn-mood btn-triste" onclick="registrarEmocion('Triste')">
+            <span class="emoji">😔</span> Triste
+        </button>
+        <button class="btn-mood btn-decepcionado" onclick="registrarEmocion('Decepcionado')">
+            <span class="emoji">😞</span> Decepcionado
+        </button>
+        <button class="btn-mood btn-jodido" onclick="registrarEmocion('Jodido en la v*rga')">
+            <span class="emoji">🤬</span> Jodido en la v*rga
+        </button>
+    </div>
+
+    <script>
+        // Lógica de Nemu para detectar la hora del día
+        const hora = new Date().getHours();
+        const preguntaEl = document.getElementById('pregunta-mood');
+        const saludoEl = document.getElementById('saludo-tiempo');
+
+        if (hora >= 5 && hora < 12) {
+            saludoEl.innerText = "Reporte matutino - 6 AM";
+            preguntaEl.innerText = "¿Cómo te sientes esta mañana?";
+        } else if (hora >= 12 && hora < 17) {
+            saludoEl.innerText = "Reporte de mediodía - 12 PM";
+            preguntaEl.innerText = "¿Cómo te sientes a esta hora?";
+        } else {
+            saludoEl.innerText = "Reporte de cierre - 5 PM";
+            preguntaEl.innerText = "¿Cómo terminas el día?";
+        }
+
+        // Función para enviar el correo a ti mismo
+        function registrarEmocion(estado) {
+            // AQUÍ PONES TU CORREO REAL:
+            const tuCorreo = "albankevine845@gmail.com"; 
+            const asunto = "Reporte Nemu: Estado de Ánimo de Nivek";
+            const cuerpo = "Hola Nemu. En este momento del día me siento: " + estado;
+            
+            // Abre la app de correo lista para enviar
+            window.location.href = `mailto:${tuCorreo}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
+        }
+    </script>
 </body>
 </html>
