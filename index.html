@@ -3,92 +3,250 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mi Gestor Personal - Nivel & Diario</title>
+  <title>Mi Gestor Anime - Diario & Licencia Hunter</title>
   <style>
-    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; transition: all 0.25s ease; }
+    * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; transition: all 0.25s ease; }
     
     body {
-      background: radial-gradient(circle at top, #1e1b4b 0%, #0f172a 60%, #020617 100%);
+      background: #090d16;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(220, 38, 38, 0.18) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(56, 189, 248, 0.12) 0%, transparent 50%);
       color: #f8fafc;
       margin: 0;
       padding: 16px;
       min-height: 100vh;
     }
 
-    .container { max-width: 550px; margin: 0 auto; }
+    .container { max-width: 520px; margin: 0 auto; }
 
-    /* SECCIÓN ROJA: NIVEL Y PERFIL (Inspirada en Foto 1) */
-    .level-banner {
-      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-      border: 2px solid #f87171;
-      border-radius: 18px;
-      padding: 20px;
+    /* NAVEGACIÓN PRINCIPAL POR PESTAÑAS */
+    .nav-tabs {
+      display: flex;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 6px;
       margin-bottom: 20px;
-      box-shadow: 0 10px 25px rgba(220, 38, 38, 0.4);
+      gap: 6px;
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      font-weight: bold;
+      font-size: 0.95rem;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* =======================================
+       ESTILO LICENCIA DE CAZADOR (HUNTER X HUNTER)
+       ======================================= */
+    .hunter-card {
+      background: #f8fafc;
+      color: #0f172a;
+      border-radius: 20px;
+      padding: 20px;
+      border: 4px solid #dc2626;
+      box-shadow: 0 12px 35px rgba(220, 38, 38, 0.35), 0 0 0 2px #0f172a;
       position: relative;
       overflow: hidden;
     }
-    
-    .level-banner::after {
-      content: '';
-      position: absolute;
-      top: -30%; right: -20%;
-      width: 180px; height: 180px;
-      background: rgba(255, 255, 255, 0.12);
-      transform: rotate(45deg);
-      pointer-events: none;
-    }
 
-    .level-header {
+    .license-header {
+      background: linear-gradient(90deg, #dc2626 0%, #b91c1c 100%);
+      margin: -20px -20px 16px -20px;
+      padding: 14px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }
-
-    .level-title {
-      font-size: 1.6rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      margin: 0;
       color: #fff;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+      border-bottom: 3px solid #0f172a;
     }
 
-    .stats-grid {
+    .license-title {
+      font-size: 1.15rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    .license-id {
+      font-family: monospace;
+      font-size: 0.8rem;
+      background: #0f172a;
+      color: #fef08a;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid #eab308;
+      font-weight: bold;
+    }
+
+    .hunter-card-body {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .hunter-avatar {
+      width: 100px;
+      height: 120px;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border: 3px solid #dc2626;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      text-align: center;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    .hunter-avatar .star-icon {
+      font-size: 2.2rem;
+      color: #fef08a;
+      text-shadow: 0 0 10px rgba(250, 204, 21, 0.6);
+    }
+
+    .hunter-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .hunter-field {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 2px dashed #cbd5e1;
+      padding-bottom: 4px;
+      font-size: 0.88rem;
+    }
+
+    .hunter-field .label {
+      font-weight: 800;
+      color: #475569;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+    }
+
+    .hunter-field .value { font-weight: 900; color: #0f172a; }
+    .hunter-field .value.highlight { color: #dc2626; font-size: 1.1rem; }
+
+    .hunter-stats-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 15px;
+      gap: 8px;
+      margin-top: 16px;
     }
 
-    .stat-card {
-      background: rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 10px;
-      border-radius: 12px;
+    .hunter-stat-box {
+      background: #e2e8f0;
+      border: 2px solid #94a3b8;
+      border-radius: 10px;
+      padding: 8px;
       text-align: center;
     }
 
-    .stat-value { font-size: 1.3rem; font-weight: bold; color: #fef08a; }
-    .stat-label { font-size: 0.7rem; text-transform: uppercase; opacity: 0.85; }
+    .hunter-stat-box .num { font-size: 1.15rem; font-weight: 900; color: #dc2626; }
+    .hunter-stat-box .lbl { font-size: 0.65rem; font-weight: 800; color: #475569; text-transform: uppercase; }
 
-    /* SECCIÓN DIARIO: GLASSMORPHISM & NEÓN (Inspirada en Fotos 2 y 3) */
-    .glass-card {
-      background: rgba(30, 41, 59, 0.65);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    .hunter-footer-seal {
+      margin-top: 16px;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 8px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      border-left: 4px solid #22c55e;
     }
 
-    input, select {
+    /* =======================================
+       ESTILO DIARIO & 6 BOTONES DE ESTADO ANIME
+       ======================================= */
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      margin: 0 0 10px 0;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Grid de 6 botones de estado Anime */
+    .anime-status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .anime-status-btn {
+      background: rgba(30, 41, 59, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #cbd5e1;
+      padding: 10px 4px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .anime-status-btn span.emoji { font-size: 1.3rem; }
+
+    .anime-status-btn:hover {
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.15);
+    }
+
+    .anime-status-btn.selected {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      border-color: #38bdf8;
+      color: #fff;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+    }
+
+    /* Formulario para agregar registro */
+    .diary-card {
+      background: rgba(30, 41, 59, 0.65);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    input[type="text"] {
       width: 100%;
-      padding: 12px 16px;
-      margin-top: 8px;
+      padding: 12px 14px;
       border-radius: 12px;
       border: 1px solid rgba(255, 255, 255, 0.15);
       background: rgba(15, 23, 42, 0.85);
@@ -97,66 +255,38 @@
       outline: none;
     }
 
-    input:focus, select:focus {
+    input[type="text"]:focus {
       border-color: #38bdf8;
       box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
     }
 
-    button.save-btn {
+    button.add-btn {
       width: 100%;
-      background: linear-gradient(90deg, #2563eb, #06b6d4);
+      background: linear-gradient(90deg, #dc2626, #ea580c);
       border: none;
       color: #fff;
       font-weight: bold;
-      padding: 14px;
+      padding: 12px;
       border-radius: 12px;
       cursor: pointer;
-      margin-top: 14px;
-      box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
-      font-size: 1rem;
+      margin-top: 12px;
+      box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+      font-size: 0.95rem;
     }
 
-    button.save-btn:hover {
+    button.add-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(6, 182, 212, 0.6);
+      box-shadow: 0 6px 20px rgba(220, 38, 38, 0.6);
     }
 
-    /* FILTROS TIPO PÍLDORA (Foto 2) */
-    .pills-container {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 8px;
-      margin-bottom: 16px;
-    }
-
-    .pill {
-      background: rgba(30, 41, 59, 0.8);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: #94a3b8;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .pill.active {
-      background: #38bdf8;
-      color: #0f172a;
-      font-weight: bold;
-      border-color: #38bdf8;
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
-    }
-
-    /* LISTA CON EFECTO DE BRILLO AZUL (Foto 3) */
+    /* Lista de Registros */
     .item {
-      background: rgba(15, 23, 42, 0.75);
+      background: rgba(15, 23, 42, 0.8);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(56, 189, 248, 0.2);
-      padding: 14px 16px;
+      padding: 12px 14px;
       border-radius: 14px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -164,8 +294,7 @@
 
     .item:hover {
       border-color: rgba(56, 189, 248, 0.6);
-      box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);
-      transform: scale(1.01);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
     }
 
     .item.completed {
@@ -176,7 +305,7 @@
     .item.completed strong { text-decoration: line-through; }
 
     .badge {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       background: rgba(56, 189, 248, 0.15);
       color: #38bdf8;
       border: 1px solid rgba(56, 189, 248, 0.3);
@@ -190,7 +319,7 @@
       background: rgba(239, 68, 68, 0.2);
       border: 1px solid #ef4444;
       color: #fca5a5;
-      padding: 6px 12px;
+      padding: 6px 10px;
       border-radius: 8px;
       cursor: pointer;
       font-size: 0.8rem;
@@ -203,69 +332,150 @@
 
   <div class="container">
     
-    <!-- SECCIÓN DE NIVEL (ESTILO ROJO ETIQUETA) -->
-    <div class="level-banner">
-      <div class="level-header">
-        <h1 class="level-title">NIVEL <span id="userLevel">1</span></h1>
-        <span style="font-weight: bold; font-size: 0.9rem; background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 8px;">🔥 Racha: <span id="streakDays">1</span>d</span>
-      </div>
+    <!-- PESTAÑAS DE NAVEGACIÓN -->
+    <div class="nav-tabs">
+      <button class="nav-btn active" onclick="switchTab('diario', this)">📖 Diario</button>
+      <button class="nav-btn" onclick="switchTab('nivel', this)">💳 Licencia Nivel</button>
+    </div>
+
+    <!-- PESTAÑA 1: DIARIO -->
+    <div id="diario-tab" class="tab-content active">
       
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-value" id="totalItems">0</div>
-          <div class="stat-label">Registros</div>
+      <div class="diary-card">
+        <div class="section-title">Elige el Estado de tu Entrada:</div>
+        
+        <!-- 6 Botones de Estado Anime -->
+        <div class="anime-status-grid">
+          <button class="anime-status-btn selected" onclick="selectStatus('⚔️ Misión', this)">
+            <span class="emoji">⚔️</span>
+            <span>Misión</span>
+          </button>
+          <button class="anime-status-btn" onclick="selectStatus('💡 Idea', this)">
+            <span class="emoji">💡</span>
+            <span>Idea Ninja</span>
+          </button>
+          <button class="anime-status-btn" onclick="selectStatus('⚡ Entreno', this)">
+            <span class="emoji">⚡</span>
+            <span>Entreno Ki</span>
+          </button>
+          <button class="anime-status-btn" onclick="selectStatus('📜 Pergamino', this)">
+            <span class="emoji">📜</span>
+            <span>Pergamino</span>
+          </button>
+          <button class="anime-status-btn" onclick="selectStatus('🍥 Ramen', this)">
+            <span class="emoji">🍥</span>
+            <span>Ramen</span>
+          </button>
+          <button class="anime-status-btn" onclick="selectStatus('🔮 Visión', this)">
+            <span class="emoji">🔮</span>
+            <span>Visión</span>
+          </button>
         </div>
-        <div class="stat-card">
-          <div class="stat-value" id="doneItems">0</div>
-          <div class="stat-label">Listos</div>
+
+        <!-- Formulario para agregar la nota -->
+        <input type="text" id="title" placeholder="Escribe lo que quieres registrar en tu diario...">
+        <button class="add-btn" onclick="addItem()">Guardar en Diario</button>
+      </div>
+
+      <!-- Lista de Notas del Diario -->
+      <div id="list"></div>
+    </div>
+
+    <!-- PESTAÑA 2: NIVEL (LICENCIA DE CAZADOR HUNTER X HUNTER) -->
+    <div id="nivel-tab" class="tab-content">
+      
+      <div class="hunter-card">
+        <div class="license-header">
+          <div class="license-title">LICENCIA DE CAZADOR</div>
+          <div class="license-id">#HXH-2026-889</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-value" id="xpPoints">0</div>
-          <div class="stat-label">Puntos XP</div>
+
+        <div class="hunter-card-body">
+          <div class="hunter-avatar">
+            <div class="star-icon">★</div>
+            <span style="font-size: 0.65rem; font-weight: bold; margin-top: 4px;">LICENSED</span>
+          </div>
+
+          <div class="hunter-details">
+            <div class="hunter-field">
+              <span class="label">Nivel de Cazador</span>
+              <span class="value highlight" id="userLevel">1</span>
+            </div>
+            <div class="hunter-field">
+              <span class="label">Rango</span>
+              <span class="value" id="userRank">Novato</span>
+            </div>
+            <div class="hunter-field">
+              <span class="label">Puntos XP</span>
+              <span class="value" id="xpPoints">0</span>
+            </div>
+            <div class="hunter-field">
+              <span class="label">Racha Activa</span>
+              <span class="value" style="color: #dc2626;">🔥 <span id="streakDays">1</span> Días</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hunter-stats-grid">
+          <div class="hunter-stat-box">
+            <div class="num" id="totalItems">0</div>
+            <div class="lbl">Registros</div>
+          </div>
+          <div class="hunter-stat-box">
+            <div class="num" id="doneItems">0</div>
+            <div class="lbl">Misiones</div>
+          </div>
+          <div class="hunter-stat-box">
+            <div class="num" id="completionRate">0%</div>
+            <div class="lbl">Efectividad</div>
+          </div>
+        </div>
+
+        <div class="hunter-footer-seal">
+          ESTADO: LICENCIA OFICIAL ACTIVA Y AUTORIZADA
         </div>
       </div>
-    </div>
 
-    <!-- SECCIÓN DIARIO (FORMULARIO Y FILTROS GLASS/NEÓN) -->
-    <div class="glass-card">
-      <input type="text" id="title" placeholder="¿Qué quieres registrar hoy en tu diario?">
-      <select id="category">
-        <option value="Tarea">📝 Tarea</option>
-        <option value="Idea">💡 Idea</option>
-        <option value="Hábito">⚡ Hábito</option>
-        <option value="Nota">📌 Nota</option>
-      </select>
-      <button class="save-btn" onclick="addItem()">Guardar en Diario</button>
     </div>
-
-    <!-- FILTROS EN PÍLDORA -->
-    <div class="pills-container">
-      <button class="pill active" onclick="filterCategory('Todas', this)">Todas</button>
-      <button class="pill" onclick="filterCategory('Tarea', this)">📝 Tareas</button>
-      <button class="pill" onclick="filterCategory('Idea', this)">💡 Ideas</button>
-      <button class="pill" onclick="filterCategory('Hábito', this)">⚡ Hábitos</button>
-      <button class="pill" onclick="filterCategory('Nota', this)">📌 Notas</button>
-    </div>
-
-    <!-- LISTA DE REGISTROS -->
-    <div id="list"></div>
 
   </div>
 
   <script>
     let items = JSON.parse(localStorage.getItem('my_app_data')) || [];
-    let currentFilter = 'Todas';
+    let selectedCategory = '⚔️ Misión';
+
+    function switchTab(tabName, btn) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      
+      document.getElementById(`${tabName}-tab`).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function selectStatus(status, btn) {
+      selectedCategory = status;
+      document.querySelectorAll('.anime-status-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    }
 
     function updateLevelStats() {
       const completed = items.filter(i => i.done).length;
       const total = items.length;
       const xp = completed * 50 + total * 10;
       const level = Math.floor(xp / 150) + 1;
+      const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+      let rank = "Novato";
+      if (level >= 3) rank = "Cazador de 1 Estrella ⭐";
+      if (level >= 6) rank = "Cazador de 2 Estrellas ⭐⭐";
+      if (level >= 10) rank = "Cazador de Elite 🏆";
 
       document.getElementById('totalItems').innerText = total;
       document.getElementById('doneItems').innerText = completed;
       document.getElementById('xpPoints').innerText = xp;
       document.getElementById('userLevel').innerText = level;
+      document.getElementById('userRank').innerText = rank;
+      document.getElementById('completionRate').innerText = rate + '%';
     }
 
     function saveAndRender() {
@@ -275,20 +485,15 @@
       const list = document.getElementById('list');
       list.innerHTML = '';
 
-      const filteredItems = currentFilter === 'Todas' 
-        ? items 
-        : items.filter(item => item.category === currentFilter);
-
-      filteredItems.forEach((item, index) => {
-        const realIndex = items.indexOf(item);
+      items.forEach((item, index) => {
         list.innerHTML += `
           <div class="item ${item.done ? 'completed' : ''}">
-            <div onclick="toggleItem(${realIndex})" style="flex-grow: 1; cursor: pointer;">
+            <div onclick="toggleItem(${index})" style="flex-grow: 1; cursor: pointer;">
               <div><strong>${item.title}</strong></div>
               <span class="badge">${item.category}</span>
               <span style="font-size: 0.7rem; opacity: 0.6; margin-left: 8px;">${item.date || ''}</span>
             </div>
-            <button class="delete-btn" onclick="deleteItem(${realIndex})">✕</button>
+            <button class="delete-btn" onclick="deleteItem(${index})">✕</button>
           </div>
         `;
       });
@@ -296,12 +501,11 @@
 
     function addItem() {
       const title = document.getElementById('title').value.trim();
-      const category = document.getElementById('category').value;
       if (!title) return;
       
       items.unshift({ 
         title, 
-        category, 
+        category: selectedCategory, 
         done: false, 
         date: new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }) 
       });
@@ -317,13 +521,6 @@
 
     function deleteItem(index) {
       items.splice(index, 1);
-      saveAndRender();
-    }
-
-    function filterCategory(cat, btn) {
-      currentFilter = cat;
-      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-      btn.classList.add('active');
       saveAndRender();
     }
 
