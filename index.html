@@ -1,242 +1,687 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <title>Kido App - Nemu</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #0d0d0d;
-            color: #ffffff;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
-        
-        /* Contenedor principal para el efecto de difuminado */
-        #app-content {
-            transition: all 0.4s ease;
-        }
-        .difuminado {
-            filter: blur(8px);
-            opacity: 0.6;
-            pointer-events: none;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0b0c10">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Kido App</title>
 
-        .header { margin-top: 30px; margin-bottom: 25px; }
-        .header h1 { 
-            font-size: 28px; 
-            background: -webkit-linear-gradient(#ff3b30, #ff9500);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
-        }
-        .header p { color: #8e8e93; font-size: 16px; margin: 0; }
+  <style>
+    /* --- VARIABLES Y CONFIGURACIÓN BASE --- */
+    :root {
+      --bg-deep: #0b0c10;
+      --glass-bg: rgba(22, 27, 34, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --accent-cyan: #00f2fe;
+      --accent-blue: #4facfe;
+      --text-main: #f0f6fc;
+      --text-dim: #8b949e;
+      --btn-grad-start: #1f6feb;
+      --btn-grad-end: #1158c7;
+      --btn-shadow: #0d3d8a;
+    }
 
-        .widget {
-            background-color: #1c1c1e;
-            border-radius: 25px;
-            padding: 25px 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 2px 0 rgba(255,255,255,0.05);
-            border: 1px solid #2c2c2e;
-            margin: 0 auto 25px auto;
-            max-width: 400px;
-        }
-        
-        .widget h2 { font-size: 20px; margin-top: 0; margin-bottom: 20px; font-weight: 600; transition: all 0.3s; }
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-        /* Estilo de Botones 3D */
-        .btn-mood {
-            display: block;
-            width: 100%;
-            padding: 16px;
-            margin-bottom: 15px;
-            font-size: 18px;
-            font-weight: 600;
-            color: white;
-            background-color: #2c2c2e;
-            border: 2px solid #3a3a3c;
-            border-radius: 18px;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.1s ease;
-            text-align: left;
-        }
-        
-        /* Efecto de presionar el botón 3D */
-        .btn-mood:active { top: 6px; box-shadow: 0 0px 0 transparent !important; }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-deep);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
 
-        /* Sombras 3D personalizadas para cada emoción */
-        .btn-feliz { border-color: #34c759; box-shadow: 0 6px 0 #1e7a35; }
-        .btn-normal { border-color: #ffcc00; box-shadow: 0 6px 0 #b38f00; }
-        .btn-triste { border-color: #007aff; box-shadow: 0 6px 0 #004d9e; }
-        .btn-decepcionado { border-color: #af52de; box-shadow: 0 6px 0 #6e2594; }
-        .btn-jodido { border-color: #ff3b30; box-shadow: 0 6px 0 #991c15; }
-        
-        .emoji { font-size: 24px; margin-right: 12px; vertical-align: middle; }
+    /* --- CONTENEDOR PRINCIPAL Y VISTAS --- */
+    .app-viewport {
+      max-width: 440px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: 20px 16px 110px 16px;
+    }
 
-        /* Área de texto 3D invertida (hundida) */
-        .nota-input {
-            width: 100%;
-            height: 120px;
-            background-color: #0a0a0a;
-            color: white;
-            border: 2px solid #333;
-            border-radius: 18px;
-            padding: 15px;
-            font-size: 16px;
-            font-family: inherit;
-            resize: none;
-            box-sizing: border-box;
-            margin-bottom: 20px;
-            box-shadow: inset 0 5px 10px rgba(0,0,0,0.8);
-            transition: border-color 0.3s;
-        }
-        .nota-input:focus { border-color: #ff3b30; outline: none; }
+    .tab-view {
+      display: none;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
 
-        /* Botón Rojo 3D para Enviar */
-        .btn-rojo {
-            display: block;
-            width: 100%;
-            padding: 18px;
-            font-size: 18px;
-            font-weight: bold;
-            color: white;
-            background: linear-gradient(145deg, #ff453a, #d62828);
-            border: none;
-            border-radius: 18px;
-            cursor: pointer;
-            position: relative;
-            box-shadow: 0 6px 0 #8b0000, 0 12px 20px rgba(255, 59, 48, 0.4);
-            transition: all 0.1s ease;
-        }
-        .btn-rojo:active { top: 6px; box-shadow: 0 0px 0 #8b0000, 0 4px 6px rgba(255, 59, 48, 0.4); }
+    .tab-view.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
 
-    </style>
+    /* --- ENCABEZADOS Y TEXTOS --- */
+    .nemu-header {
+      margin-bottom: 20px;
+    }
+
+    .nemu-header h1 {
+      margin: 0;
+      font-size: 1.6rem;
+      letter-spacing: -0.5px;
+    }
+
+    .nemu-header .subtitle {
+      margin: 4px 0 0 0;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    /* --- TARJETAS GLASSMORPHISM --- */
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    }
+
+    .glass-card h3 {
+      margin: 0 0 14px 0;
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    /* --- SELECTOR DE ÁNIMO (MOOD TRACKER) --- */
+    .mood-selector {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .mood-btn {
+      flex: 1;
+      font-size: 1.4rem;
+      padding: 10px 0;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.04);
+      cursor: pointer;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.5);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease;
+    }
+
+    .mood-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.5);
+      background: rgba(0, 242, 254, 0.15);
+    }
+
+    .chip-container {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .mood-chip {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 4px 8px;
+      font-size: 0.85rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* --- NOTAS MENTALES Y BOTÓN 3D --- */
+    textarea {
+      width: 100%;
+      height: 90px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      resize: none;
+      outline: none;
+      margin-bottom: 12px;
+    }
+
+    textarea:focus {
+      border-color: var(--accent-blue);
+    }
+
+    .btn-3d {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, var(--btn-grad-start), var(--btn-grad-end));
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 5px 0 var(--btn-shadow), 0 10px 15px rgba(0,0,0,0.4);
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
+    }
+
+    .btn-3d:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 var(--btn-shadow), 0 4px 6px rgba(0,0,0,0.3);
+    }
+
+    /* --- TARJETA LICENCIA DE CAZADOR (HUNTER CARD) --- */
+    .hunter-card-wrap {
+      perspective: 1000px;
+      margin-bottom: 24px;
+    }
+
+    .hunter-card {
+      position: relative;
+      background: linear-gradient(145deg, #1b222c, #0d1117);
+      border-radius: 18px;
+      padding: 2px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), inset 0 0 1px rgba(255, 255, 255, 0.4);
+      border: 1px solid rgba(79, 172, 254, 0.3);
+    }
+
+    .hunter-card-inner {
+      background: radial-gradient(circle at top right, #1a2332 0%, #0d121a 75%);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .hunter-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+    }
+
+    .hunter-badge {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: var(--accent-cyan);
+    }
+
+    .hunter-serial {
+      font-family: monospace;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+
+    .hunter-body {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .hunter-avatar-slot {
+      width: 72px;
+      height: 85px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #232d3d, #141a24);
+      border: 1px solid rgba(0, 242, 254, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.6);
+      flex-shrink: 0;
+    }
+
+    .avatar-ph {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--accent-cyan);
+      text-shadow: 0 0 12px rgba(0, 242, 254, 0.6);
+    }
+
+    .hunter-meta h2 {
+      margin: 0;
+      font-size: 1.35rem;
+      letter-spacing: 1px;
+    }
+
+    .hunter-title {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+    }
+
+    .hunter-spec-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .hunter-spec-grid label {
+      display: block;
+      font-size: 0.6rem;
+      color: var(--text-dim);
+    }
+
+    .hunter-spec-grid span {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .hunter-card-footer {
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .micro-chip {
+      width: 28px;
+      height: 18px;
+      background: linear-gradient(135deg, #ffd700, #b8860b);
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+
+    .hunter-code {
+      font-family: monospace;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+    }
+
+    /* --- PILARES DE GESTIÓN --- */
+    .section-title {
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin: 16px 0 10px 4px;
+    }
+
+    .pillar-card {
+      padding: 14px 16px;
+      border-left: 3px solid var(--accent-blue);
+    }
+
+    .pillar-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pillar-header h4 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .pillar-desc {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      margin: 6px 0 10px 0;
+      line-height: 1.4;
+    }
+
+    .pillar-tags {
+      display: flex;
+      gap: 8px;
+    }
+
+    .status-tag, .metric-tag {
+      font-size: 0.68rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .status-tag.active-tag {
+      background: rgba(0, 242, 254, 0.15);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 242, 254, 0.3);
+    }
+
+    /* --- BARRA FLOTANTE DE PESTAÑAS (iOS BOTTOM BAR) --- */
+    .bottom-nav {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 32px);
+      max-width: 400px;
+      background: rgba(18, 22, 28, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 28px;
+      display: flex;
+      justify-content: space-around;
+      padding: 6px 12px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+      z-index: 100;
+    }
+
+    .nav-tab {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 6px 20px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-tab.active {
+      color: var(--accent-cyan);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .nav-icon {
+      font-size: 1.2rem;
+    }
+
+    .nav-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
 
-    <div id="app-content">
-        <div class="header">
-            <h1>Bienvenido, Nivek</h1>
-            <p id="saludo-tiempo">Nemu está en línea.</p>
+  <main class="app-viewport">
+
+    <!-- ==================== PESTAÑA: DIARIO ==================== -->
+    <section id="tab-diario" class="tab-view active">
+      <header class="nemu-header">
+        <h1 id="nemu-greeting">Hola, Nivek</h1>
+        <p class="subtitle">Bitácora activa y registro</p>
+      </header>
+
+      <!-- Mood Tracker -->
+      <div class="card glass-card">
+        <h3>Estado de Ánimo</h3>
+        <div class="mood-selector">
+          <button class="mood-btn" data-mood="🔥">🔥</button>
+          <button class="mood-btn" data-mood="⚡">⚡</button>
+          <button class="mood-btn" data-mood="🌿">🌿</button>
+          <button class="mood-btn" data-mood="🌧️">🌧️</button>
+          <button class="mood-btn" data-mood="🌀">🌀</button>
         </div>
+        <div id="mood-history" class="chip-container"></div>
+      </div>
 
-        <!-- Casillero de Emociones -->
-        <div class="widget">
-            <h2 id="pregunta-mood">¿Cómo te sientes hoy?</h2>
-            <button class="btn-mood btn-feliz" onclick="registrarEmocion('Feliz')">
-                <span class="emoji">😁</span> Feliz
-            </button>
-            <button class="btn-mood btn-normal" onclick="registrarEmocion('Normal')">
-                <span class="emoji">😐</span> Normal
-            </button>
-            <button class="btn-mood btn-triste" onclick="registrarEmocion('Triste')">
-                <span class="emoji">😔</span> Triste
-            </button>
-            <button class="btn-mood btn-decepcionado" onclick="registrarEmocion('Decepcionado')">
-                <span class="emoji">😞</span> Decepcionado
-            </button>
-            <button class="btn-mood btn-jodido" onclick="registrarEmocion('Jodido en la v*rga')">
-                <span class="emoji">🤬</span> Jodido en la v*rga
-            </button>
+      <!-- Notas Mentales -->
+      <div class="card glass-card">
+        <h3>Notas Mentales</h3>
+        <textarea id="mental-notes-input" placeholder="Captura rápida de pensamientos o tareas..."></textarea>
+        <button id="send-notes-btn" class="btn-3d">Guardar y Sincronizar</button>
+      </div>
+    </section>
+
+    <!-- ==================== PESTAÑA: NIVEK ==================== -->
+    <section id="tab-nivek" class="tab-view">
+      <!-- Tarjeta Hunter -->
+      <div class="hunter-card-wrap">
+        <div class="hunter-card">
+          <div class="hunter-card-inner">
+            <div class="hunter-top-bar">
+              <span class="hunter-badge">HUNTER LICENSE</span>
+              <span class="hunter-serial">№ 2000-0519-EC</span>
+            </div>
+
+            <div class="hunter-body">
+              <div class="hunter-avatar-slot">
+                <div class="avatar-ph">N</div>
+              </div>
+              <div class="hunter-meta">
+                <h2>NIVEK</h2>
+                <span class="hunter-title">COGNITIVE & STRATEGY</span>
+                <div class="hunter-spec-grid">
+                  <div><label>CLASE</label><span>ESPECIALISTA</span></div>
+                  <div><label>RANGO</label><span>★★☆</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="hunter-card-footer">
+              <div class="micro-chip"></div>
+              <span class="hunter-code">KX-9418 // KIDO CORP CORE</span>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <!-- Nuevo Casillero de Notas Mentales -->
-        <div class="widget">
-            <h2>Descarga tus pensamientos</h2>
-            <textarea id="nota-texto" class="nota-input" placeholder="Escribe aquí tu nota mental..."></textarea>
-            <button id="btn-enviar-nota" class="btn-rojo" onclick="enviarNota()">Guardar Nota Mental</button>
-        </div>
-    </div>
+      <!-- Pilares -->
+      <div class="pillars-container">
+        <h3 class="section-title">Ejes Operativos</h3>
 
-    <script>
-        const tuCorreo = "albankevine845@gmail.com"; // Tu correo destino
-        const appContent = document.getElementById('app-content');
-        
-        // Lógica de hora
-        const hora = new Date().getHours();
-        const preguntaEl = document.getElementById('pregunta-mood');
-        const saludoEl = document.getElementById('saludo-tiempo');
-        let preguntaOriginal = "";
+        <article class="card glass-card pillar-card">
+          <div class="pillar-header">
+            <span>❤️‍🔥</span>
+            <h4>Salud & Vitalidad</h4>
+          </div>
+          <p class="pillar-desc">Entrenamiento físico, acondicionamiento y balance neuromuscular.</p>
+          <div class="pillar-tags">
+            <span class="status-tag">En Progreso</span>
+            <span class="metric-tag">Fuerza / Cardio</span>
+          </div>
+        </article>
 
-        if (hora >= 5 && hora < 12) {
-            saludoEl.innerText = "Reporte matutino - 6 AM";
-            preguntaOriginal = "¿Cómo te sientes esta mañana?";
-        } else if (hora >= 12 && hora < 17) {
-            saludoEl.innerText = "Reporte de mediodía - 12 PM";
-            preguntaOriginal = "¿Cómo te sientes a esta hora?";
-        } else {
-            saludoEl.innerText = "Reporte de cierre - 5 PM";
-            preguntaOriginal = "¿Cómo terminas el día?";
+        <article class="card glass-card pillar-card">
+          <div class="pillar-header">
+            <span>🧠</span>
+            <h4>Estudio & Investigación</h4>
+          </div>
+          <p class="pillar-desc">Exploración conceptual, lecturas avanzadas y desarrollo analítico.</p>
+          <div class="pillar-tags">
+            <span class="status-tag active-tag">Activo</span>
+            <span class="metric-tag">Investigación</span>
+          </div>
+        </article>
+
+        <article class="card glass-card pillar-card">
+          <div class="pillar-header">
+            <span>⚡</span>
+            <h4>Trabajo & Proyectos</h4>
+          </div>
+          <p class="pillar-desc">Dirección de iniciativas creativas, sistemas y flujos de automatización.</p>
+          <div class="pillar-tags">
+            <span class="status-tag">Planificación</span>
+            <span class="metric-tag">Kido Corp</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Barra de Navegación Inferior -->
+    <nav class="bottom-nav">
+      <button class="nav-tab active" data-target="tab-diario">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Diario</span>
+      </button>
+      <button class="nav-tab" data-target="tab-nivek">
+        <span class="nav-icon">🃏</span>
+        <span class="nav-label">Nivek</span>
+      </button>
+    </nav>
+
+  </main>
+
+  <script>
+    const KidoApp = (() => {
+      // 1. GESTOR DE ALMACENAMIENTO LOCAL
+      const Storage = {
+        KEYS: {
+          MOODS: 'kido_mood_history'
+        },
+        get(key) {
+          try {
+            return JSON.parse(localStorage.getItem(key)) || [];
+          } catch (e) {
+            return [];
+          }
+        },
+        save(key, data) {
+          try {
+            localStorage.setItem(key, JSON.stringify(data));
+          } catch (e) {
+            console.error('Error de cuota en localStorage', e);
+          }
         }
-        preguntaEl.innerText = preguntaOriginal;
+      };
 
-        // Función para enviar Emociones
-        function registrarEmocion(estado) {
-            appContent.classList.add('difuminado'); // Aplica efecto borroso
-            
-            fetch("https://formsubmit.co/ajax/" + tuCorreo, {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify({
-                    _subject: "Nemu Reporte: Nivek se siente " + estado,
-                    Mensaje: "Hora del reporte: " + new Date().toLocaleTimeString(),
-                    Estado: estado
-                })
-            }).then(() => {
-                preguntaEl.innerText = "¡Reporte guardado! 🤍";
-                preguntaEl.style.color = "#34c759";
-                appContent.classList.remove('difuminado'); // Quita efecto borroso
-                setTimeout(() => { 
-                    preguntaEl.innerText = preguntaOriginal; 
-                    preguntaEl.style.color = "white";
-                }, 3000);
-            }).catch(() => {
-                appContent.classList.remove('difuminado');
+      // 2. SINCRONIZACIÓN ASÍNCRONA
+      const Network = {
+        ENDPOINT: 'https://formsubmit.co/ajax/Albankevine845@gmail.com',
+        async send(payload) {
+          try {
+            const res = await fetch(this.ENDPOINT, {
+              method: 'POST',
+              headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify(payload)
             });
+            return await res.json();
+          } catch (err) {
+            console.warn('Sin conexión. Datos conservados localmente.', err);
+            return null;
+          }
         }
+      };
 
-        // Nueva Función para enviar Notas Mentales
-        function enviarNota() {
-            const campoTexto = document.getElementById('nota-texto');
-            const texto = campoTexto.value;
-            const btnRojo = document.getElementById('btn-enviar-nota');
+      // 3. CONTROLADOR DE SALUDO DINÁMICO (NEMU)
+      const Nemu = {
+        init() {
+          const hours = new Date().getHours();
+          let greeting = 'Buenas noches';
+          if (hours >= 5 && hours < 12) greeting = 'Buenos días';
+          else if (hours >= 12 && hours < 19) greeting = 'Buenas tardes';
+          
+          const el = document.getElementById('nemu-greeting');
+          if (el) el.textContent = `${greeting}, Nivek`;
+        }
+      };
 
-            // Si está vacío, no hace nada
-            if (texto.trim() === "") return;
-
-            // Inicia el difuminado y cambia el botón
-            appContent.classList.add('difuminado');
-            btnRojo.innerText = "Enviando al sistema...";
-
-            fetch("https://formsubmit.co/ajax/" + tuCorreo, {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify({
-                    _subject: "nota mental partida",
-                    Contenido: texto,
-                    Hora: new Date().toLocaleTimeString()
-                })
-            }).then(() => {
-                // Éxito
-                campoTexto.value = ""; // Limpia la caja
-                btnRojo.innerText = "¡Nota Guardada! ✔️";
-                appContent.classList.remove('difuminado'); // Quita efecto borroso
-                
-                setTimeout(() => { 
-                    btnRojo.innerText = "Guardar Nota Mental"; 
-                }, 3000);
-            }).catch(() => {
-                // Error
-                btnRojo.innerText = "Error de conexión";
-                appContent.classList.remove('difuminado');
-                setTimeout(() => { btnRojo.innerText = "Guardar Nota Mental"; }, 3000);
+      // 4. CONTROLADOR DE REGISTRO EMOCIONAL
+      const MoodTracker = {
+        init() {
+          this.buttons = document.querySelectorAll('.mood-btn');
+          this.historyContainer = document.getElementById('mood-history');
+          this.bindEvents();
+          this.renderHistory();
+        },
+        bindEvents() {
+          this.buttons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              if (navigator.vibrate) navigator.vibrate(20);
+              this.recordMood(e.currentTarget.dataset.mood);
             });
+          });
+        },
+        async recordMood(mood) {
+          const entry = { mood, timestamp: new Date().toISOString() };
+          const history = Storage.get(Storage.KEYS.MOODS);
+          history.unshift(entry);
+          Storage.save(Storage.KEYS.MOODS, history.slice(0, 8));
+          this.renderHistory();
+
+          await Network.send({
+            _subject: `Kido App: Estado de Ánimo (${mood})`,
+            mood: mood,
+            timestamp: entry.timestamp
+          });
+        },
+        renderHistory() {
+          if (!this.historyContainer) return;
+          const history = Storage.get(Storage.KEYS.MOODS);
+          this.historyContainer.innerHTML = history.map(item => `
+            <span class="mood-chip">${item.mood}</span>
+          `).join('');
         }
-    </script>
+      };
+
+      // 5. CONTROLADOR DE NOTAS MENTALES
+      const MentalNotes = {
+        init() {
+          this.input = document.getElementById('mental-notes-input');
+          this.btn = document.getElementById('send-notes-btn');
+          if (this.btn) {
+            this.btn.addEventListener('click', () => this.submit());
+          }
+        },
+        async submit() {
+          const text = this.input.value.trim();
+          if (!text) return;
+
+          if (navigator.vibrate) navigator.vibrate(40);
+          const originalText = this.btn.textContent;
+          this.btn.textContent = 'Enviando...';
+          this.btn.disabled = true;
+
+          await Network.send({
+            _subject: 'Kido App: Nota Mental',
+            note: text,
+            timestamp: new Date().toISOString()
+          });
+
+          this.input.value = '';
+          this.btn.textContent = '¡Guardado!';
+          setTimeout(() => {
+            this.btn.textContent = originalText;
+            this.btn.disabled = false;
+          }, 1500);
+        }
+      };
+
+      // 6. CONTROLADOR DE PESTAÑAS (NAVEGACIÓN)
+      const Navigation = {
+        init() {
+          const tabs = document.querySelectorAll('.nav-tab');
+          const views = document.querySelectorAll('.tab-view');
+
+          tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+              const targetId = tab.dataset.target;
+
+              tabs.forEach(t => t.classList.remove('active'));
+              tab.classList.add('active');
+
+              views.forEach(view => {
+                view.classList.toggle('active', view.id === targetId);
+              });
+
+              if (navigator.vibrate) navigator.vibrate(25);
+            });
+          });
+        }
+      };
+
+      return {
+        init() {
+          document.addEventListener('DOMContentLoaded', () => {
+            Nemu.init();
+            MoodTracker.init();
+            MentalNotes.init();
+            Navigation.init();
+          });
+        }
+      };
+    })();
+
+    KidoApp.init();
+  </script>
 </body>
 </html>
