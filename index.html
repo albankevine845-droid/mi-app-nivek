@@ -17,7 +17,6 @@
         }
         
         .header { margin-top: 40px; margin-bottom: 30px; }
-        /* Letras cool y llamativas */
         .header h1 { 
             font-size: 28px; 
             background: -webkit-linear-gradient(#ff3b30, #ff9500);
@@ -27,7 +26,6 @@
         }
         .header p { color: #8e8e93; font-size: 16px; margin: 0; }
 
-        /* Estilo del casillero tipo iOS Widget */
         .mood-widget {
             background-color: #1c1c1e;
             border-radius: 25px;
@@ -38,9 +36,8 @@
             max-width: 400px;
         }
         
-        .mood-widget h2 { font-size: 22px; margin-top: 0; margin-bottom: 25px; font-weight: 600; }
+        .mood-widget h2 { font-size: 22px; margin-top: 0; margin-bottom: 25px; font-weight: 600; transition: all 0.3s; }
 
-        /* Botones de emociones */
         .btn-mood {
             display: block;
             width: 100%;
@@ -58,7 +55,6 @@
         }
         .btn-mood:active { transform: scale(0.96); opacity: 0.8; }
         
-        /* Colores para cada emoción */
         .btn-feliz { border-left: 6px solid #34c759; }
         .btn-normal { border-left: 6px solid #ffcc00; }
         .btn-triste { border-left: 6px solid #007aff; }
@@ -96,31 +92,57 @@
     </div>
 
     <script>
-        // Lógica de Nemu para detectar la hora del día
         const hora = new Date().getHours();
         const preguntaEl = document.getElementById('pregunta-mood');
         const saludoEl = document.getElementById('saludo-tiempo');
+        let preguntaOriginal = "";
 
         if (hora >= 5 && hora < 12) {
             saludoEl.innerText = "Reporte matutino - 6 AM";
-            preguntaEl.innerText = "¿Cómo te sientes esta mañana?";
+            preguntaOriginal = "¿Cómo te sientes esta mañana?";
         } else if (hora >= 12 && hora < 17) {
             saludoEl.innerText = "Reporte de mediodía - 12 PM";
-            preguntaEl.innerText = "¿Cómo te sientes a esta hora?";
+            preguntaOriginal = "¿Cómo te sientes a esta hora?";
         } else {
             saludoEl.innerText = "Reporte de cierre - 5 PM";
-            preguntaEl.innerText = "¿Cómo terminas el día?";
+            preguntaOriginal = "¿Cómo terminas el día?";
         }
+        preguntaEl.innerText = preguntaOriginal;
 
-        // Función para enviar el correo a ti mismo
+        // Nueva función de envío silencioso
         function registrarEmocion(estado) {
-            // AQUÍ PONES TU CORREO REAL:
-            const tuCorreo = "albankevine845@gmail.com"; 
-            const asunto = "Reporte Nemu: Estado de Ánimo de Nivek";
-            const cuerpo = "Hola Nemu. En este momento del día me siento: " + estado;
-            
-            // Abre la app de correo lista para enviar
-            window.location.href = `mailto:${tuCorreo}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
+            preguntaEl.innerText = "Enviando reporte a Nemu...";
+            preguntaEl.style.color = "#8e8e93";
+
+            fetch("https://formsubmit.co/ajax/albankevine845@gmail.com", {
+                method: "POST",
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    _subject: "Nemu Reporte: Nivek se siente " + estado,
+                    Mensaje: "Hora del reporte: " + new Date().toLocaleTimeString(),
+                    Estado: estado
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                preguntaEl.innerText = "¡Reporte guardado! 🤍";
+                preguntaEl.style.color = "#34c759";
+                setTimeout(() => { 
+                    preguntaEl.innerText = preguntaOriginal; 
+                    preguntaEl.style.color = "white";
+                }, 3000);
+            })
+            .catch(error => {
+                preguntaEl.innerText = "Error de conexión";
+                preguntaEl.style.color = "#ff3b30";
+                setTimeout(() => { 
+                    preguntaEl.innerText = preguntaOriginal; 
+                    preguntaEl.style.color = "white";
+                }, 3000);
+            });
         }
     </script>
 </body>
