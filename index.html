@@ -56,9 +56,11 @@
 
     .nav-tabs { display: flex; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 16px; padding: 6px; margin-bottom: 20px; gap: 6px; backdrop-filter: blur(12px); box-shadow: var(--glass-shadow); }
     .nav-btn { flex: 1; padding: 12px; border: none; background: transparent; color: var(--text-muted); font-weight: 800; font-size: 0.9rem; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; }
-    /* Corrección de color en botón activo */
-    .nav-btn.active { background: var(--text-main); color: var(--bg-galaxy); box-shadow: 0 4px 15px rgba(0,0,0,0.15); transform: translateY(-2px); }
-    body:not(.light-mode) .nav-btn.active { color: #ffffff !important; background: #0f172a; border: 1px solid rgba(255,255,255,0.2); }
+    
+    /* CORRECCIÓN: Contraste perfecto para el botón activo en ambos modos */
+    .nav-btn.active { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.15); font-weight: 900; }
+    body:not(.light-mode) .nav-btn.active { background: #ffffff; color: #0f172a !important; }
+    body.light-mode .nav-btn.active { background: #0f172a; color: #ffffff !important; }
     
     .tab-content { display: none; } .tab-content.active { display: block; animation: fadeIn 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -176,7 +178,6 @@
               <div class="hl-barcode"></div>
             </div>
             <div class="hl-bottom">
-              <!-- Solo NIVEK centrado -->
               <div class="hl-data-box hl-box-large">NIVEK</div>
               <div class="hl-data-box hl-box-small"><span>ID:</span> <span>0931-935-795</span></div>
               <div class="hl-data-box hl-box-small"><span>RANGO:</span> <span id="userRank">NOVATO</span></div>
