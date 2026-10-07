@@ -8,7 +8,6 @@
   <style>
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; }
     
-    /* FONDO MEJORADO: LIQUID SPACE (MODO OSCURO) */
     :root {
       --bg-galaxy: radial-gradient(at 0% 0%, #0f172a 0%, transparent 50%), 
                    radial-gradient(at 100% 0%, #1e1b4b 0%, transparent 50%), 
@@ -23,14 +22,11 @@
       --accent-glow: #38bdf8;
       --input-bg: rgba(15, 23, 42, 0.7);
       --card-item-bg: rgba(15, 23, 42, 0.6);
-      
-      /* Efectos de selección (Oscuro) */
       --btn-select-bg: linear-gradient(145deg, rgba(56, 189, 248, 0.15), rgba(37, 99, 235, 0.25));
       --btn-select-border: rgba(56, 189, 248, 0.8);
       --btn-select-shadow: 0 8px 20px rgba(56, 189, 248, 0.3), inset 0 0 10px rgba(56, 189, 248, 0.2);
     }
 
-    /* FONDO MEJORADO: SOFT AURORA (MODO CLARO) */
     body.light-mode {
       --bg-galaxy: radial-gradient(at 0% 0%, #ffffff 0%, transparent 50%), 
                    radial-gradient(at 100% 0%, #e0e7ff 0%, transparent 50%), 
@@ -45,8 +41,6 @@
       --accent-glow: #2563eb;
       --input-bg: rgba(255, 255, 255, 0.8);
       --card-item-bg: rgba(255, 255, 255, 0.7);
-      
-      /* Efectos de selección (Claro) */
       --btn-select-bg: linear-gradient(145deg, rgba(37, 99, 235, 0.1), rgba(29, 78, 216, 0.15));
       --btn-select-border: rgba(37, 99, 235, 0.8);
       --btn-select-shadow: 0 8px 20px rgba(37, 99, 235, 0.2), inset 0 0 10px rgba(37, 99, 235, 0.1);
@@ -55,78 +49,45 @@
     body { background: var(--bg-galaxy); background-attachment: fixed; color: var(--text-main); margin: 0; padding: 16px; min-height: 100vh; padding-bottom: 90px; transition: background 0.5s ease, color 0.5s ease; }
     .container { max-width: 520px; margin: 0 auto; }
 
-    /* CABECERA */
     .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
     .app-logo-title { font-size: 1.15rem; font-weight: 900; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
     .discreet-mode-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-main); font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(12px); box-shadow: var(--glass-shadow); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     .discreet-mode-btn:active { transform: scale(0.85); }
 
-    /* PESTAÑAS (ANIMACIÓN SUAVE) */
     .nav-tabs { display: flex; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 16px; padding: 6px; margin-bottom: 20px; gap: 6px; backdrop-filter: blur(12px); box-shadow: var(--glass-shadow); }
     .nav-btn { flex: 1; padding: 12px; border: none; background: transparent; color: var(--text-muted); font-weight: 800; font-size: 0.9rem; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; }
+    /* Corrección de color en botón activo */
     .nav-btn.active { background: var(--text-main); color: var(--bg-galaxy); box-shadow: 0 4px 15px rgba(0,0,0,0.15); transform: translateY(-2px); }
-    body:not(.light-mode) .nav-btn.active { color: #0f172a; }
+    body:not(.light-mode) .nav-btn.active { color: #ffffff !important; background: #0f172a; border: 1px solid rgba(255,255,255,0.2); }
+    
     .tab-content { display: none; } .tab-content.active { display: block; animation: fadeIn 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* RELOJ */
     .datetime-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px; padding: 16px; margin-bottom: 14px; text-align: center; backdrop-filter: blur(12px); box-shadow: var(--glass-shadow); }
     .datetime-title { font-size: 0.75rem; font-weight: 800; color: var(--accent-glow); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; }
     .clock-display { font-size: 1.6rem; font-weight: 900; letter-spacing: 1px; }
     .date-display { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; font-weight: 600; }
     
-    /* ÁREA DE REGISTRO */
     .liquid-glass-card { background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 20px; margin-bottom: 20px; box-shadow: var(--glass-shadow); }
     .section-title { font-size: 0.85rem; font-weight: 800; margin: 0 0 14px 0; color: var(--accent-glow); text-transform: uppercase; letter-spacing: 1px; }
     
-    /* EFECTOS PREMIUM EN MOOD BUTTONS */
     .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
-    .mood-btn { 
-      background: var(--input-bg); 
-      border: 2px solid transparent; 
-      color: var(--text-main); 
-      padding: 12px 4px; 
-      border-radius: 14px; 
-      cursor: pointer; 
-      display: flex; flex-direction: column; align-items: center; gap: 4px; 
-      font-size: 0.75rem; font-weight: 700; 
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-    }
+    .mood-btn { background: var(--input-bg); border: 2px solid transparent; color: var(--text-main); padding: 12px 4px; border-radius: 14px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.75rem; font-weight: 700; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     .mood-btn .iphone-emoji { font-size: 1.6rem; transition: transform 0.3s ease; }
-    
-    /* Animación al Seleccionar */
-    .mood-btn.selected { 
-      background: var(--btn-select-bg); 
-      border-color: var(--btn-select-border); 
-      box-shadow: var(--btn-select-shadow); 
-      transform: translateY(-5px) scale(1.03); 
-    }
+    .mood-btn.selected { background: var(--btn-select-bg); border-color: var(--btn-select-border); box-shadow: var(--btn-select-shadow); transform: translateY(-5px) scale(1.03); }
     .mood-btn.selected .iphone-emoji { transform: scale(1.15) translateY(-2px); }
     
     input[type="text"] { width: 100%; padding: 16px; border-radius: 14px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main); font-size: 1rem; outline: none; transition: border-color 0.3s ease; }
     input[type="text"]:focus { border-color: var(--accent-glow); }
     
-    /* EFECTOS TÁCTILES EN BOTONES DE ACCIÓN */
     .action-buttons { display: flex; gap: 10px; margin-top: 14px; }
-    .action-btn { 
-      flex: 1; padding: 14px 8px; border: none; border-radius: 14px; font-weight: 800; font-size: 0.85rem; 
-      cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #fff; 
-      box-shadow: 0 6px 15px rgba(0,0,0,0.2); 
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative; overflow: hidden;
-    }
+    .action-btn { flex: 1; padding: 14px 8px; border: none; border-radius: 14px; font-weight: 800; font-size: 0.85rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #fff; box-shadow: 0 6px 15px rgba(0,0,0,0.2); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
     .btn-thought { background: linear-gradient(135deg, #3b82f6, #2563eb); }
     .btn-location { background: linear-gradient(135deg, #10b981, #059669); }
     .action-btn span:first-child { font-size: 1.3rem; transition: transform 0.2s ease; }
-    
-    /* Animación de "Pulsación Física" (Press) */
-    .action-btn:active { 
-      transform: scale(0.92) translateY(2px); 
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
-    }
+    .action-btn:active { transform: scale(0.92) translateY(2px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
     .action-btn:active span:first-child { transform: scale(0.9); }
 
-    /* LISTA */
     .item { background: var(--card-item-bg); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); padding: 16px; border-radius: 16px; margin-bottom: 12px; box-shadow: var(--glass-shadow); transition: transform 0.2s ease; }
     .item:hover { transform: translateX(4px); border-color: var(--glass-border); }
     .item-header { display: flex; justify-content: space-between; align-items: flex-start; }
@@ -136,153 +97,39 @@
     .delete-btn { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; padding: 4px 10px; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: bold; margin-left: 10px; transition: transform 0.2s; }
     .delete-btn:active { transform: scale(0.8); }
 
-    /* ========================================================
-       TARJETA LICENCIA HUNTER (REPLICA FIEL)
-       ======================================================== */
-    .hunter-license-wrapper {
-      display: flex;
-      justify-content: center;
-      padding: 10px 0;
-    }
+    .hunter-license-wrapper { display: flex; justify-content: center; padding: 10px 0; }
+    .hunter-license { width: 100%; max-width: 310px; aspect-ratio: 0.58; background: #fdfdfd; border: 3px solid #111; border-radius: 14px; padding: 6px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
+    .hl-inner { width: 100%; height: 100%; border: 3px solid #111; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; }
     
-    .hunter-license {
-      width: 100%;
-      max-width: 310px;
-      aspect-ratio: 0.58; /* Proporción vertical estricta */
-      background: #fdfdfd;
-      border: 3px solid #111;
-      border-radius: 14px;
-      padding: 6px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-    }
+    .hl-top { background: #111; flex: 1.25; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 24px 16px 0 16px; }
+    .hl-logo-box { background: #fdfdfd; width: 90%; aspect-ratio: 1.25; position: relative; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+    .hl-logo-x { font-family: "Times New Roman", Times, serif; font-size: 155px; color: #111; line-height: 0; transform: scaleX(1.3) scaleY(1.1); z-index: 1; }
+    .hl-logo-diamond { position: absolute; width: 33%; height: 75%; background: #c62828; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); z-index: 2; }
     
-    .hl-inner {
-      width: 100%;
-      height: 100%;
-      border: 3px solid #111;
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    
-    /* Mitad Superior Oscura */
-    .hl-top {
-      background: #111;
-      flex: 1.25;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      padding: 24px 16px 0 16px;
-    }
-    
-    /* Logo HxH */
-    .hl-logo-box {
-      background: #fdfdfd;
-      width: 90%;
-      aspect-ratio: 1.25;
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-    }
-    
-    .hl-logo-x {
-      font-family: "Times New Roman", Times, serif;
-      font-size: 155px;
-      color: #111;
-      line-height: 0;
-      transform: scaleX(1.3) scaleY(1.1);
-      z-index: 1;
-    }
-    
-    .hl-logo-diamond {
-      position: absolute;
-      width: 33%;
-      height: 75%;
-      background: #c62828; /* Rojo Carmesí */
-      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-      z-index: 2;
-    }
-    
-    /* Código de Barras */
     .hl-barcode {
-      width: 100%;
-      height: 55px;
-      background: repeating-linear-gradient(
-        to right,
-        #fff, #fff 3px,
-        #111 3px, #111 7px,
-        #fff 7px, #fff 9px,
-        #111 9px, #111 14px,
-        #fff 14px, #fff 18px,
-        #111 18px, #111 21px,
-        #fff 21px, #fff 24px,
-        #111 24px, #111 30px
-      );
+      width: 100%; height: 55px;
+      background: repeating-linear-gradient(to right, #fff, #fff 3px, #111 3px, #111 7px, #fff 7px, #fff 9px, #111 9px, #111 14px, #fff 14px, #fff 18px, #111 18px, #111 21px, #fff 21px, #fff 24px, #111 24px, #111 30px);
     }
     
-    /* Mitad Inferior Celeste */
-    .hl-bottom {
-      background: #9bc2e6; /* Celeste exacto */
-      flex: 1;
-      border-top: 3px solid #111;
-      padding: 12px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      justify-content: center;
-    }
-    
-    /* Cajas de Datos Blancas */
-    .hl-data-box {
-      background: #fdfdfd;
-      border: 2px solid #111;
-      display: flex;
-      align-items: center;
-      padding: 0 10px;
-      font-family: "Courier New", Courier, monospace;
-      font-weight: 900;
-      color: #111;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    
-    .hl-box-large {
-      height: 40px;
-      font-size: 1.15rem;
-      justify-content: center;
-      margin-bottom: 2px;
-    }
-    
-    .hl-box-small {
-      height: 24px;
-      font-size: 0.78rem;
-      justify-content: space-between;
-    }
+    .hl-bottom { background: #9bc2e6; flex: 1; border-top: 3px solid #111; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; justify-content: center; }
+    .hl-data-box { background: #fdfdfd; border: 2px solid #111; display: flex; align-items: center; padding: 0 10px; font-family: "Courier New", Courier, monospace; font-weight: 900; color: #111; text-transform: uppercase; letter-spacing: 0.5px; }
+    .hl-box-large { height: 40px; font-size: 1.4rem; justify-content: center; margin-bottom: 2px; }
+    .hl-box-small { height: 24px; font-size: 0.78rem; justify-content: space-between; }
   </style>
 </head>
 <body>
 
   <div class="container">
-    
-    <!-- CABECERA -->
     <div class="top-header">
-      <div class="app-logo-title">
-        <span>🌌</span> <span>MI DIARIO GALÁCTICO</span>
-      </div>
+      <div class="app-logo-title"><span>🌌</span> <span>MI DIARIO GALÁCTICO</span></div>
       <button class="discreet-mode-btn" id="discreetBtn" onclick="toggleManualTheme()" title="Cambiar Tema">🌙</button>
     </div>
 
-    <!-- PESTAÑAS -->
     <div class="nav-tabs">
       <button class="nav-btn active" onclick="switchTab('diario', this)">📖 Diario</button>
       <button class="nav-btn" onclick="switchTab('nivel', this)">💳 Licencia</button>
     </div>
 
-    <!-- PESTAÑA 1: DIARIO (2 BOTONES, EFECTO LIQUID PRESS) -->
     <div id="diario-tab" class="tab-content active">
       <div class="datetime-card">
         <div class="datetime-title">Reloj del Sistema</div>
@@ -306,12 +153,10 @@
         
         <div class="action-buttons">
           <button class="action-btn btn-thought" onclick="addThought()">
-            <span>💭</span>
-            <span>Guardar Pensamiento</span>
+            <span>💭</span><span>Guardar Pensamiento</span>
           </button>
           <button class="action-btn btn-location" onclick="addLocation()">
-            <span>📍</span>
-            <span>Guardar Ubicación</span>
+            <span>📍</span><span>Guardar Ubicación</span>
           </button>
         </div>
       </div>
@@ -319,13 +164,10 @@
       <div id="list"></div>
     </div>
 
-    <!-- PESTAÑA 2: LICENCIA HUNTER X HUNTER -->
     <div id="nivel-tab" class="tab-content">
       <div class="hunter-license-wrapper">
         <div class="hunter-license">
           <div class="hl-inner">
-            
-            <!-- Mitad Oscura Superior -->
             <div class="hl-top">
               <div class="hl-logo-box">
                 <div class="hl-logo-x">X</div>
@@ -333,16 +175,14 @@
               </div>
               <div class="hl-barcode"></div>
             </div>
-            
-            <!-- Mitad Celeste Inferior -->
             <div class="hl-bottom">
-              <div class="hl-data-box hl-box-large">NIVEK (Kevin)</div>
+              <!-- Solo NIVEK centrado -->
+              <div class="hl-data-box hl-box-large">NIVEK</div>
               <div class="hl-data-box hl-box-small"><span>ID:</span> <span>0931-935-795</span></div>
               <div class="hl-data-box hl-box-small"><span>RANGO:</span> <span id="userRank">NOVATO</span></div>
               <div class="hl-data-box hl-box-small"><span>NIVEL:</span> <span id="userLevel">1</span></div>
               <div class="hl-data-box hl-box-small"><span>EXP:</span> <span id="xpPoints">0</span></div>
             </div>
-            
           </div>
         </div>
       </div>
@@ -355,7 +195,6 @@
     let selectedMood = '😊 Feliz';
     let isManualTheme = false;
 
-    // RELOJ
     function updateLiveClock() {
       const now = new Date();
       const optionsDate = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
@@ -367,7 +206,6 @@
     setInterval(updateLiveClock, 1000);
     updateLiveClock();
 
-    // TEMAS
     function applyAutoTheme() {
       if (isManualTheme) return;
       const hour = new Date().getHours();
@@ -388,7 +226,6 @@
       document.getElementById('discreetBtn').innerText = isLight ? '☀️' : '🌙';
     }
 
-    // PESTAÑAS Y MOOD
     function switchTab(tabName, btn) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -402,60 +239,42 @@
       btn.classList.add('selected');
     }
 
-    // BOTÓN 1: PENSAMIENTO
     function addThought() {
       const title = document.getElementById('title').value.trim();
-      if (!title) {
-        alert("Por favor escribe tu pensamiento antes de guardar.");
-        return;
-      }
+      if (!title) { alert("Por favor escribe tu pensamiento antes de guardar."); return; }
       const now = new Date();
       const dateStr = now.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
       const timeStr = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-
       items.unshift({ title: title, category: selectedMood, date: dateStr, time: timeStr, location: 'Sin ubicación', done: false });
       document.getElementById('title').value = '';
       saveAndRender();
     }
 
-    // BOTÓN 2: UBICACIÓN
     function addLocation() {
-      if (!("geolocation" in navigator)) {
-        alert('GPS no soportado en este dispositivo.');
-        return;
-      }
+      if (!("geolocation" in navigator)) { alert('GPS no soportado en este dispositivo.'); return; }
       const locBtn = document.querySelector('.btn-location');
       const originalHtml = locBtn.innerHTML;
       locBtn.innerHTML = '<span>⏳</span><span>Buscando...</span>';
-
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const lat = position.coords.latitude.toFixed(5);
           const lon = position.coords.longitude.toFixed(5);
-          const locationStr = `Lat: ${lat}, Lon: ${lon}`;
-          
           const now = new Date();
           const dateStr = now.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
           const timeStr = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-
-          items.unshift({ title: '📍 Punto de Control Guardado', category: 'Ubicación GPS', date: dateStr, time: timeStr, location: locationStr, done: false });
+          items.unshift({ title: '📍 Punto de Control Guardado', category: 'Ubicación GPS', date: dateStr, time: timeStr, location: `Lat: ${lat}, Lon: ${lon}`, done: false });
           locBtn.innerHTML = originalHtml;
           saveAndRender();
         },
-        (error) => {
-          locBtn.innerHTML = originalHtml;
-          alert('No se pudo obtener la ubicación. Verifica tu GPS.');
-        },
+        (error) => { locBtn.innerHTML = originalHtml; alert('No se pudo obtener la ubicación. Verifica tu GPS.'); },
         { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
       );
     }
 
-    // RENDER
     function saveAndRender() {
       localStorage.setItem('my_app_data', JSON.stringify(items));
       const list = document.getElementById('list');
       list.innerHTML = '';
-
       items.forEach((item, index) => {
         list.innerHTML += `
           <div class="item">
@@ -471,29 +290,21 @@
           </div>
         `;
       });
-
       const completed = items.filter(i => i.done).length;
       const total = items.length;
       const xp = completed * 50 + total * 10;
       const level = Math.floor(xp / 150) + 1;
-
       let rank = "NOVATO";
       if (level >= 3) rank = "CAZADOR 1⭐";
       if (level >= 6) rank = "CAZADOR 2⭐";
       if (level >= 10) rank = "CAZADOR ÉLITE";
-
       document.getElementById('userLevel').innerText = level;
       document.getElementById('userRank').innerText = rank;
       document.getElementById('xpPoints').innerText = xp;
     }
 
-    function deleteItem(index) {
-      items.splice(index, 1);
-      saveAndRender();
-    }
-
-    applyAutoTheme();
-    saveAndRender();
+    function deleteItem(index) { items.splice(index, 1); saveAndRender(); }
+    applyAutoTheme(); saveAndRender();
   </script>
 </body>
 </html>
