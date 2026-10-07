@@ -97,66 +97,93 @@
     .delete-btn { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; padding: 4px 10px; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: bold; margin-left: 10px; transition: transform 0.2s; }
     .delete-btn:active { transform: scale(0.8); }
 
-    /* ========================================================
-       NUEVO: MINI MENÚ DE UBICACIÓN DESPLEGABLE
-       ======================================================== */
-    details.mini-menu {
-      margin-top: 8px;
-      background: rgba(0, 0, 0, 0.05);
-      border-radius: 10px;
-      padding: 8px 12px;
-      border: 1px solid var(--glass-border);
-      transition: background 0.3s ease;
-    }
+    details.mini-menu { margin-top: 8px; background: rgba(0, 0, 0, 0.05); border-radius: 10px; padding: 8px 12px; border: 1px solid var(--glass-border); transition: background 0.3s ease; }
     body:not(.light-mode) details.mini-menu { background: rgba(255, 255, 255, 0.05); }
-    
-    details.mini-menu summary {
-      cursor: pointer;
-      font-weight: 800;
-      color: var(--accent-glow);
-      outline: none;
-      list-style: none; /* Oculta flecha por defecto */
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.8rem;
-    }
+    details.mini-menu summary { cursor: pointer; font-weight: 800; color: var(--accent-glow); outline: none; list-style: none; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; }
     details.mini-menu summary::-webkit-details-marker { display: none; }
-    details.mini-menu summary::after {
-      content: '▼';
-      font-size: 0.6rem;
-      transition: transform 0.3s;
-      opacity: 0.7;
-    }
+    details.mini-menu summary::after { content: '▼'; font-size: 0.6rem; transition: transform 0.3s; opacity: 0.7; }
     details[open].mini-menu summary::after { transform: rotate(180deg); }
-    
-    .loc-coords {
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px dashed var(--glass-border);
-      font-family: monospace;
-      font-size: 0.7rem;
-      color: var(--text-main);
-      opacity: 0.9;
-      letter-spacing: 0.5px;
-    }
+    .loc-coords { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--glass-border); font-family: monospace; font-size: 0.7rem; color: var(--text-main); opacity: 0.9; letter-spacing: 0.5px; }
 
-    /* TARJETA LICENCIA HUNTER */
     .hunter-license-wrapper { display: flex; justify-content: center; padding: 10px 0; }
     .hunter-license { width: 100%; max-width: 310px; aspect-ratio: 0.58; background: #fdfdfd; border: 3px solid #111; border-radius: 14px; padding: 6px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
     .hl-inner { width: 100%; height: 100%; border: 3px solid #111; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; }
-    
     .hl-top { background: #111; flex: 1.25; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 24px 16px 0 16px; }
     .hl-logo-box { background: #fdfdfd; width: 90%; aspect-ratio: 1.25; position: relative; display: flex; justify-content: center; align-items: center; overflow: hidden; }
     .hl-logo-x { font-family: "Times New Roman", Times, serif; font-size: 155px; color: #111; line-height: 0; transform: scaleX(1.3) scaleY(1.1); z-index: 1; }
     .hl-logo-diamond { position: absolute; width: 33%; height: 75%; background: #c62828; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); z-index: 2; }
-    
     .hl-barcode { width: 100%; height: 55px; background: repeating-linear-gradient(to right, #fff, #fff 3px, #111 3px, #111 7px, #fff 7px, #fff 9px, #111 9px, #111 14px, #fff 14px, #fff 18px, #111 18px, #111 21px, #fff 21px, #fff 24px, #111 24px, #111 30px); }
-    
     .hl-bottom { background: #9bc2e6; flex: 1; border-top: 3px solid #111; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; justify-content: center; }
     .hl-data-box { background: #fdfdfd; border: 2px solid #111; display: flex; align-items: center; padding: 0 10px; font-family: "Courier New", Courier, monospace; font-weight: 900; color: #111; text-transform: uppercase; letter-spacing: 0.5px; }
     .hl-box-large { height: 40px; font-size: 1.4rem; justify-content: center; margin-bottom: 2px; }
     .hl-box-small { height: 24px; font-size: 0.78rem; justify-content: space-between; }
+
+    /* ========================================================
+       NUEVO DASHBOARD: BLOQUES DE DETALLES Y CORAZÓN
+       ======================================================== */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 20px;
+      padding-bottom: 10px;
+    }
+    
+    .dash-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: var(--glass-shadow);
+    }
+    .dash-card h3 { margin: 0 0 12px 0; font-size: 0.85rem; color: var(--accent-glow); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px dashed var(--glass-border); padding-bottom: 6px; }
+    .dash-card p, .dash-card li { font-size: 0.8rem; color: var(--text-main); margin-bottom: 6px; line-height: 1.4; }
+    .dash-card ul { padding-left: 20px; margin: 0; }
+
+    /* Animaciones del Corazón */
+    @keyframes heartbeat-altered {
+      0% { transform: scale(1); }
+      15% { transform: scale(1.3); }
+      30% { transform: scale(1); }
+      45% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+    @keyframes heartbeat-calm {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+
+    .heart-wrapper { display: flex; justify-content: center; margin-bottom: 16px; margin-top: 10px; }
+    .heart-icon {
+      font-size: 3.5rem;
+      animation: heartbeat-altered 0.7s infinite;
+      filter: drop-shadow(0 0 12px rgba(220, 38, 38, 0.8));
+      transition: filter 0.5s ease;
+    }
+    .heart-icon.calm {
+      animation: heartbeat-calm 1.5s infinite ease-in-out;
+      filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.5));
+    }
+
+    /* Checkbox de Pastilla */
+    .custom-check { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; background: rgba(0,0,0,0.1); padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border); transition: all 0.3s; }
+    body.light-mode .custom-check { background: rgba(255,255,255,0.4); }
+    .custom-check:hover { background: var(--input-bg); }
+    .custom-check input { display: none; }
+    
+    .check-box {
+      width: 22px; height: 22px;
+      border: 2px solid var(--accent-glow);
+      border-radius: 6px; display: flex; align-items: center; justify-content: center;
+      margin-top: 2px; transition: all 0.3s ease; flex-shrink: 0;
+    }
+    .custom-check input:checked + .check-box { background: var(--accent-glow); }
+    .custom-check input:checked + .check-box::after { content: '✔'; color: #fff; font-size: 0.8rem; font-weight: bold; }
+    
+    .check-text { font-size: 0.85rem; color: var(--text-main); line-height: 1.4; }
+    
   </style>
 </head>
 <body>
@@ -172,6 +199,7 @@
       <button class="nav-btn" onclick="switchTab('nivel', this)">💳 Licencia</button>
     </div>
 
+    <!-- PESTAÑA 1: DIARIO -->
     <div id="diario-tab" class="tab-content active">
       <div class="datetime-card">
         <div class="datetime-title">Reloj del Sistema</div>
@@ -206,7 +234,9 @@
       <div id="list"></div>
     </div>
 
+    <!-- PESTAÑA 2: LICENCIA Y DASHBOARD -->
     <div id="nivel-tab" class="tab-content">
+      <!-- Tarjeta Hunter x Hunter -->
       <div class="hunter-license-wrapper">
         <div class="hunter-license">
           <div class="hl-inner">
@@ -227,8 +257,56 @@
           </div>
         </div>
       </div>
-    </div>
 
+      <!-- NUEVO DASHBOARD -->
+      <div class="dashboard-grid">
+        
+        <!-- Bloque 1: Monitoreo de Salud -->
+        <div class="dash-card">
+          <h3>❤️ Monitoreo de Salud</h3>
+          <div class="heart-wrapper">
+            <div class="heart-icon" id="heartIcon">❤️</div>
+          </div>
+          <label class="custom-check">
+            <input type="checkbox" id="pillCheck" onchange="togglePill()">
+            <div class="check-box"></div>
+            <div class="check-text">Tomar la pastilla de la presión <strong>Losartán de 100mg</strong> en la mañana todos los días.</div>
+          </label>
+        </div>
+
+        <!-- Bloque 2: Detalles de mí -->
+        <div class="dash-card">
+          <h3>👤 Detalles de Mí</h3>
+          <p><strong>Enfoque Actual:</strong> Psicología y Dirección General de Kido Corp.</p>
+          <p><strong>Meta del Trimestre:</strong> Mantener consistencia en la bitácora y fortalecer la marca personal.</p>
+        </div>
+
+        <!-- Bloque 3: Grid Dividido para Tareas y Gastos -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="dash-card" style="margin: 0;">
+            <h3 style="font-size: 0.75rem;">📋 Cosas que hacer</h3>
+            <ul style="padding-left: 16px;">
+              <li>Revisar lecturas de la universidad</li>
+              <li>Anotar registro diario</li>
+            </ul>
+          </div>
+          <div class="dash-card" style="margin: 0;">
+            <h3 style="font-size: 0.75rem;">💰 Gastos</h3>
+            <ul style="padding-left: 16px;">
+              <li>Transporte</li>
+              <li>Suscripciones digitales</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Bloque 4: Notas del Mes -->
+        <div class="dash-card">
+          <h3>📌 Notas Importantes del Mes</h3>
+          <p style="opacity: 0.85; font-style: italic;">"Recuerda mantener el balance entre el estudio, el desarrollo de Kido Corp y tu descanso físico."</p>
+        </div>
+
+      </div>
+    </div>
   </div>
 
   <script>
@@ -236,6 +314,37 @@
     let selectedMood = '😊 Feliz';
     let isManualTheme = false;
 
+    // INICIALIZACIÓN DE SALUD (Pastilla)
+    function initPillState() {
+      const todayStr = new Date().toLocaleDateString();
+      const savedDate = localStorage.getItem('nivek_pill_date');
+      const check = document.getElementById('pillCheck');
+      const heart = document.getElementById('heartIcon');
+      
+      if(savedDate === todayStr) {
+        check.checked = true;
+        heart.classList.add('calm');
+      } else {
+        check.checked = false;
+        heart.classList.remove('calm');
+      }
+    }
+
+    function togglePill() {
+      const check = document.getElementById('pillCheck');
+      const heart = document.getElementById('heartIcon');
+      const todayStr = new Date().toLocaleDateString();
+      
+      if(check.checked) {
+        localStorage.setItem('nivek_pill_date', todayStr);
+        heart.classList.add('calm');
+      } else {
+        localStorage.removeItem('nivek_pill_date');
+        heart.classList.remove('calm');
+      }
+    }
+
+    // RELOJ
     function updateLiveClock() {
       const now = new Date();
       const optionsDate = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
@@ -303,19 +412,16 @@
         async (position) => {
           const lat = position.coords.latitude.toFixed(5);
           const lon = position.coords.longitude.toFixed(5);
-          
           let placeName = "Ubicación Guardada";
           
-          // Llama a la API gratuita para traducir coordenadas a nombre del lugar
           try {
             const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
             const data = await res.json();
             if (data && data.address) {
-              // Intenta obtener el nombre más lógico: Barrio, Ciudad o Pueblo
               placeName = data.address.suburb || data.address.neighbourhood || data.address.city || data.address.town || data.address.village || "Punto de Control GPS";
             }
           } catch (e) {
-            console.log("No se pudo obtener el nombre exacto del lugar");
+            console.log("Error de conexión con mapa");
           }
 
           const now = new Date();
@@ -346,7 +452,6 @@
       list.innerHTML = '';
       
       items.forEach((item, index) => {
-        // Bloque del mini menú condicional
         let locationHTML = '';
         if (item.location && item.location !== 'Sin ubicación') {
           const displayName = item.placeName || 'Coordenadas GPS';
@@ -388,7 +493,11 @@
     }
 
     function deleteItem(index) { items.splice(index, 1); saveAndRender(); }
-    applyAutoTheme(); saveAndRender();
+    
+    // Iniciar sistema
+    applyAutoTheme(); 
+    saveAndRender();
+    initPillState();
   </script>
 </body>
 </html>
