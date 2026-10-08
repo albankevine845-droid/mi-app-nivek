@@ -33,33 +33,81 @@
       overflow-x: hidden; -webkit-font-smoothing: antialiased;
     }
 
-    /* --- PANTALLA DE BLOQUEO (PIN DE ACCESO) --- */
+    /* =========================================================================
+       PANTALLA DE BLOQUEO (iOS LIQUID GLASS & FONDOS HD)
+       ========================================================================= */
     .lock-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(11, 12, 16, 0.92);
-      backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
       z-index: 9999; display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
+      background-size: cover; background-position: center;
+      transition: opacity 0.5s ease, visibility 0.5s ease, background-image 0.6s ease;
     }
-    .lock-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-    .lock-header h2 { margin: 0; font-size: 1.5rem; letter-spacing: 3px; color: var(--accent-cyan); text-align: center; text-transform: uppercase; }
-    .lock-header p { margin: 8px 0 30px; font-size: 0.85rem; color: var(--text-dim); text-align: center; }
 
-    .pin-dots { display: flex; gap: 16px; margin-bottom: 40px; justify-content: center; }
-    .pin-dots .dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.2); transition: all 0.2s ease; }
-    .pin-dots .dot.active { background: var(--accent-cyan); border-color: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); }
+    /* Fondos HD desde Unsplash */
+    .bg-mountain { background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1080&q=80'); }
+    .bg-beach { background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1080&q=80'); }
+    .bg-sunset { background-image: url('https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=1080&q=80'); }
+    .bg-galaxy { background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=1080&q=80'); }
+
+    .lock-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+    /* Panel de Cristal (Liquid Glass) */
+    .lock-glass-panel {
+      background: rgba(11, 12, 16, 0.35);
+      backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 35px;
+      padding: 40px 30px;
+      display: flex; flex-direction: column; align-items: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+
+    /* Reloj y Fecha estilo iOS */
+    .lock-datetime { text-align: center; margin-bottom: 30px; }
+    .lock-datetime h1 {
+      margin: 0; font-size: 4.5rem; font-weight: 200; letter-spacing: -2px;
+      color: #fff; text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .lock-datetime p {
+      margin: 5px 0 0 0; font-size: 1.1rem; font-weight: 500; color: rgba(255,255,255,0.9);
+      text-transform: capitalize; text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .lock-header h2 { margin: 0 0 10px 0; font-size: 1.1rem; letter-spacing: 2px; color: var(--accent-cyan); text-transform: uppercase; }
+
+    /* Puntos de PIN Dinámicos */
+    .pin-dots { display: flex; gap: 12px; margin-bottom: 35px; justify-content: center; min-height: 16px; }
+    .pin-dots .dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.4); transition: all 0.2s ease; }
+    .pin-dots .dot.active { background: #fff; border-color: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.8); }
     .pin-dots.error-shake { animation: shake 0.4s; }
     @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
 
+    /* Teclado PIN */
     .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; width: 260px; }
     .num-btn {
-      width: 70px; height: 70px; border-radius: 50%; border: none; background: rgba(255, 255, 255, 0.05); color: #fff;
-      font-size: 1.6rem; font-weight: 300; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+      width: 74px; height: 74px; border-radius: 50%; border: none;
+      background: rgba(255, 255, 255, 0.1); color: #fff;
+      font-size: 1.8rem; font-weight: 300; cursor: pointer;
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 4px 0 rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.2);
       transition: transform 0.1s, background 0.2s;
     }
-    .num-btn:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0.5); background: rgba(0, 242, 254, 0.2); }
-    .num-btn.action-btn { font-size: 1.2rem; background: transparent; box-shadow: none; color: var(--text-dim); }
+    .num-btn:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0.5); background: rgba(255,255,255,0.25); }
+    .num-btn.action-btn { font-size: 1.2rem; background: transparent; box-shadow: none; color: rgba(255,255,255,0.7); }
+
+    /* Selector de Fondos HD */
+    .bg-selector-bar {
+      position: absolute; bottom: 30px; display: flex; gap: 15px;
+      background: rgba(0,0,0,0.4); padding: 10px 20px; border-radius: 30px;
+      backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
+    }
+    .bg-selector-bar button {
+      background: transparent; border: none; font-size: 1.5rem; cursor: pointer;
+      transition: transform 0.2s; filter: grayscale(50%);
+    }
+    .bg-selector-bar button:active { transform: scale(1.2); }
+    .bg-selector-bar button.active-bg { filter: grayscale(0%); transform: scale(1.1); }
 
     /* --- CONTENEDOR PRINCIPAL Y VISTAS --- */
     .app-viewport { max-width: 440px; margin: 0 auto; min-height: 100vh; padding: 20px 16px 110px 16px; }
@@ -69,32 +117,19 @@
     .nemu-header h1 { margin: 0; font-size: 1.6rem; letter-spacing: -0.5px; }
     .nemu-header .subtitle { margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-dim); }
 
-    /* --- TARJETAS GLASSMORPHISM Y BOTONES 3D --- */
-    .glass-card {
-      background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--glass-border); border-radius: 20px; padding: 18px; margin-bottom: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-    }
+    /* --- TARJETAS GLASSMORPHISM --- */
+    .glass-card { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 18px; margin-bottom: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); }
     .glass-card h3 { margin: 0 0 14px 0; font-size: 1.05rem; font-weight: 600; }
-    
     .mood-selector { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 14px; }
-    .mood-btn {
-      flex: 1; font-size: 1.4rem; padding: 10px 0; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.04); cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.5); transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease;
-    }
+    .mood-btn { flex: 1; font-size: 1.4rem; padding: 10px 0; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.04); cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.5); transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease; }
     .mood-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.5); background: rgba(0, 242, 254, 0.15); }
     .chip-container { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
     .mood-chip { background: rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 4px 8px; font-size: 0.85rem; border: 1px solid rgba(255, 255, 255, 0.05); }
 
-    textarea {
-      width: 100%; height: 90px; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px; padding: 12px; color: var(--text-main); font-size: 0.9rem; resize: none; outline: none; margin-bottom: 12px;
-    }
+    textarea { width: 100%; height: 90px; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px; color: var(--text-main); font-size: 0.9rem; resize: none; outline: none; margin-bottom: 12px; }
     textarea:focus { border-color: var(--accent-blue); }
 
-    .btn-3d {
-      width: 100%; padding: 14px; border-radius: 14px; border: none; background: linear-gradient(135deg, var(--btn-grad-start), var(--btn-grad-end));
-      color: #fff; font-weight: 600; font-size: 0.95rem; cursor: pointer; box-shadow: 0 5px 0 var(--btn-shadow), 0 10px 15px rgba(0,0,0,0.4); transition: transform 0.08s ease, box-shadow 0.08s ease;
-    }
+    .btn-3d { width: 100%; padding: 14px; border-radius: 14px; border: none; background: linear-gradient(135deg, var(--btn-grad-start), var(--btn-grad-end)); color: #fff; font-weight: 600; font-size: 0.95rem; cursor: pointer; box-shadow: 0 5px 0 var(--btn-shadow), 0 10px 15px rgba(0,0,0,0.4); transition: transform 0.08s ease, box-shadow 0.08s ease; }
     .btn-3d:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--btn-shadow), 0 4px 6px rgba(0,0,0,0.3); }
 
     .btn-red { background: linear-gradient(135deg, #ff4b4b, #d32f2f); box-shadow: 0 5px 0 #9a0007, 0 10px 15px rgba(0,0,0,0.4); }
@@ -104,59 +139,40 @@
        TARJETA DE CAZADOR ANIME (RÉPLICA EXACTA)
        ========================================================================= */
     .hunter-anime-card {
-      background: #000;
-      border: 6px solid #fff;
-      border-radius: 8px;
-      width: 100%;
-      max-width: 290px;
-      margin: 0 auto 24px auto;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
+      background: #000; border: 4px solid #fff; border-radius: 12px;
+      width: 100%; max-width: 320px; margin: 0 auto 24px auto;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7); overflow: hidden;
+      display: flex; flex-direction: column;
     }
-    .h-top { background: #000; padding: 15px 15px 10px 15px; }
+    
+    .h-top { background: #000; padding: 18px 20px 12px 20px; }
     .h-logo-box {
-      background: #f4f4f4;
-      padding: 12px;
-      margin-bottom: 12px;
-      height: 120px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: #fff; padding: 15px; margin-bottom: 15px;
+      height: 140px; display: flex; align-items: center; justify-content: center;
+      border-radius: 4px;
     }
+    
     .h-barcode {
-      height: 45px;
-      background: repeating-linear-gradient(
-        to right,
-        #fff, #fff 3px, #000 3px, #000 6px,
-        #fff 6px, #fff 10px, #000 10px, #000 14px,
-        #fff 14px, #fff 18px, #000 18px, #000 24px
-      );
-      width: 100%;
-    }
-    .h-bottom {
-      background: #8cbdf0;
-      padding: 15px 12px;
-      border-top: 3px solid #000;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .h-slot {
-      background: #fff;
-      border: 2px solid #000;
-      padding: 5px 8px;
-      text-align: center;
-      font-family: monospace;
-      font-weight: 900;
-      color: #000;
-      font-size: 0.95rem;
-      letter-spacing: 3px;
-      text-transform: uppercase;
+      height: 45px; width: 100%; border-radius: 2px;
+      background: repeating-linear-gradient( to right, #fff, #fff 3px, #000 3px, #000 7px, #fff 7px, #fff 11px, #000 11px, #000 15px, #fff 15px, #fff 21px, #000 21px, #000 28px, #fff 28px, #fff 31px, #000 31px, #000 36px );
     }
 
-    /* --- PILARES Y CHECKBOX DE LOSARTÁN --- */
+    .h-bottom {
+      background: #8cbdf0; padding: 18px 15px;
+      border-top: 4px solid #000; display: flex; flex-direction: column; gap: 10px;
+    }
+    
+    /* Cajas blancas estilo Runas/Textos de la tarjeta original */
+    .h-slot {
+      background: #fff; border: 2px solid #000; padding: 6px 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: monospace; font-weight: 900; color: #000;
+      font-size: 0.95rem; letter-spacing: 4px; text-transform: uppercase;
+      box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+    }
+    .h-slot-sm { font-size: 0.8rem; letter-spacing: 2px; }
+    
+    /* --- PILARES Y CHECKBOX --- */
     .section-title { font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); margin: 12px 0 10px 4px; }
     .pillar-card { padding: 14px 16px; border-left: 3px solid var(--accent-blue); }
     .pillar-header { display: flex; align-items: center; justify-content: space-between; }
@@ -175,30 +191,20 @@
     input:checked + .slider { background-color: #00f2fe; }
     input:checked + .slider:before { transform: translateX(20px); }
 
-    /* ANIMACIONES DEL CORAZÓN (LATIDO / ELECTROCARDIOGRAMA) */
+    /* ANIMACIONES DEL CORAZÓN */
     .heartbeat-svg { transition: color 0.4s ease; }
     .heartbeat-svg.altered { color: #ff4b4b; }
     .heartbeat-svg.altered .hb-line { animation: shake-heart 0.3s infinite; filter: drop-shadow(0 0 5px #ff4b4b); }
-    
     .heartbeat-svg.calm { color: #00f2fe; }
     .heartbeat-svg.calm .hb-line { animation: pulse-heart 1.5s infinite ease-in-out; filter: drop-shadow(0 0 5px #00f2fe); }
 
-    @keyframes shake-heart {
-      0% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(1px, -1px) scale(1.05); }
-      100% { transform: translate(-1px, 1px) scale(1); }
-    }
-    @keyframes pulse-heart {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-    }
+    @keyframes shake-heart { 0% { transform: translate(0, 0) scale(1); } 50% { transform: translate(1px, -1px) scale(1.05); } 100% { transform: translate(-1px, 1px) scale(1); } }
+    @keyframes pulse-heart { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+    @keyframes latido { 0% { transform: scale(1); } 15% { transform: scale(1.25); } 30% { transform: scale(1); } 45% { transform: scale(1.15); } 60% { transform: scale(1); } }
+    .icono-latido { display: inline-block; animation: latido 1.5s infinite; transform-origin: center; }
 
     /* --- BARRA FLOTANTE DE PESTAÑAS --- */
-    .bottom-nav {
-      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 400px;
-      background: rgba(18, 22, 28, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border); border-radius: 28px; display: flex; justify-content: space-around; padding: 6px 12px; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6); z-index: 100;
-    }
+    .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 400px; background: rgba(18, 22, 28, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 28px; display: flex; justify-content: space-around; padding: 6px 12px; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6); z-index: 100; }
     .nav-tab { background: transparent; border: none; color: var(--text-dim); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 20px; border-radius: 16px; cursor: pointer; transition: all 0.2s ease; }
     .nav-tab.active { color: var(--accent-cyan); background: rgba(255, 255, 255, 0.06); }
     .nav-icon { font-size: 1.2rem; }
@@ -207,29 +213,49 @@
 </head>
 <body>
 
-  <!-- ==================== PANTALLA DE SEGURIDAD (PIN) ==================== -->
-  <div id="lock-screen" class="lock-overlay">
-    <div class="lock-header">
-      <h2>KIDO CORE</h2>
-      <p>Autenticación requerida</p>
+  <!-- ==================== PANTALLA DE SEGURIDAD ESTILO iOS ==================== -->
+  <div id="lock-screen" class="lock-overlay bg-mountain">
+    
+    <div class="lock-glass-panel">
+      <!-- Reloj y Fecha -->
+      <div class="lock-datetime">
+        <h1 id="lock-time">--:--</h1>
+        <p id="lock-date">Cargando fecha...</p>
+      </div>
+
+      <div class="lock-header">
+        <h2>KIDO CORE</h2>
+      </div>
+      
+      <!-- Contenedor dinámico de puntos PIN -->
+      <div class="pin-dots" id="pin-dots-container">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+
+      <div class="numpad">
+        <button class="num-btn" data-val="1">1</button>
+        <button class="num-btn" data-val="2">2</button>
+        <button class="num-btn" data-val="3">3</button>
+        <button class="num-btn" data-val="4">4</button>
+        <button class="num-btn" data-val="5">5</button>
+        <button class="num-btn" data-val="6">6</button>
+        <button class="num-btn" data-val="7">7</button>
+        <button class="num-btn" data-val="8">8</button>
+        <button class="num-btn" data-val="9">9</button>
+        <button class="num-btn action-btn" data-val="clear">C</button>
+        <button class="num-btn" data-val="0">0</button>
+        <button class="num-btn action-btn" data-val="enter">➔</button>
+      </div>
     </div>
-    <div class="pin-dots">
-      <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+
+    <!-- Selector de Fondos -->
+    <div class="bg-selector-bar">
+      <button class="bg-btn active-bg" data-bg="bg-mountain">🏔️</button>
+      <button class="bg-btn" data-bg="bg-beach">🏖️</button>
+      <button class="bg-btn" data-bg="bg-sunset">🌅</button>
+      <button class="bg-btn" data-bg="bg-galaxy">🌌</button>
     </div>
-    <div class="numpad">
-      <button class="num-btn" data-val="1">1</button>
-      <button class="num-btn" data-val="2">2</button>
-      <button class="num-btn" data-val="3">3</button>
-      <button class="num-btn" data-val="4">4</button>
-      <button class="num-btn" data-val="5">5</button>
-      <button class="num-btn" data-val="6">6</button>
-      <button class="num-btn" data-val="7">7</button>
-      <button class="num-btn" data-val="8">8</button>
-      <button class="num-btn" data-val="9">9</button>
-      <button class="num-btn action-btn" data-val="clear">C</button>
-      <button class="num-btn" data-val="0">0</button>
-      <button class="num-btn action-btn" data-val="enter">➔</button>
-    </div>
+
   </div>
 
   <main class="app-viewport">
@@ -259,12 +285,11 @@
         <button id="send-notes-btn" class="btn-3d">Guardar y Sincronizar</button>
       </div>
 
-      <!-- BOTÓN ROJO: Check-in GPS -->
       <div class="card glass-card">
         <h3>📍 Check-in de Ubicación</h3>
         <p class="pillar-desc" style="margin-top:-8px; margin-bottom:14px;">Registra manualmente tus coordenadas exactas para el mapeo mensual.</p>
         <button id="send-location-btn" class="btn-3d btn-red">
-          🛰️ Guardar Ruta Actual
+          <span class="icono-latido" style="margin-right: 5px;">🛰️</span> Guardar Ruta Actual
         </button>
       </div>
     </section>
@@ -272,25 +297,30 @@
     <!-- ==================== PESTAÑA: NIVEK ==================== -->
     <section id="tab-nivek" class="tab-view">
       
-      <!-- TARJETA LICENCIA DE CAZADOR ANIME (RÉPLICA EXACTA) -->
+      <!-- TARJETA LICENCIA DE CAZADOR ANIME (RÉPLICA FIEL) -->
       <div class="hunter-anime-card">
+        <!-- Parte Superior Negra -->
         <div class="h-top">
+          <!-- Cuadro blanco con la doble X y Diamante -->
           <div class="h-logo-box">
-            <svg viewBox="0 0 100 80" width="100%" height="100%">
-              <!-- X Izquierda y Derecha Gruesa -->
-              <polygon points="15,10 35,10 50,35 65,10 85,10 60,40 85,70 65,70 50,45 35,70 15,70 40,40" fill="#000"/>
+            <svg viewBox="0 0 100 80" style="width:100%; max-height:100px;">
+              <!-- Doble X estilizada -->
+              <path d="M5,0 L35,0 L50,30 L65,0 L95,0 L60,40 L95,80 L65,80 L50,50 L35,80 L5,80 L40,40 Z" fill="#000" />
               <!-- Diamante Rojo Central -->
-              <polygon points="50,15 70,40 50,65 30,40" fill="#d32f2f"/>
+              <polygon points="50,12 72,40 50,68 28,40" fill="#d32f2f" />
             </svg>
           </div>
+          <!-- Código de barras -->
           <div class="h-barcode"></div>
         </div>
+        
+        <!-- Parte Inferior Celeste -->
         <div class="h-bottom">
-          <div class="h-slot">NIVEK</div>
-          <div class="h-slot">2000-0519-EC</div>
-          <div class="h-slot">KIDO CORP</div>
-          <div class="h-slot">ESPECIALISTA</div>
-          <div class="h-slot">KX-9418</div>
+          <div class="h-slot">N I V E K</div>
+          <div class="h-slot h-slot-sm">2000-0519-EC</div>
+          <!-- Cambio solicitado: KIDO CORP -> GUASMO NORTE -->
+          <div class="h-slot h-slot-sm">GUASMO NORTE</div>
+          <div class="h-slot h-slot-sm">ESPECIALISTA / KX-9418</div>
         </div>
       </div>
 
@@ -326,7 +356,6 @@
           </div>
         </article>
 
-        <!-- Tarjeta Estudio -->
         <article class="card glass-card pillar-card">
           <div class="pillar-header">
             <span class="pillar-icon">🧠</span>
@@ -339,7 +368,6 @@
           </div>
         </article>
 
-        <!-- Tarjeta Trabajo -->
         <article class="card glass-card pillar-card">
           <div class="pillar-header">
             <span class="pillar-icon">⚡</span>
@@ -352,7 +380,6 @@
           </div>
         </article>
       </div>
-
     </section>
 
     <!-- Barra de Navegación Inferior -->
@@ -365,42 +392,95 @@
   <script>
     const KidoApp = (() => {
       
-      // 0. SISTEMA DE SEGURIDAD (PIN = 0519)
+      // 0. SISTEMA DE SEGURIDAD (PIN MULTIPLE Y FONDOS)
       const Security = {
-        PIN: "0519",
+        VALID_PINS: ["1234", "0931935795"], // Acepta el PIN corto o la cédula
         currentInput: "",
         init() {
           this.overlay = document.getElementById('lock-screen');
-          this.dots = document.querySelectorAll('.dot');
+          this.dotsContainer = document.getElementById('pin-dots-container');
           this.buttons = document.querySelectorAll('.num-btn');
+          this.bgButtons = document.querySelectorAll('.bg-btn');
+          
+          this.startClock();
           this.bindEvents();
         },
+        startClock() {
+          const updateTime = () => {
+            const now = new Date();
+            const h = now.getHours().toString().padStart(2, '0');
+            const m = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('lock-time').textContent = `${h}:${m}`;
+            
+            const options = { weekday: 'long', month: 'long', day: 'numeric' };
+            document.getElementById('lock-date').textContent = now.toLocaleDateString('es-ES', options);
+          };
+          updateTime();
+          setInterval(updateTime, 1000);
+        },
         bindEvents() {
+          // Teclado PIN
           this.buttons.forEach(btn => {
             btn.addEventListener('click', (e) => {
               if (navigator.vibrate) navigator.vibrate(15);
               this.handleInput(e.currentTarget.dataset.val);
             });
           });
+          
+          // Cambiar Fondos
+          this.bgButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const selectedBg = e.currentTarget.dataset.bg;
+              
+              // Actualizar clases del overlay
+              this.overlay.className = `lock-overlay ${selectedBg}`;
+              
+              // Actualizar estado de los botones
+              this.bgButtons.forEach(b => b.classList.remove('active-bg'));
+              e.currentTarget.classList.add('active-bg');
+              if (navigator.vibrate) navigator.vibrate(10);
+            });
+          });
         },
         handleInput(val) {
-          if (val === 'clear') { this.currentInput = ""; } 
-          else if (val === 'enter') { this.checkPin(); return; } 
-          else { if (this.currentInput.length < 4) this.currentInput += val; }
+          if (val === 'clear') { 
+            this.currentInput = ""; 
+          } 
+          else if (val === 'enter') { 
+            this.checkPin(); return; 
+          } 
+          else { 
+            if (this.currentInput.length < 10) this.currentInput += val; 
+          }
+          
           this.updateDots();
-          if (this.currentInput.length === 4) setTimeout(() => this.checkPin(), 250);
+          
+          // Auto-verificar si coincide con algún PIN exacto
+          if (this.VALID_PINS.includes(this.currentInput)) {
+            setTimeout(() => this.checkPin(), 250);
+          }
         },
         updateDots() {
-          this.dots.forEach((dot, index) => { dot.classList.toggle('active', index < this.currentInput.length); });
+          // Genera puntos dinámicamente según lo que se haya escrito (mínimo 4)
+          const dotsCount = Math.max(4, this.currentInput.length);
+          this.dotsContainer.innerHTML = '';
+          for(let i=0; i < dotsCount; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'dot' + (i < this.currentInput.length ? ' active' : '');
+            this.dotsContainer.appendChild(dot);
+          }
         },
         checkPin() {
-          if (this.currentInput === this.PIN) {
+          if (this.VALID_PINS.includes(this.currentInput)) {
             this.overlay.classList.add('hidden');
           } else {
-            const dotsContainer = document.querySelector('.pin-dots');
-            dotsContainer.classList.add('error-shake');
+            this.dotsContainer.classList.add('error-shake');
             if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
-            setTimeout(() => { dotsContainer.classList.remove('error-shake'); this.currentInput = ""; this.updateDots(); }, 400);
+            setTimeout(() => { 
+              this.dotsContainer.classList.remove('error-shake'); 
+              this.currentInput = ""; 
+              this.updateDots(); 
+            }, 400);
           }
         }
       };
@@ -426,7 +506,7 @@
         save(key, data) { try { localStorage.setItem(key, JSON.stringify(data)); } catch(e) {} }
       };
 
-      // 3. SINCRONIZACIÓN ASÍNCRONA (FormSubmit)
+      // 3. SINCRONIZACIÓN ASÍNCRONA
       const Network = {
         ENDPOINT: 'https://formsubmit.co/ajax/Albankevine845@gmail.com',
         async send(payload) {
@@ -513,7 +593,7 @@
         async submit() {
           if (navigator.vibrate) navigator.vibrate([40, 50, 40]);
           const originalHTML = this.btn.innerHTML;
-          this.btn.innerHTML = '🛰️ Triangulando...'; this.btn.disabled = true;
+          this.btn.innerHTML = '<span class="icono-latido" style="margin-right: 5px;">📡</span> Triangulando...'; this.btn.disabled = true;
           const coords = await GeoLoc.getCoords();
           this.btn.innerHTML = 'Enviando...';
           await Network.send({ _subject: 'Kido App: Check-in GPS', nota: '📍 El usuario ha registrado un punto fijo.', fecha_hora: new Date().toISOString(), ubicacion_gps: `${coords.lat}, ${coords.lng}` });
@@ -532,14 +612,12 @@
           if(this.checkbox && this.hbSvg) {
             this.checkbox.addEventListener('change', () => {
               if(this.checkbox.checked) {
-                // Estado Tranquilo (Medicamento Tomado)
                 this.hbSvg.classList.remove('altered');
                 this.hbSvg.classList.add('calm');
                 this.statusText.textContent = "Ritmo Estable ✅";
                 this.statusText.style.color = "#00f2fe";
                 if (navigator.vibrate) navigator.vibrate([20, 30, 20]);
               } else {
-                // Estado Alterado (Sin Medicamento)
                 this.hbSvg.classList.remove('calm');
                 this.hbSvg.classList.add('altered');
                 this.statusText.textContent = "Ritmo Alterado ⚠️";
@@ -575,7 +653,7 @@
             MoodTracker.init();
             MentalNotes.init();
             LocationCheckIn.init();
-            HeartControl.init(); // Inicia la lógica del corazón
+            HeartControl.init();
             Navigation.init();
           });
         }
