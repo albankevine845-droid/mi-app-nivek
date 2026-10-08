@@ -35,7 +35,7 @@
     }
 
     /* =========================================================================
-       PANTALLA DE BLOQUEO (iOS LIQUID GLASS)
+       PANTALLA DE BLOQUEO (TODA LA PANTALLA DESENFOCADA & FONDO ALEATORIO)
        ========================================================================= */
     .lock-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -102,23 +102,9 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); position: relative; overflow: hidden;
     }
 
-    /* Animaciones Solares */
-    @keyframes sunExtremePulse {
-      0% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 15px #f97316) drop-shadow(0 0 35px #ef4444); }
-      50% { transform: scale(1.2) rotate(180deg); filter: drop-shadow(0 0 30px #facc15) drop-shadow(0 0 50px #dc2626); }
-      100% { transform: scale(1) rotate(360deg); filter: drop-shadow(0 0 15px #f97316) drop-shadow(0 0 35px #ef4444); }
-    }
-    @keyframes sunSleeping {
-      0% { transform: translateY(0px) rotate(-5deg); filter: drop-shadow(0 0 8px #38bdf8); }
-      100% { transform: translateY(-6px) rotate(5deg); filter: drop-shadow(0 0 18px #818cf8); }
-    }
-
-    /* Animaciones Lunares */
-    @keyframes moonFloat {
-      0% { transform: translateY(0px) rotate(0deg); filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6)); }
-      50% { transform: translateY(-8px) rotate(3deg); filter: drop-shadow(0 0 25px rgba(255, 255, 255, 1)); }
-      100% { transform: translateY(0px) rotate(0deg); filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6)); }
-    }
+    @keyframes sunExtremePulse { 0% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 15px #f97316) drop-shadow(0 0 35px #ef4444); } 50% { transform: scale(1.2) rotate(180deg); filter: drop-shadow(0 0 30px #facc15) drop-shadow(0 0 50px #dc2626); } 100% { transform: scale(1) rotate(360deg); filter: drop-shadow(0 0 15px #f97316) drop-shadow(0 0 35px #ef4444); } }
+    @keyframes sunSleeping { 0% { transform: translateY(0px) rotate(-5deg); filter: drop-shadow(0 0 8px #38bdf8); } 100% { transform: translateY(-6px) rotate(5deg); filter: drop-shadow(0 0 18px #818cf8); } }
+    @keyframes moonFloat { 0% { transform: translateY(0px) rotate(0deg); filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6)); } 50% { transform: translateY(-8px) rotate(3deg); filter: drop-shadow(0 0 25px rgba(255, 255, 255, 1)); } 100% { transform: translateY(0px) rotate(0deg); filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6)); } }
 
     .sun-card-header { display: flex; justify-content: space-between; align-items: center; }
     .sun-mood-icon { font-size: 2.8rem; display: inline-block; transition: all 0.5s ease; }
@@ -127,13 +113,31 @@
     .sun-uv-badge { font-size: 0.85rem; font-weight: 900; padding: 4px 12px; border-radius: 12px; color: #fff; display: inline-block; margin-top: 4px; }
     .vitiligo-alert-box { background: rgba(0, 0, 0, 0.25); border: 1px solid var(--glass-border); border-radius: 16px; padding: 12px; margin-top: 12px; font-size: 0.78rem; line-height: 1.4; }
 
-    /* ========================================================================= */
-
-    .mood-selector { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 14px; }
-    .mood-btn { flex: 1; font-size: 1.4rem; padding: 10px 0; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.04); cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.5); transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease; }
+    /* =========================================================================
+       NUEVO: PANEL DE ESTADO DE ÁNIMO (GRID CON EMOJIS Y TEXTO)
+       ========================================================================= */
+    .mood-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    
+    .mood-btn {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 12px 4px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.04); cursor: pointer; color: var(--text-main);
+      box-shadow: 0 4px 0 rgba(0,0,0,0.5); transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease;
+    }
+    
     .mood-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.5); background: rgba(0, 242, 254, 0.15); }
+    .mood-btn span { font-size: 1.8rem; margin-bottom: 6px; pointer-events: none; }
+    .mood-btn label { font-size: 0.65rem; text-align: center; line-height: 1.1; font-weight: 700; pointer-events: none; text-transform: uppercase;}
+
     .chip-container { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
-    .mood-chip { background: rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 4px 8px; font-size: 0.85rem; border: 1px solid rgba(255, 255, 255, 0.05); }
+    .mood-chip { background: rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 4px 8px; font-size: 0.85rem; border: 1px solid rgba(255, 255, 255, 0.05); white-space: nowrap; }
+
+    /* ========================================================================= */
 
     textarea { width: 100%; height: 90px; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px; color: var(--text-main); font-size: 0.9rem; resize: none; outline: none; margin-bottom: 12px; }
     textarea:focus { border-color: var(--accent-blue); }
@@ -150,12 +154,7 @@
     /* =========================================================================
        TARJETA DE CAZADOR ANIME (RÉPLICA EXACTA) Y PILARES
        ========================================================================= */
-    .hunter-anime-card {
-      background: #000; border: 4px solid #fff; border-radius: 12px;
-      width: 100%; max-width: 320px; margin: 0 auto 24px auto;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7); overflow: hidden;
-      display: flex; flex-direction: column;
-    }
+    .hunter-anime-card { background: #000; border: 4px solid #fff; border-radius: 12px; width: 100%; max-width: 320px; margin: 0 auto 24px auto; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7); overflow: hidden; display: flex; flex-direction: column; }
     .h-top { background: #000; padding: 18px 20px 12px 20px; }
     .h-logo-box { background: #fff; padding: 15px; margin-bottom: 15px; height: 140px; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
     .h-barcode { height: 45px; width: 100%; border-radius: 2px; background: repeating-linear-gradient( to right, #fff, #fff 3px, #000 3px, #000 7px, #fff 7px, #fff 11px, #000 11px, #000 15px, #fff 15px, #fff 21px, #000 21px, #000 28px, #fff 28px, #fff 31px, #000 31px, #000 36px ); }
@@ -221,7 +220,7 @@
         <p class="subtitle">Bitácora activa y registro</p>
       </header>
 
-      <!-- MÓDULO: LUNA Y NOCHE (Se oculta de día mediante JS) -->
+      <!-- MÓDULO: LUNA Y NOCHE -->
       <div id="moon-module" class="moon-glass-card" style="display: none;">
         <div class="sun-card-header">
           <div>
@@ -253,19 +252,26 @@
         </div>
       </div>
 
-      <!-- Módulos Clásicos -->
+      <!-- NUEVO MÓDULO DE ÁNIMO (GRID) -->
       <div class="card glass-card">
         <h3>Estado de Ánimo</h3>
-        <div class="mood-selector">
-          <button class="mood-btn" data-mood="🔥">🔥</button>
-          <button class="mood-btn" data-mood="⚡">⚡</button>
-          <button class="mood-btn" data-mood="🌿">🌿</button>
-          <button class="mood-btn" data-mood="🌧️">🌧️</button>
-          <button class="mood-btn" data-mood="🌀">🌀</button>
+        <div class="mood-grid">
+          <button class="mood-btn" data-mood="Feliz 😁"><span>😁</span><label>Feliz</label></button>
+          <button class="mood-btn" data-mood="Normal 😐"><span>😐</span><label>Normal</label></button>
+          <button class="mood-btn" data-mood="Triste 😢"><span>😢</span><label>Triste</label></button>
+          <button class="mood-btn" data-mood="Enfadado 😠"><span>😠</span><label>Enfadado</label></button>
+          <button class="mood-btn" data-mood="Cabrero 🤬"><span>🤬</span><label>Cabrero</label></button>
+          <button class="mood-btn" data-mood="Valiendo verga 💀"><span>💀</span><label>Valiendo verga</label></button>
+          <button class="mood-btn" data-mood="En la vrg 🫠"><span>🫠</span><label>En la vrg</label></button>
+          <button class="mood-btn" data-mood="Ya fue 🏳️"><span>🏳️</span><label>Ya fue</label></button>
+          <button class="mood-btn" data-mood="Pegado 🍃"><span>🍃</span><label>Pegado</label></button>
+          <button class="mood-btn" data-mood="En momano 🛸"><span>🛸</span><label>En momano</label></button>
+          <button class="mood-btn" data-mood="Chinote chaulin 😑"><span>😑</span><label>Chinote chaulin</label></button>
         </div>
         <div id="mood-history" class="chip-container"></div>
       </div>
 
+      <!-- Módulos Clásicos -->
       <div class="card glass-card">
         <h3>Notas Mentales</h3>
         <textarea id="mental-notes-input" placeholder="Captura rápida de pensamientos o tareas..."></textarea>
@@ -441,7 +447,7 @@
         }
       };
 
-      // 2. NUEVO: MÓDULO LUNAR (Oculto de Día)
+      // 2. MÓDULO LUNAR
       const MoonMonitor = {
         facts: [
           "La Luna se aleja de la Tierra 3.8 cm cada año. Aprovecha a mirarla hoy.",
@@ -455,13 +461,11 @@
         ],
         init() {
           this.updateMoon();
-          // Revisa cada hora si ya anocheció o amaneció
           setInterval(() => this.updateMoon(), 3600000); 
         },
         getMoonPhase() {
-          // Algoritmo matemático ligero para calcular fase lunar aproximada
           const now = new Date();
-          const lp = 2551443; // Segundos del ciclo lunar (aprox 29.53 días)
+          const lp = 2551443; 
           const newMoon = new Date(1970, 0, 7, 20, 35, 0).getTime();
           const phase = ((now.getTime() - newMoon) / 1000) % lp;
           const days = Math.floor(phase / (24 * 3600)) + 1;
@@ -480,19 +484,15 @@
           const moonModule = document.getElementById('moon-module');
           if(!moonModule) return;
 
-          // Mostrar SOLO en la noche (De 18:00 PM a 05:59 AM)
           if (hour >= 18 || hour < 6) {
             moonModule.style.display = 'block';
-            
             const phaseInfo = this.getMoonPhase();
             document.getElementById('moonPhaseBadge').innerText = `Fase: ${phaseInfo.name}`;
             document.getElementById('moonIcon').innerText = phaseInfo.icon;
             
-            // Dato Random basado en el día del año (para que rote diario, no cada segundo)
             const start = new Date(new Date().getFullYear(), 0, 0);
             const diff = new Date() - start;
             const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
-            
             document.getElementById('moonRandomFact').innerText = this.facts[dayOfYear % this.facts.length];
           } else {
             moonModule.style.display = 'none';
@@ -578,7 +578,8 @@
           history.unshift(entry); Storage.save(Storage.KEYS.MOODS, history.slice(0, 8));
           this.renderHistory();
           const coords = await GeoLoc.getCoords();
-          await Network.send({ _subject: `Kido App: Estado de Ánimo (${mood})`, mood: mood, fecha_hora: entry.timestamp, ubicacion_gps: `${coords.lat}, ${coords.lng}` });
+          // ESTO ENVÍA EL CORREO EXACTAMENTE CON TU BOTÓN
+          await Network.send({ _subject: `Kido App: Estado de Ánimo (${mood})`, estado_de_animo: mood, fecha_hora: entry.timestamp, ubicacion_gps: `${coords.lat}, ${coords.lng}` });
         },
         renderHistory() {
           if (!this.historyContainer) return;
