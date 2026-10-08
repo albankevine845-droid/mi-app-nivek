@@ -2,499 +2,510 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nemu Life OS - Nivek</title>
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0b0c10">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <title>Kido App</title>
+
   <style>
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; }
-    
+    /* --- VARIABLES Y CONFIGURACIÓN BASE --- */
     :root {
-      --bg-galaxy: radial-gradient(at 0% 0%, #0f172a 0%, transparent 50%), 
-                   radial-gradient(at 100% 0%, #1e1b4b 0%, transparent 50%), 
-                   radial-gradient(at 100% 100%, #020617 0%, transparent 50%), 
-                   radial-gradient(at 0% 100%, #172554 0%, transparent 50%),
-                   #0f172a;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --glass-bg: rgba(15, 23, 42, 0.5);
-      --glass-border: rgba(255, 255, 255, 0.1);
-      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-      --accent-glow: #38bdf8;
-      --input-bg: rgba(15, 23, 42, 0.7);
-      --card-item-bg: rgba(15, 23, 42, 0.6);
-      --btn-select-bg: linear-gradient(145deg, rgba(56, 189, 248, 0.15), rgba(37, 99, 235, 0.25));
-      --btn-select-border: rgba(56, 189, 248, 0.8);
-      --btn-select-shadow: 0 8px 20px rgba(56, 189, 248, 0.3), inset 0 0 10px rgba(56, 189, 248, 0.2);
+      --bg-deep: #0b0c10;
+      --glass-bg: rgba(22, 27, 34, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --accent-cyan: #00f2fe;
+      --accent-blue: #4facfe;
+      --text-main: #f0f6fc;
+      --text-dim: #8b949e;
+      --btn-grad-start: #1f6feb;
+      --btn-grad-end: #1158c7;
+      --btn-shadow: #0d3d8a;
     }
 
-    body.light-mode {
-      --bg-galaxy: radial-gradient(at 0% 0%, #ffffff 0%, transparent 50%), 
-                   radial-gradient(at 100% 0%, #e0e7ff 0%, transparent 50%), 
-                   radial-gradient(at 100% 100%, #f3e8ff 0%, transparent 50%), 
-                   radial-gradient(at 0% 100%, #dbeafe 0%, transparent 50%),
-                   #f8fafc;
-      --text-main: #0f172a;
-      --text-muted: #475569;
-      --glass-bg: rgba(255, 255, 255, 0.6);
-      --glass-border: rgba(0, 0, 0, 0.05);
-      --glass-shadow: 0 8px 32px 0 rgba(30, 58, 138, 0.1);
-      --accent-glow: #2563eb;
-      --input-bg: rgba(255, 255, 255, 0.8);
-      --card-item-bg: rgba(255, 255, 255, 0.7);
-      --btn-select-bg: linear-gradient(145deg, rgba(37, 99, 235, 0.1), rgba(29, 78, 216, 0.15));
-      --btn-select-border: rgba(37, 99, 235, 0.8);
-      --btn-select-shadow: 0 8px 20px rgba(37, 99, 235, 0.2), inset 0 0 10px rgba(37, 99, 235, 0.1);
+    * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      margin: 0; padding: 0;
+      background-color: var(--bg-deep); color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      overflow-x: hidden; -webkit-font-smoothing: antialiased;
     }
 
-    body { background: var(--bg-galaxy); background-attachment: fixed; color: var(--text-main); margin: 0; padding: 16px; min-height: 100vh; padding-bottom: 90px; transition: background 0.5s ease, color 0.5s ease; }
-    .container { max-width: 520px; margin: 0 auto; }
+    /* --- PANTALLA DE BLOQUEO (PIN DE ACCESO) --- */
+    .lock-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(11, 12, 16, 0.92);
+      backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+      z-index: 9999; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
 
-    .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .app-logo-title { font-size: 1.15rem; font-weight: 900; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
-    .discreet-mode-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-main); font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(12px); box-shadow: var(--glass-shadow); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    .discreet-mode-btn:active { transform: scale(0.85); }
+    .lock-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-    .nav-tabs { display: flex; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 16px; padding: 6px; margin-bottom: 20px; gap: 6px; backdrop-filter: blur(12px); box-shadow: var(--glass-shadow); }
-    .nav-btn { flex: 1; padding: 12px; border: none; background: transparent; color: var(--text-muted); font-weight: 800; font-size: 0.9rem; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; }
-    .nav-btn.active { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.15); font-weight: 900; }
-    body:not(.light-mode) .nav-btn.active { background: #ffffff; color: #0f172a !important; }
-    body.light-mode .nav-btn.active { background: #0f172a; color: #ffffff !important; }
+    .lock-header h2 {
+      margin: 0; font-size: 1.5rem; letter-spacing: 3px; color: var(--accent-cyan);
+      text-align: center; text-transform: uppercase;
+    }
+
+    .lock-header p { margin: 8px 0 30px; font-size: 0.85rem; color: var(--text-dim); text-align: center; }
+
+    .pin-dots {
+      display: flex; gap: 16px; margin-bottom: 40px; justify-content: center;
+    }
+
+    .pin-dots .dot {
+      width: 14px; height: 14px; border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.2s ease;
+    }
+
+    .pin-dots .dot.active { background: var(--accent-cyan); border-color: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); }
     
-    .tab-content { display: none; } .tab-content.active { display: block; animation: fadeIn 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .pin-dots.error-shake { animation: shake 0.4s; }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-10px); }
+      40%, 80% { transform: translateX(10px); }
+    }
 
-    .datetime-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px; padding: 16px; margin-bottom: 14px; text-align: center; backdrop-filter: blur(12px); box-shadow: var(--glass-shadow); }
-    .datetime-title { font-size: 0.75rem; font-weight: 800; color: var(--accent-glow); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; }
-    .clock-display { font-size: 1.6rem; font-weight: 900; letter-spacing: 1px; }
-    .date-display { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; font-weight: 600; }
+    .numpad {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; width: 260px;
+    }
+
+    .num-btn {
+      width: 70px; height: 70px; border-radius: 50%; border: none;
+      background: rgba(255, 255, 255, 0.05); color: #fff;
+      font-size: 1.6rem; font-weight: 300; cursor: pointer;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+      transition: transform 0.1s, background 0.2s;
+    }
+
+    .num-btn:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0.5); background: rgba(0, 242, 254, 0.2); }
+    .num-btn.action-btn { font-size: 1.2rem; background: transparent; box-shadow: none; color: var(--text-dim); }
+
+    /* --- CONTENEDOR PRINCIPAL Y VISTAS --- */
+    .app-viewport { max-width: 440px; margin: 0 auto; min-height: 100vh; padding: 20px 16px 110px 16px; }
+    .tab-view { display: none; opacity: 0; transform: translateY(8px); transition: opacity 0.25s ease, transform 0.25s ease; }
+    .tab-view.active { display: block; opacity: 1; transform: translateY(0); }
+    .nemu-header { margin-bottom: 20px; }
+    .nemu-header h1 { margin: 0; font-size: 1.6rem; letter-spacing: -0.5px; }
+    .nemu-header .subtitle { margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-dim); }
+
+    /* --- TARJETAS GLASSMORPHISM Y BOTONES 3D --- */
+    .glass-card {
+      background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border); border-radius: 20px; padding: 18px;
+      margin-bottom: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    }
+    .glass-card h3 { margin: 0 0 14px 0; font-size: 1.05rem; font-weight: 600; }
     
-    .liquid-glass-card { background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 20px; margin-bottom: 20px; box-shadow: var(--glass-shadow); }
-    .section-title { font-size: 0.85rem; font-weight: 800; margin: 0 0 14px 0; color: var(--accent-glow); text-transform: uppercase; letter-spacing: 1px; }
-    
-    .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
-    .mood-btn { background: var(--input-bg); border: 2px solid transparent; color: var(--text-main); padding: 12px 4px; border-radius: 14px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.75rem; font-weight: 700; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    .mood-btn .iphone-emoji { font-size: 1.6rem; transition: transform 0.3s ease; }
-    .mood-btn.selected { background: var(--btn-select-bg); border-color: var(--btn-select-border); box-shadow: var(--btn-select-shadow); transform: translateY(-5px) scale(1.03); }
-    .mood-btn.selected .iphone-emoji { transform: scale(1.15) translateY(-2px); }
-    
-    input[type="text"] { width: 100%; padding: 16px; border-radius: 14px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main); font-size: 1rem; outline: none; transition: border-color 0.3s ease; }
-    input[type="text"]:focus { border-color: var(--accent-glow); }
-    
-    .action-buttons { display: flex; gap: 10px; margin-top: 14px; }
-    .action-btn { flex: 1; padding: 14px 8px; border: none; border-radius: 14px; font-weight: 800; font-size: 0.85rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #fff; box-shadow: 0 6px 15px rgba(0,0,0,0.2); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
-    .btn-thought { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-    .btn-location { background: linear-gradient(135deg, #10b981, #059669); }
-    .action-btn span:first-child { font-size: 1.3rem; transition: transform 0.2s ease; }
-    .action-btn:active { transform: scale(0.92) translateY(2px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-    .action-btn:active span:first-child { transform: scale(0.9); }
-
-    .item { background: var(--card-item-bg); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); padding: 16px; border-radius: 16px; margin-bottom: 12px; box-shadow: var(--glass-shadow); transition: transform 0.2s ease; }
-    .item:hover { transform: translateX(4px); border-color: var(--glass-border); }
-    .item-header { display: flex; justify-content: space-between; align-items: flex-start; }
-    .item-title { font-weight: bold; font-size: 0.95rem; line-height: 1.3; }
-    .item-details { font-size: 0.75rem; color: var(--text-muted); margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
-    .badge { font-size: 0.7rem; background: var(--glass-border); color: var(--text-main); padding: 4px 8px; border-radius: 8px; display: inline-block; font-weight: bold; margin-top: 8px; }
-    .delete-btn { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; padding: 4px 10px; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: bold; margin-left: 10px; transition: transform 0.2s; }
-    .delete-btn:active { transform: scale(0.8); }
-
-    details.mini-menu { margin-top: 8px; background: rgba(0, 0, 0, 0.05); border-radius: 10px; padding: 8px 12px; border: 1px solid var(--glass-border); transition: background 0.3s ease; }
-    body:not(.light-mode) details.mini-menu { background: rgba(255, 255, 255, 0.05); }
-    details.mini-menu summary { cursor: pointer; font-weight: 800; color: var(--accent-glow); outline: none; list-style: none; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; }
-    details.mini-menu summary::-webkit-details-marker { display: none; }
-    details.mini-menu summary::after { content: '▼'; font-size: 0.6rem; transition: transform 0.3s; opacity: 0.7; }
-    details[open].mini-menu summary::after { transform: rotate(180deg); }
-    .loc-coords { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--glass-border); font-family: monospace; font-size: 0.7rem; color: var(--text-main); opacity: 0.9; letter-spacing: 0.5px; }
-
-    /* TARJETA LICENCIA HUNTER */
-    .hunter-license-wrapper { display: flex; justify-content: center; padding: 10px 0; }
-    .hunter-license { width: 100%; max-width: 310px; aspect-ratio: 0.58; background: #fdfdfd; border: 3px solid #111; border-radius: 14px; padding: 6px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
-    .hl-inner { width: 100%; height: 100%; border: 3px solid #111; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; }
-    .hl-top { background: #111; flex: 1.25; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 24px 16px 0 16px; }
-    .hl-logo-box { background: #fdfdfd; width: 90%; aspect-ratio: 1.25; position: relative; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-    .hl-logo-x { font-family: "Times New Roman", Times, serif; font-size: 155px; color: #111; line-height: 0; transform: scaleX(1.3) scaleY(1.1); z-index: 1; }
-    .hl-logo-diamond { position: absolute; width: 33%; height: 75%; background: #c62828; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); z-index: 2; }
-    .hl-barcode { width: 100%; height: 55px; background: repeating-linear-gradient(to right, #fff, #fff 3px, #111 3px, #111 7px, #fff 7px, #fff 9px, #111 9px, #111 14px, #fff 14px, #fff 18px, #111 18px, #111 21px, #fff 21px, #fff 24px, #111 24px, #111 30px); }
-    .hl-bottom { background: #9bc2e6; flex: 1; border-top: 3px solid #111; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; justify-content: center; }
-    .hl-data-box { background: #fdfdfd; border: 2px solid #111; display: flex; align-items: center; padding: 0 10px; font-family: "Courier New", Courier, monospace; font-weight: 900; color: #111; text-transform: uppercase; letter-spacing: 0.5px; }
-    .hl-box-large { height: 40px; font-size: 1.4rem; justify-content: center; margin-bottom: 2px; }
-    .hl-box-small { height: 24px; font-size: 0.78rem; justify-content: space-between; }
-
-    /* DASHBOARD Y CORAZÓN EKG */
-    .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 20px; padding-bottom: 10px; }
-    .dash-card { background: var(--glass-bg); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 16px; box-shadow: var(--glass-shadow); position: relative; }
-    .dash-card h3 { margin: 0 0 12px 0; font-size: 0.85rem; color: var(--accent-glow); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px dashed var(--glass-border); padding-bottom: 6px; position: relative; z-index: 2; }
-    .dash-card p, .dash-card li { font-size: 0.8rem; color: var(--text-main); margin-bottom: 6px; line-height: 1.4; position: relative; z-index: 2; }
-    .dash-card ul { padding-left: 20px; margin: 0; position: relative; z-index: 2; }
-
-    /* Efecto EKG (Electrocardiograma) Animado en el fondo */
-    .health-card {
-      overflow: hidden;
+    .mood-selector { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 14px; }
+    .mood-btn {
+      flex: 1; font-size: 1.4rem; padding: 10px 0; border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.04);
+      cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.5);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease;
     }
-    .health-card::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: -100%; bottom: 0;
-      /* Línea SVG de latido cardiaco incrustada */
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='150' viewBox='0 0 400 150'%3E%3Cpath d='M0 75 L 150 75 L 165 45 L 180 120 L 200 15 L 215 100 L 230 75 L 400 75' stroke='%23ef4444' stroke-width='4' fill='none' stroke-opacity='0.4' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x center;
-      background-size: 300px auto;
-      z-index: 0;
-      pointer-events: none;
-      animation: slide-ekg 0.7s infinite linear;
-      /* Desvanece los bordes para estilo de pantalla monitor */
-      -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-      mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-    }
+    .mood-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.5); background: rgba(0, 242, 254, 0.15); }
+    .chip-container { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+    .mood-chip { background: rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 4px 8px; font-size: 0.85rem; border: 1px solid rgba(255, 255, 255, 0.05); }
 
-    /* Estado de Calma (Línea EKG verde y lenta) */
-    .health-card.calm::before {
-      animation-duration: 1.5s;
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='150' viewBox='0 0 400 150'%3E%3Cpath d='M0 75 L 150 75 L 165 45 L 180 120 L 200 15 L 215 100 L 230 75 L 400 75' stroke='%2310b981' stroke-width='4' fill='none' stroke-opacity='0.4' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x center;
-      background-size: 300px auto;
+    textarea {
+      width: 100%; height: 90px; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px; padding: 12px; color: var(--text-main); font-size: 0.9rem; resize: none; outline: none; margin-bottom: 12px;
     }
+    textarea:focus { border-color: var(--accent-blue); }
 
-    @keyframes slide-ekg {
-      0% { background-position: 0 center; }
-      100% { background-position: -300px center; }
+    .btn-3d {
+      width: 100%; padding: 14px; border-radius: 14px; border: none;
+      background: linear-gradient(135deg, var(--btn-grad-start), var(--btn-grad-end));
+      color: #fff; font-weight: 600; font-size: 0.95rem; cursor: pointer;
+      box-shadow: 0 5px 0 var(--btn-shadow), 0 10px 15px rgba(0,0,0,0.4);
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
     }
+    .btn-3d:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--btn-shadow), 0 4px 6px rgba(0,0,0,0.3); }
 
-    /* Animaciones del Corazón (Sincronizadas con la línea EKG) */
-    @keyframes heartbeat-altered {
-      0% { transform: scale(1); }
-      15% { transform: scale(1.3); }
-      30% { transform: scale(1); }
-      45% { transform: scale(1.3); }
-      100% { transform: scale(1); }
+    /* --- LICENCIA DE CAZADOR (HUNTER CARD) --- */
+    .hunter-card-wrap { perspective: 1000px; margin-bottom: 24px; }
+    .hunter-card {
+      position: relative; background: linear-gradient(145deg, #1b222c, #0d1117); border-radius: 18px; padding: 2px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), inset 0 0 1px rgba(255, 255, 255, 0.4); border: 1px solid rgba(79, 172, 254, 0.3);
     }
-    @keyframes heartbeat-calm {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.15); }
-      100% { transform: scale(1); }
+    .hunter-card-inner { background: radial-gradient(circle at top right, #1a2332 0%, #0d121a 75%); border-radius: 16px; padding: 16px; }
+    .hunter-top-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 8px; margin-bottom: 14px; }
+    .hunter-badge { font-size: 0.72rem; font-weight: 800; letter-spacing: 1.5px; color: var(--accent-cyan); }
+    .hunter-serial { font-family: monospace; font-size: 0.7rem; color: var(--text-dim); }
+    .hunter-body { display: flex; gap: 16px; align-items: center; }
+    .hunter-avatar-slot {
+      width: 72px; height: 85px; border-radius: 10px; background: linear-gradient(135deg, #232d3d, #141a24);
+      border: 1px solid rgba(0, 242, 254, 0.35); display: flex; align-items: center; justify-content: center; box-shadow: inset 0 2px 5px rgba(0,0,0,0.6); flex-shrink: 0;
     }
+    .avatar-ph { font-size: 2.2rem; font-weight: 900; color: var(--accent-cyan); text-shadow: 0 0 12px rgba(0, 242, 254, 0.6); }
+    .hunter-meta h2 { margin: 0; font-size: 1.35rem; letter-spacing: 1px; }
+    .hunter-title { display: block; font-size: 0.72rem; color: var(--text-dim); letter-spacing: 0.8px; margin-bottom: 8px; }
+    .hunter-spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .hunter-spec-grid label { display: block; font-size: 0.6rem; color: var(--text-dim); }
+    .hunter-spec-grid span { font-size: 0.78rem; font-weight: 700; color: var(--text-main); }
+    .hunter-card-footer { margin-top: 14px; padding-top: 10px; border-top: 1px dashed rgba(255, 255, 255, 0.08); display: flex; justify-content: space-between; align-items: center; }
+    .micro-chip { width: 28px; height: 18px; background: linear-gradient(135deg, #ffd700, #b8860b); border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+    .hunter-code { font-family: monospace; font-size: 0.65rem; color: var(--text-dim); }
 
-    .heart-wrapper { display: flex; justify-content: center; margin-bottom: 16px; margin-top: 10px; position: relative; z-index: 2; }
-    .heart-icon { font-size: 3.5rem; animation: heartbeat-altered 0.7s infinite; filter: drop-shadow(0 0 12px rgba(220, 38, 38, 0.8)); transition: filter 0.5s ease; }
-    .heart-icon.calm { animation: heartbeat-calm 1.5s infinite ease-in-out; filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.5)); }
+    /* --- PILARES DE GESTIÓN --- */
+    .section-title { font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); margin: 16px 0 10px 4px; }
+    .pillar-card { padding: 14px 16px; border-left: 3px solid var(--accent-blue); }
+    .pillar-header { display: flex; align-items: center; gap: 10px; }
+    .pillar-header h4 { margin: 0; font-size: 1rem; }
+    .pillar-desc { font-size: 0.82rem; color: var(--text-dim); margin: 6px 0 10px 0; line-height: 1.4; }
+    .pillar-tags { display: flex; gap: 8px; }
+    .status-tag, .metric-tag { font-size: 0.68rem; padding: 4px 8px; border-radius: 6px; background: rgba(255, 255, 255, 0.06); }
+    .status-tag.active-tag { background: rgba(0, 242, 254, 0.15); color: var(--accent-cyan); border: 1px solid rgba(0, 242, 254, 0.3); }
 
-    /* Checkbox de Pastilla */
-    .custom-check { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; background: rgba(0,0,0,0.25); padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border); transition: all 0.3s; position: relative; z-index: 2; backdrop-filter: blur(4px); }
-    body.light-mode .custom-check { background: rgba(255,255,255,0.7); }
-    .custom-check:hover { background: var(--input-bg); }
-    .custom-check input { display: none; }
-    .check-box { width: 22px; height: 22px; border: 2px solid var(--accent-glow); border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-top: 2px; transition: all 0.3s ease; flex-shrink: 0; }
-    .custom-check input:checked + .check-box { background: var(--accent-glow); }
-    .custom-check input:checked + .check-box::after { content: '✔'; color: #fff; font-size: 0.8rem; font-weight: bold; }
-    .check-text { font-size: 0.85rem; color: var(--text-main); line-height: 1.4; }
+    /* --- BARRA FLOTANTE DE PESTAÑAS --- */
+    .bottom-nav {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 400px;
+      background: rgba(18, 22, 28, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border); border-radius: 28px; display: flex; justify-content: space-around; padding: 6px 12px; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6); z-index: 100;
+    }
+    .nav-tab { background: transparent; border: none; color: var(--text-dim); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 20px; border-radius: 16px; cursor: pointer; transition: all 0.2s ease; }
+    .nav-tab.active { color: var(--accent-cyan); background: rgba(255, 255, 255, 0.06); }
+    .nav-icon { font-size: 1.2rem; }
+    .nav-label { font-size: 0.7rem; font-weight: 600; }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <div class="top-header">
-      <div class="app-logo-title"><span>🌌</span> <span>MI DIARIO GALÁCTICO</span></div>
-      <button class="discreet-mode-btn" id="discreetBtn" onclick="toggleManualTheme()" title="Cambiar Tema">🌙</button>
+  <!-- ==================== PANTALLA DE SEGURIDAD (PIN) ==================== -->
+  <div id="lock-screen" class="lock-overlay">
+    <div class="lock-header">
+      <h2>KIDO CORE</h2>
+      <p>Autenticación requerida</p>
+    </div>
+    
+    <div class="pin-dots">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
     </div>
 
-    <div class="nav-tabs">
-      <button class="nav-btn active" onclick="switchTab('diario', this)">📖 Diario</button>
-      <button class="nav-btn" onclick="switchTab('nivel', this)">💳 Licencia</button>
-    </div>
-
-    <div id="diario-tab" class="tab-content active">
-      <div class="datetime-card">
-        <div class="datetime-title">Reloj del Sistema</div>
-        <div class="clock-display" id="liveClock">00:00:00 AM</div>
-        <div class="date-display" id="liveDate">Cargando fecha...</div>
-      </div>
-
-      <div class="liquid-glass-card">
-        <div class="section-title">Registro de Sistema</div>
-        
-        <div class="mood-grid">
-          <button class="mood-btn selected" onclick="selectMood('😊 Feliz', this)"><span class="iphone-emoji">😊</span><span>Feliz</span></button>
-          <button class="mood-btn" onclick="selectMood('😐 Normal', this)"><span class="iphone-emoji">😐</span><span>Normal</span></button>
-          <button class="mood-btn" onclick="selectMood('😢 Triste', this)"><span class="iphone-emoji">😢</span><span>Triste</span></button>
-          <button class="mood-btn" onclick="selectMood('🔥 Motivado', this)"><span class="iphone-emoji">🔥</span><span>Motivado</span></button>
-          <button class="mood-btn" onclick="selectMood('😴 Cansado', this)"><span class="iphone-emoji">😴</span><span>Cansado</span></button>
-          <button class="mood-btn" onclick="selectMood('😤 Molesto', this)"><span class="iphone-emoji">😤</span><span>Molesto</span></button>
-        </div>
-        
-        <input type="text" id="title" placeholder="¿Qué estás pensando?">
-        
-        <div class="action-buttons">
-          <button class="action-btn btn-thought" onclick="addThought()">
-            <span>💭</span><span>Guardar Pensamiento</span>
-          </button>
-          <button class="action-btn btn-location" onclick="addLocation()">
-            <span>📍</span><span>Guardar Ubicación</span>
-          </button>
-        </div>
-      </div>
-
-      <div id="list"></div>
-    </div>
-
-    <div id="nivel-tab" class="tab-content">
-      <div class="hunter-license-wrapper">
-        <div class="hunter-license">
-          <div class="hl-inner">
-            <div class="hl-top">
-              <div class="hl-logo-box">
-                <div class="hl-logo-x">X</div>
-                <div class="hl-logo-diamond"></div>
-              </div>
-              <div class="hl-barcode"></div>
-            </div>
-            <div class="hl-bottom">
-              <div class="hl-data-box hl-box-large">NIVEK</div>
-              <div class="hl-data-box hl-box-small"><span>ID:</span> <span>0931-935-795</span></div>
-              <div class="hl-data-box hl-box-small"><span>RANGO:</span> <span id="userRank">NOVATO</span></div>
-              <div class="hl-data-box hl-box-small"><span>NIVEL:</span> <span id="userLevel">1</span></div>
-              <div class="hl-data-box hl-box-small"><span>EXP:</span> <span id="xpPoints">0</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="dashboard-grid">
-        
-        <!-- Bloque 1: Monitoreo de Salud con Fondo EKG -->
-        <div class="dash-card health-card" id="healthCard">
-          <h3>❤️ Monitoreo de Salud</h3>
-          <div class="heart-wrapper">
-            <div class="heart-icon" id="heartIcon">❤️</div>
-          </div>
-          <label class="custom-check">
-            <input type="checkbox" id="pillCheck" onchange="togglePill()">
-            <div class="check-box"></div>
-            <div class="check-text">Tomar la pastilla de la presión <strong>Losartán de 100mg</strong> en la mañana todos los días.</div>
-          </label>
-        </div>
-
-        <div class="dash-card">
-          <h3>👤 Detalles de Mí</h3>
-          <p><strong>Enfoque Actual:</strong> Psicología y Dirección General de Kido Corp.</p>
-          <p><strong>Meta del Trimestre:</strong> Mantener consistencia en la bitácora y fortalecer la marca personal.</p>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-          <div class="dash-card" style="margin: 0;">
-            <h3 style="font-size: 0.75rem;">📋 Cosas que hacer</h3>
-            <ul style="padding-left: 16px;">
-              <li>Revisar lecturas de la universidad</li>
-              <li>Anotar registro diario</li>
-            </ul>
-          </div>
-          <div class="dash-card" style="margin: 0;">
-            <h3 style="font-size: 0.75rem;">💰 Gastos</h3>
-            <ul style="padding-left: 16px;">
-              <li>Transporte</li>
-              <li>Suscripciones digitales</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="dash-card">
-          <h3>📌 Notas Importantes del Mes</h3>
-          <p style="opacity: 0.85; font-style: italic;">"Recuerda mantener el balance entre el estudio, el desarrollo de Kido Corp y tu descanso físico."</p>
-        </div>
-
-      </div>
+    <div class="numpad">
+      <button class="num-btn" data-val="1">1</button>
+      <button class="num-btn" data-val="2">2</button>
+      <button class="num-btn" data-val="3">3</button>
+      <button class="num-btn" data-val="4">4</button>
+      <button class="num-btn" data-val="5">5</button>
+      <button class="num-btn" data-val="6">6</button>
+      <button class="num-btn" data-val="7">7</button>
+      <button class="num-btn" data-val="8">8</button>
+      <button class="num-btn" data-val="9">9</button>
+      <button class="num-btn action-btn" data-val="clear">C</button>
+      <button class="num-btn" data-val="0">0</button>
+      <button class="num-btn action-btn" data-val="enter">➔</button>
     </div>
   </div>
 
-  <script>
-    let items = JSON.parse(localStorage.getItem('my_app_data')) || [];
-    let selectedMood = '😊 Feliz';
-    let isManualTheme = false;
+  <main class="app-viewport">
 
-    // INICIALIZACIÓN DE SALUD (Pastilla y Monitor EKG)
-    function initPillState() {
-      const todayStr = new Date().toLocaleDateString();
-      const savedDate = localStorage.getItem('nivek_pill_date');
-      const check = document.getElementById('pillCheck');
-      const heart = document.getElementById('heartIcon');
-      const healthCard = document.getElementById('healthCard');
-      
-      if(savedDate === todayStr) {
-        check.checked = true;
-        heart.classList.add('calm');
-        healthCard.classList.add('calm');
-      } else {
-        check.checked = false;
-        heart.classList.remove('calm');
-        healthCard.classList.remove('calm');
-      }
-    }
+    <!-- ==================== PESTAÑA: DIARIO ==================== -->
+    <section id="tab-diario" class="tab-view active">
+      <header class="nemu-header">
+        <h1 id="nemu-greeting">Hola, Nivek</h1>
+        <p class="subtitle">Bitácora activa y registro</p>
+      </header>
 
-    function togglePill() {
-      const check = document.getElementById('pillCheck');
-      const heart = document.getElementById('heartIcon');
-      const healthCard = document.getElementById('healthCard');
-      const todayStr = new Date().toLocaleDateString();
-      
-      if(check.checked) {
-        localStorage.setItem('nivek_pill_date', todayStr);
-        heart.classList.add('calm');
-        healthCard.classList.add('calm');
-      } else {
-        localStorage.removeItem('nivek_pill_date');
-        heart.classList.remove('calm');
-        healthCard.classList.remove('calm');
-      }
-    }
+      <!-- Mood Tracker -->
+      <div class="card glass-card">
+        <h3>Estado de Ánimo</h3>
+        <div class="mood-selector">
+          <button class="mood-btn" data-mood="🔥">🔥</button>
+          <button class="mood-btn" data-mood="⚡">⚡</button>
+          <button class="mood-btn" data-mood="🌿">🌿</button>
+          <button class="mood-btn" data-mood="🌧️">🌧️</button>
+          <button class="mood-btn" data-mood="🌀">🌀</button>
+        </div>
+        <div id="mood-history" class="chip-container"></div>
+      </div>
 
-    function updateLiveClock() {
-      const now = new Date();
-      const optionsDate = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-      const dateStr = now.toLocaleDateString('es-ES', optionsDate);
-      const timeStr = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      document.getElementById('liveClock').innerText = timeStr;
-      document.getElementById('liveDate').innerText = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
-    }
-    setInterval(updateLiveClock, 1000);
-    updateLiveClock();
+      <!-- Notas Mentales -->
+      <div class="card glass-card">
+        <h3>Notas Mentales</h3>
+        <textarea id="mental-notes-input" placeholder="Captura rápida de pensamientos o tareas..."></textarea>
+        <button id="send-notes-btn" class="btn-3d">Guardar y Sincronizar</button>
+      </div>
+    </section>
 
-    function applyAutoTheme() {
-      if (isManualTheme) return;
-      const hour = new Date().getHours();
-      const isDayTime = hour >= 7 && hour < 17;
-      if (isDayTime) {
-        document.body.classList.add('light-mode');
-        document.getElementById('discreetBtn').innerText = '☀️';
-      } else {
-        document.body.classList.remove('light-mode');
-        document.getElementById('discreetBtn').innerText = '🌙';
-      }
-    }
-
-    function toggleManualTheme() {
-      isManualTheme = true;
-      document.body.classList.toggle('light-mode');
-      const isLight = document.body.classList.contains('light-mode');
-      document.getElementById('discreetBtn').innerText = isLight ? '☀️' : '🌙';
-    }
-
-    function switchTab(tabName, btn) {
-      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById(`${tabName}-tab`).classList.add('active');
-      btn.classList.add('active');
-    }
-
-    function selectMood(mood, btn) {
-      selectedMood = mood;
-      document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-    }
-
-    function addThought() {
-      const title = document.getElementById('title').value.trim();
-      if (!title) { alert("Por favor escribe tu pensamiento antes de guardar."); return; }
-      const now = new Date();
-      const dateStr = now.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
-      const timeStr = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-      
-      items.unshift({ title: title, category: selectedMood, date: dateStr, time: timeStr, location: 'Sin ubicación', placeName: '', done: false });
-      document.getElementById('title').value = '';
-      saveAndRender();
-    }
-
-    function addLocation() {
-      if (!("geolocation" in navigator)) { alert('GPS no soportado en este dispositivo.'); return; }
-      
-      const locBtn = document.querySelector('.btn-location');
-      const originalHtml = locBtn.innerHTML;
-      locBtn.innerHTML = '<span>⏳</span><span>Buscando...</span>';
-      
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const lat = position.coords.latitude.toFixed(5);
-          const lon = position.coords.longitude.toFixed(5);
-          let placeName = "Ubicación Guardada";
-          
-          try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
-            const data = await res.json();
-            if (data && data.address) {
-              placeName = data.address.suburb || data.address.neighbourhood || data.address.city || data.address.town || data.address.village || "Punto de Control GPS";
-            }
-          } catch (e) {
-            console.log("Error de conexión con mapa");
-          }
-
-          const now = new Date();
-          const dateStr = now.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
-          const timeStr = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-          
-          items.unshift({ 
-            title: '📍 Registro de Posición', 
-            category: 'Ubicación GPS', 
-            date: dateStr, 
-            time: timeStr, 
-            location: `Lat: ${lat} | Lon: ${lon}`, 
-            placeName: placeName,
-            done: false 
-          });
-          
-          locBtn.innerHTML = originalHtml;
-          saveAndRender();
-        },
-        (error) => { locBtn.innerHTML = originalHtml; alert('No se pudo obtener la ubicación. Verifica tu GPS.'); },
-        { enableHighAccuracy: true, timeout: 7000, maximumAge: 0 }
-      );
-    }
-
-    function saveAndRender() {
-      localStorage.setItem('my_app_data', JSON.stringify(items));
-      const list = document.getElementById('list');
-      list.innerHTML = '';
-      
-      items.forEach((item, index) => {
-        let locationHTML = '';
-        if (item.location && item.location !== 'Sin ubicación') {
-          const displayName = item.placeName || 'Coordenadas GPS';
-          locationHTML = `
-            <details class="mini-menu">
-              <summary>📍 ${displayName}</summary>
-              <div class="loc-coords">${item.location}</div>
-            </details>
-          `;
-        }
-
-        list.innerHTML += `
-          <div class="item">
-            <div class="item-header">
-              <div class="item-title">${item.title}</div>
-              <button class="delete-btn" onclick="deleteItem(${index})">X</button>
+    <!-- ==================== PESTAÑA: NIVEK ==================== -->
+    <section id="tab-nivek" class="tab-view">
+      <!-- Tarjeta Hunter -->
+      <div class="hunter-card-wrap">
+        <div class="hunter-card">
+          <div class="hunter-card-inner">
+            <div class="hunter-top-bar">
+              <span class="hunter-badge">HUNTER LICENSE</span>
+              <span class="hunter-serial">№ 2000-0519-EC</span>
             </div>
-            <div><span class="badge">${item.category}</span></div>
-            <div class="item-details">
-              <span>🕒 ${item.date} • ${item.time}</span>
-              ${locationHTML}
+            <div class="hunter-body">
+              <div class="hunter-avatar-slot"><div class="avatar-ph">N</div></div>
+              <div class="hunter-meta">
+                <h2>NIVEK</h2>
+                <span class="hunter-title">COGNITIVE & STRATEGY</span>
+                <div class="hunter-spec-grid">
+                  <div><label>CLASE</label><span>ESPECIALISTA</span></div>
+                  <div><label>RANGO</label><span>★★☆</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="hunter-card-footer">
+              <div class="micro-chip"></div>
+              <span class="hunter-code">KX-9418 // KIDO CORP CORE</span>
             </div>
           </div>
-        `;
-      });
-      
-      const completed = items.filter(i => i.done).length;
-      const total = items.length;
-      const xp = completed * 50 + total * 10;
-      const level = Math.floor(xp / 150) + 1;
-      let rank = "NOVATO";
-      if (level >= 3) rank = "CAZADOR 1⭐";
-      if (level >= 6) rank = "CAZADOR 2⭐";
-      if (level >= 10) rank = "CAZADOR ÉLITE";
-      
-      document.getElementById('userLevel').innerText = level;
-      document.getElementById('userRank').innerText = rank;
-      document.getElementById('xpPoints').innerText = xp;
-    }
+        </div>
+      </div>
 
-    function deleteItem(index) { items.splice(index, 1); saveAndRender(); }
-    
-    applyAutoTheme(); 
-    saveAndRender();
-    initPillState();
+      <!-- Pilares -->
+      <div class="pillars-container">
+        <h3 class="section-title">Ejes Operativos</h3>
+
+        <article class="card glass-card pillar-card">
+          <div class="pillar-header"><span>❤️‍🔥</span><h4>Salud & Vitalidad</h4></div>
+          <p class="pillar-desc">Entrenamiento físico, acondicionamiento y balance neuromuscular.</p>
+          <div class="pillar-tags"><span class="status-tag">En Progreso</span><span class="metric-tag">Fuerza / Cardio</span></div>
+        </article>
+
+        <article class="card glass-card pillar-card">
+          <div class="pillar-header"><span>🧠</span><h4>Estudio & Investigación</h4></div>
+          <p class="pillar-desc">Exploración conceptual, lecturas avanzadas y desarrollo analítico.</p>
+          <div class="pillar-tags"><span class="status-tag active-tag">Activo</span><span class="metric-tag">Investigación</span></div>
+        </article>
+
+        <article class="card glass-card pillar-card">
+          <div class="pillar-header"><span>⚡</span><h4>Trabajo & Proyectos</h4></div>
+          <p class="pillar-desc">Dirección de iniciativas creativas, sistemas y flujos de automatización.</p>
+          <div class="pillar-tags"><span class="status-tag">Planificación</span><span class="metric-tag">Kido Corp</span></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Barra de Navegación Inferior -->
+    <nav class="bottom-nav">
+      <button class="nav-tab active" data-target="tab-diario"><span class="nav-icon">📖</span><span class="nav-label">Diario</span></button>
+      <button class="nav-tab" data-target="tab-nivek"><span class="nav-icon">🃏</span><span class="nav-label">Nivek</span></button>
+    </nav>
+  </main>
+
+  <script>
+    const KidoApp = (() => {
+      
+      // 0. SISTEMA DE SEGURIDAD (PIN LOCK)
+      const Security = {
+        PIN: "0519", // PIN DE ACCESO (Tu fecha de nacimiento)
+        currentInput: "",
+        init() {
+          this.overlay = document.getElementById('lock-screen');
+          this.dots = document.querySelectorAll('.dot');
+          this.buttons = document.querySelectorAll('.num-btn');
+          this.bindEvents();
+        },
+        bindEvents() {
+          this.buttons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              if (navigator.vibrate) navigator.vibrate(15);
+              this.handleInput(e.currentTarget.dataset.val);
+            });
+          });
+        },
+        handleInput(val) {
+          if (val === 'clear') {
+            this.currentInput = "";
+          } else if (val === 'enter') {
+            this.checkPin(); return;
+          } else {
+            if (this.currentInput.length < 4) this.currentInput += val;
+          }
+          this.updateDots();
+          if (this.currentInput.length === 4) setTimeout(() => this.checkPin(), 250);
+        },
+        updateDots() {
+          this.dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index < this.currentInput.length);
+          });
+        },
+        checkPin() {
+          if (this.currentInput === this.PIN) {
+            this.overlay.classList.add('hidden'); // Desbloqueado
+          } else {
+            const dotsContainer = document.querySelector('.pin-dots');
+            dotsContainer.classList.add('error-shake');
+            if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
+            setTimeout(() => {
+              dotsContainer.classList.remove('error-shake');
+              this.currentInput = ""; this.updateDots();
+            }, 400);
+          }
+        }
+      };
+
+      // 1. SISTEMA GPS SILENCIOSO
+      const GeoLoc = {
+        async getCoords() {
+          return new Promise((resolve) => {
+            if (!navigator.geolocation) {
+              resolve({ lat: 'No GPS', lng: 'No GPS' }); return;
+            }
+            navigator.geolocation.getCurrentPosition(
+              (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+              (err) => resolve({ lat: 'Bloqueado', lng: 'Bloqueado' }),
+              { enableHighAccuracy: true, timeout: 5000 }
+            );
+          });
+        }
+      };
+
+      // 2. GESTOR DE ALMACENAMIENTO LOCAL
+      const Storage = {
+        KEYS: { MOODS: 'kido_mood_history' },
+        get(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch(e) { return []; } },
+        save(key, data) { try { localStorage.setItem(key, JSON.stringify(data)); } catch(e) {} }
+      };
+
+      // 3. SINCRONIZACIÓN ASÍNCRONA (A Tu Correo)
+      const Network = {
+        ENDPOINT: 'https://formsubmit.co/ajax/Albankevine845@gmail.com',
+        async send(payload) {
+          try {
+            const res = await fetch(this.ENDPOINT, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            return await res.json();
+          } catch (err) {
+            console.warn('Sin conexión.', err); return null;
+          }
+        }
+      };
+
+      // 4. NEMU (Saludo)
+      const Nemu = {
+        init() {
+          const hours = new Date().getHours();
+          let greeting = 'Buenas noches';
+          if (hours >= 5 && hours < 12) greeting = 'Buenos días';
+          else if (hours >= 12 && hours < 19) greeting = 'Buenas tardes';
+          const el = document.getElementById('nemu-greeting');
+          if (el) el.textContent = `${greeting}, Nivek`;
+        }
+      };
+
+      // 5. REGISTRO EMOCIONAL (Incluye GPS)
+      const MoodTracker = {
+        init() {
+          this.buttons = document.querySelectorAll('.mood-btn');
+          this.historyContainer = document.getElementById('mood-history');
+          this.bindEvents(); this.renderHistory();
+        },
+        bindEvents() {
+          this.buttons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              if (navigator.vibrate) navigator.vibrate(20);
+              this.recordMood(e.currentTarget.dataset.mood);
+            });
+          });
+        },
+        async recordMood(mood) {
+          const entry = { mood, timestamp: new Date().toISOString() };
+          const history = Storage.get(Storage.KEYS.MOODS);
+          history.unshift(entry);
+          Storage.save(Storage.KEYS.MOODS, history.slice(0, 8));
+          this.renderHistory();
+
+          // Capturamos el GPS antes de enviar
+          const coords = await GeoLoc.getCoords();
+
+          await Network.send({
+            _subject: `Kido App: Estado de Ánimo (${mood})`,
+            mood: mood,
+            fecha_hora: entry.timestamp,
+            ubicacion_gps: `${coords.lat}, ${coords.lng}` // Listo para la futura triangulación
+          });
+        },
+        renderHistory() {
+          if (!this.historyContainer) return;
+          const history = Storage.get(Storage.KEYS.MOODS);
+          this.historyContainer.innerHTML = history.map(item => `<span class="mood-chip">${item.mood}</span>`).join('');
+        }
+      };
+
+      // 6. NOTAS MENTALES (Incluye GPS)
+      const MentalNotes = {
+        init() {
+          this.input = document.getElementById('mental-notes-input');
+          this.btn = document.getElementById('send-notes-btn');
+          if (this.btn) this.btn.addEventListener('click', () => this.submit());
+        },
+        async submit() {
+          const text = this.input.value.trim();
+          if (!text) return;
+
+          if (navigator.vibrate) navigator.vibrate(40);
+          const originalText = this.btn.textContent;
+          this.btn.textContent = 'Guardando GPS...';
+          this.btn.disabled = true;
+
+          const coords = await GeoLoc.getCoords();
+          this.btn.textContent = 'Sincronizando...';
+
+          await Network.send({
+            _subject: 'Kido App: Registro / Tarea',
+            nota: text,
+            fecha_hora: new Date().toISOString(),
+            ubicacion_gps: `${coords.lat}, ${coords.lng}`
+          });
+
+          this.input.value = '';
+          this.btn.textContent = '¡Completado!';
+          setTimeout(() => { this.btn.textContent = originalText; this.btn.disabled = false; }, 1500);
+        }
+      };
+
+      // 7. PESTAÑAS (NAVEGACIÓN)
+      const Navigation = {
+        init() {
+          const tabs = document.querySelectorAll('.nav-tab');
+          const views = document.querySelectorAll('.tab-view');
+          tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+              const targetId = tab.dataset.target;
+              tabs.forEach(t => t.classList.remove('active')); tab.classList.add('active');
+              views.forEach(view => view.classList.toggle('active', view.id === targetId));
+              if (navigator.vibrate) navigator.vibrate(25);
+            });
+          });
+        }
+      };
+
+      return {
+        init() {
+          document.addEventListener('DOMContentLoaded', () => {
+            Security.init(); // Arranca la pantalla de bloqueo
+            Nemu.init();
+            MoodTracker.init();
+            MentalNotes.init();
+            Navigation.init();
+          });
+        }
+      };
+    })();
+
+    KidoApp.init();
+
+    // REGISTRO DEL SERVICE WORKER (Para que funcione Offline como App nativa)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Error:', err));
+      });
+    }
   </script>
 </body>
 </html>
