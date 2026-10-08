@@ -19,6 +19,7 @@
       --accent-blue: #4facfe;
       --text-main: #f0f6fc;
       --text-dim: #8b949e;
+      --text-muted: #9ca3af;
       --btn-grad-start: #1f6feb;
       --btn-grad-end: #1158c7;
       --btn-shadow: #0d3d8a;
@@ -44,58 +45,38 @@
       transition: opacity 0.5s ease, visibility 0.5s ease;
     }
 
-    /* Capa oscura y de desenfoque aplicada a toda la pantalla */
     .lock-overlay::before {
-      content: "";
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(11, 12, 16, 0.45); /* Oscurece para resaltar los textos */
+      content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(11, 12, 16, 0.45); 
       backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
       z-index: -1;
     }
 
-    /* Fondos HD desde Unsplash */
     .bg-mountain { background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1080&q=80'); }
     .bg-beach { background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1080&q=80'); }
     .bg-sunset { background-image: url('https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=1080&q=80'); }
     .bg-galaxy { background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=1080&q=80'); }
 
     .lock-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .lock-glass-panel { display: flex; flex-direction: column; align-items: center; padding: 20px; }
 
-    /* Contenedor central (sin fondo propio para fundirse con la pantalla) */
-    .lock-glass-panel {
-      display: flex; flex-direction: column; align-items: center;
-      padding: 20px;
-    }
-
-    /* Reloj y Fecha estilo iOS */
     .lock-datetime { text-align: center; margin-bottom: 40px; }
-    .lock-datetime h1 {
-      margin: 0; font-size: 5rem; font-weight: 200; letter-spacing: -2px;
-      color: #fff; text-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    }
-    .lock-datetime p {
-      margin: 5px 0 0 0; font-size: 1.2rem; font-weight: 500; color: rgba(255,255,255,0.9);
-      text-transform: capitalize; text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
+    .lock-datetime h1 { margin: 0; font-size: 5rem; font-weight: 200; letter-spacing: -2px; color: #fff; text-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+    .lock-datetime p { margin: 5px 0 0 0; font-size: 1.2rem; font-weight: 500; color: rgba(255,255,255,0.9); text-transform: capitalize; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
 
     .lock-header h2 { margin: 0 0 10px 0; font-size: 1.1rem; letter-spacing: 2px; color: var(--accent-cyan); text-transform: uppercase; }
 
-    /* Puntos de PIN Dinámicos */
     .pin-dots { display: flex; gap: 12px; margin-bottom: 45px; justify-content: center; min-height: 16px; }
     .pin-dots .dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.5); transition: all 0.2s ease; }
     .pin-dots .dot.active { background: #fff; border-color: #fff; box-shadow: 0 0 12px rgba(255,255,255,0.9); }
     .pin-dots.error-shake { animation: shake 0.4s; }
     @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
 
-    /* Teclado PIN */
     .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 280px; }
     .num-btn {
-      width: 80px; height: 80px; border-radius: 50%; border: none;
-      background: rgba(255, 255, 255, 0.15); color: #fff;
-      font-size: 2rem; font-weight: 300; cursor: pointer;
-      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 4px 0 rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.2);
-      transition: transform 0.1s, background 0.2s;
+      width: 80px; height: 80px; border-radius: 50%; border: none; background: rgba(255, 255, 255, 0.15); color: #fff;
+      font-size: 2rem; font-weight: 300; cursor: pointer; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 4px 0 rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.2); transition: transform 0.1s, background 0.2s;
     }
     .num-btn:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0.5); background: rgba(255,255,255,0.3); }
     .num-btn.action-btn { font-size: 1.4rem; background: transparent; box-shadow: none; color: rgba(255,255,255,0.8); }
@@ -108,9 +89,35 @@
     .nemu-header h1 { margin: 0; font-size: 1.6rem; letter-spacing: -0.5px; }
     .nemu-header .subtitle { margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-dim); }
 
-    /* --- TARJETAS GLASSMORPHISM --- */
+    /* --- TARJETAS GLASSMORPHISM COMUNES --- */
     .glass-card { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 18px; margin-bottom: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); }
     .glass-card h3 { margin: 0 0 14px 0; font-size: 1.05rem; font-weight: 600; }
+    
+    /* =========================================================================
+       MÓDULO: RADIACIÓN SOLAR & VITILIGO
+       ========================================================================= */
+    .sun-glass-card {
+      background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border); border-radius: 24px; padding: 18px; margin-bottom: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); position: relative; overflow: hidden;
+    }
+
+    @keyframes sunExtremePulse {
+      0% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 15px #f97316) drop-shadow(0 0 35px #ef4444); }
+      50% { transform: scale(1.2) rotate(180deg); filter: drop-shadow(0 0 30px #facc15) drop-shadow(0 0 50px #dc2626); }
+      100% { transform: scale(1) rotate(360deg); filter: drop-shadow(0 0 15px #f97316) drop-shadow(0 0 35px #ef4444); }
+    }
+    @keyframes sunSleeping {
+      0% { transform: translateY(0px) rotate(-5deg); filter: drop-shadow(0 0 8px #38bdf8); }
+      100% { transform: translateY(-6px) rotate(5deg); filter: drop-shadow(0 0 18px #818cf8); }
+    }
+    .sun-card-header { display: flex; justify-content: space-between; align-items: center; }
+    .sun-mood-icon { font-size: 2.8rem; display: inline-block; transition: all 0.5s ease; }
+    .sun-uv-badge { font-size: 0.85rem; font-weight: 900; padding: 4px 12px; border-radius: 12px; color: #fff; display: inline-block; margin-top: 4px; }
+    .vitiligo-alert-box { background: rgba(0, 0, 0, 0.25); border: 1px solid var(--glass-border); border-radius: 16px; padding: 12px; margin-top: 12px; font-size: 0.78rem; line-height: 1.4; }
+
+    /* ========================================================================= */
+
     .mood-selector { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 14px; }
     .mood-btn { flex: 1; font-size: 1.4rem; padding: 10px 0; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.04); cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.5); transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease; }
     .mood-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.5); background: rgba(0, 242, 254, 0.15); }
@@ -126,8 +133,12 @@
     .btn-red { background: linear-gradient(135deg, #ff4b4b, #d32f2f); box-shadow: 0 5px 0 #9a0007, 0 10px 15px rgba(0,0,0,0.4); }
     .btn-red:active { box-shadow: 0 1px 0 #9a0007, 0 4px 6px rgba(0,0,0,0.3); }
 
+    /* Animación de latido simple para iconos estéticos */
+    @keyframes latido { 0% { transform: scale(1); } 15% { transform: scale(1.25); } 30% { transform: scale(1); } 45% { transform: scale(1.15); } 60% { transform: scale(1); } }
+    .icono-latido { display: inline-block; animation: latido 1.5s infinite; transform-origin: center; }
+
     /* =========================================================================
-       TARJETA DE CAZADOR ANIME (RÉPLICA EXACTA)
+       TARJETA DE CAZADOR ANIME (RÉPLICA EXACTA) Y PILARES
        ========================================================================= */
     .hunter-anime-card {
       background: #000; border: 4px solid #fff; border-radius: 12px;
@@ -135,63 +146,21 @@
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7); overflow: hidden;
       display: flex; flex-direction: column;
     }
-    
     .h-top { background: #000; padding: 18px 20px 12px 20px; }
-    .h-logo-box {
-      background: #fff; padding: 15px; margin-bottom: 15px;
-      height: 140px; display: flex; align-items: center; justify-content: center;
-      border-radius: 4px;
-    }
-    
-    .h-barcode {
-      height: 45px; width: 100%; border-radius: 2px;
-      background: repeating-linear-gradient( to right, #fff, #fff 3px, #000 3px, #000 7px, #fff 7px, #fff 11px, #000 11px, #000 15px, #fff 15px, #fff 21px, #000 21px, #000 28px, #fff 28px, #fff 31px, #000 31px, #000 36px );
-    }
-
-    .h-bottom {
-      background: #8cbdf0; padding: 18px 15px;
-      border-top: 4px solid #000; display: flex; flex-direction: column; gap: 10px;
-    }
-    
-    .h-slot {
-      background: #fff; border: 2px solid #000; padding: 6px 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-family: monospace; font-weight: 900; color: #000;
-      font-size: 0.95rem; letter-spacing: 4px; text-transform: uppercase;
-      box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
-    }
+    .h-logo-box { background: #fff; padding: 15px; margin-bottom: 15px; height: 140px; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
+    .h-barcode { height: 45px; width: 100%; border-radius: 2px; background: repeating-linear-gradient( to right, #fff, #fff 3px, #000 3px, #000 7px, #fff 7px, #fff 11px, #000 11px, #000 15px, #fff 15px, #fff 21px, #000 21px, #000 28px, #fff 28px, #fff 31px, #000 31px, #000 36px ); }
+    .h-bottom { background: #8cbdf0; padding: 18px 15px; border-top: 4px solid #000; display: flex; flex-direction: column; gap: 10px; }
+    .h-slot { background: #fff; border: 2px solid #000; padding: 6px 10px; display: flex; align-items: center; justify-content: center; font-family: monospace; font-weight: 900; color: #000; font-size: 0.95rem; letter-spacing: 4px; text-transform: uppercase; box-shadow: 2px 2px 0px rgba(0,0,0,0.2); }
     .h-slot-sm { font-size: 0.8rem; letter-spacing: 2px; }
     
-    /* --- PILARES Y CHECKBOX --- */
     .section-title { font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); margin: 12px 0 10px 4px; }
     .pillar-card { padding: 14px 16px; border-left: 3px solid var(--accent-blue); }
-    .pillar-header { display: flex; align-items: center; justify-content: space-between; }
-    .pillar-header-left { display: flex; align-items: center; gap: 10px; }
+    .pillar-header { display: flex; align-items: center; gap: 10px; }
     .pillar-header h4 { margin: 0; font-size: 1rem; }
-    .pillar-desc { font-size: 0.82rem; color: var(--text-dim); margin: 10px 0 10px 0; line-height: 1.4; }
+    .pillar-desc { font-size: 0.82rem; color: var(--text-dim); margin: 6px 0 10px 0; line-height: 1.4; }
     .pillar-tags { display: flex; gap: 8px; }
     .status-tag, .metric-tag { font-size: 0.68rem; padding: 4px 8px; border-radius: 6px; background: rgba(255, 255, 255, 0.06); }
     .status-tag.active-tag { background: rgba(0, 242, 254, 0.15); color: var(--accent-cyan); border: 1px solid rgba(0, 242, 254, 0.3); }
-
-    /* SWITCH ESTILO iOS PARA MEDICACIÓN */
-    .switch { position: relative; display: inline-block; width: 42px; height: 22px; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ff4b4b; transition: .4s; border-radius: 22px; }
-    .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-    input:checked + .slider { background-color: #00f2fe; }
-    input:checked + .slider:before { transform: translateX(20px); }
-
-    /* ANIMACIONES DEL CORAZÓN */
-    .heartbeat-svg { transition: color 0.4s ease; }
-    .heartbeat-svg.altered { color: #ff4b4b; }
-    .heartbeat-svg.altered .hb-line { animation: shake-heart 0.3s infinite; filter: drop-shadow(0 0 5px #ff4b4b); }
-    .heartbeat-svg.calm { color: #00f2fe; }
-    .heartbeat-svg.calm .hb-line { animation: pulse-heart 1.5s infinite ease-in-out; filter: drop-shadow(0 0 5px #00f2fe); }
-
-    @keyframes shake-heart { 0% { transform: translate(0, 0) scale(1); } 50% { transform: translate(1px, -1px) scale(1.05); } 100% { transform: translate(-1px, 1px) scale(1); } }
-    @keyframes pulse-heart { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-    @keyframes latido { 0% { transform: scale(1); } 15% { transform: scale(1.25); } 30% { transform: scale(1); } 45% { transform: scale(1.15); } 60% { transform: scale(1); } }
-    .icono-latido { display: inline-block; animation: latido 1.5s infinite; transform-origin: center; }
 
     /* --- BARRA FLOTANTE DE PESTAÑAS --- */
     .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 400px; background: rgba(18, 22, 28, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 28px; display: flex; justify-content: space-around; padding: 6px 12px; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6); z-index: 100; }
@@ -205,23 +174,17 @@
 
   <!-- ==================== PANTALLA DE SEGURIDAD ESTILO iOS ==================== -->
   <div id="lock-screen" class="lock-overlay">
-    
     <div class="lock-glass-panel">
-      <!-- Reloj y Fecha -->
       <div class="lock-datetime">
         <h1 id="lock-time">--:--</h1>
         <p id="lock-date">Cargando fecha...</p>
       </div>
-
       <div class="lock-header">
         <h2>KIDO CORE</h2>
       </div>
-      
-      <!-- Contenedor dinámico de puntos PIN -->
       <div class="pin-dots" id="pin-dots-container">
         <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
       </div>
-
       <div class="numpad">
         <button class="num-btn" data-val="1">1</button>
         <button class="num-btn" data-val="2">2</button>
@@ -237,7 +200,6 @@
         <button class="num-btn action-btn" data-val="enter">➔</button>
       </div>
     </div>
-
   </div>
 
   <main class="app-viewport">
@@ -249,6 +211,23 @@
         <p class="subtitle">Bitácora activa y registro</p>
       </header>
 
+      <!-- MÓDULO: RADIACIÓN SOLAR & VITILIGO -->
+      <div class="sun-glass-card">
+        <div class="sun-card-header">
+          <div>
+            <div style="font-size: 0.95rem; font-weight: 900; color: var(--text-main);">☀️ Radiación UV Guayaquil</div>
+            <div style="font-size: 0.73rem; color: var(--text-muted); font-weight: 600;">Prevención Vitiligo por Horas</div>
+            <span class="sun-uv-badge" id="sunUvBadge">Índice UV: 0</span>
+          </div>
+          <span class="sun-mood-icon" id="sunMoodIcon">😴</span>
+        </div>
+        <div class="vitiligo-alert-box">
+          <strong id="sunMoodTitle">Sol Durmiendo (Noche)</strong><br>
+          <span id="sunVitiligoAdvice">Sin radiación solar activa. Momento ideal para descansar la piel.</span>
+        </div>
+      </div>
+
+      <!-- Módulos Clásicos -->
       <div class="card glass-card">
         <h3>Estado de Ánimo</h3>
         <div class="mood-selector">
@@ -279,7 +258,7 @@
     <!-- ==================== PESTAÑA: NIVEK ==================== -->
     <section id="tab-nivek" class="tab-view">
       
-      <!-- TARJETA LICENCIA DE CAZADOR ANIME (RÉPLICA FIEL) -->
+      <!-- TARJETA LICENCIA DE CAZADOR ANIME -->
       <div class="hunter-anime-card">
         <div class="h-top">
           <div class="h-logo-box">
@@ -298,58 +277,32 @@
         </div>
       </div>
 
-      <!-- LISTA DE PILARES Y SALUD -->
       <div class="pillars-container">
         <h3 class="section-title">Ejes Operativos</h3>
 
-        <!-- Tarjeta Salud con Animación de Latido y Check Losartán -->
+        <!-- Pilar Salud (Restaurado a la versión limpia con latido estético) -->
         <article class="card glass-card pillar-card">
           <div class="pillar-header">
-            <div class="pillar-header-left">
-              <svg id="heartbeat-anim" class="heartbeat-svg altered" viewBox="0 0 200 100" width="60" height="30">
-                <path class="hb-line" d="M10,60 L30,60 L40,30 L55,90 L65,60 L80,60 C75,20 100,20 100,50 C100,20 125,20 120,60 L135,60 L145,90 L160,30 L170,60 L190,60" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              <h4>Salud & Vitalidad</h4>
-            </div>
-            
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-              <span style="font-size: 0.65rem; color: var(--text-dim); font-weight: bold;">Losartán 100mg</span>
-              <label class="switch">
-                <input type="checkbox" id="losartan-check">
-                <span class="slider"></span>
-              </label>
-            </div>
+            <span class="pillar-icon icono-latido">❤️‍🔥</span>
+            <h4>Salud & Vitalidad</h4>
           </div>
-
-          <p class="pillar-desc">Entrenamiento físico, acondicionamiento y balance cardiovascular.</p>
+          <p class="pillar-desc">Entrenamiento físico, acondicionamiento y balance neuromuscular.</p>
           <div class="pillar-tags">
-            <span class="status-tag" id="losartan-status" style="color: #ff4b4b;">Ritmo Alterado ⚠️</span>
+            <span class="status-tag">En Progreso</span>
             <span class="metric-tag">Fuerza / Cardio</span>
           </div>
         </article>
 
+        <!-- Otros Pilares -->
         <article class="card glass-card pillar-card">
-          <div class="pillar-header">
-            <span class="pillar-icon">🧠</span>
-            <h4>Estudio & Investigación</h4>
-          </div>
+          <div class="pillar-header"><span class="pillar-icon">🧠</span><h4>Estudio & Investigación</h4></div>
           <p class="pillar-desc">Exploración conceptual, lecturas avanzadas y desarrollo analítico.</p>
-          <div class="pillar-tags">
-            <span class="status-tag active-tag">Activo</span>
-            <span class="metric-tag">Investigación</span>
-          </div>
+          <div class="pillar-tags"><span class="status-tag active-tag">Activo</span><span class="metric-tag">Investigación</span></div>
         </article>
-
         <article class="card glass-card pillar-card">
-          <div class="pillar-header">
-            <span class="pillar-icon">⚡</span>
-            <h4>Trabajo & Proyectos</h4>
-          </div>
+          <div class="pillar-header"><span class="pillar-icon">⚡</span><h4>Trabajo & Proyectos</h4></div>
           <p class="pillar-desc">Dirección de iniciativas creativas, sistemas y flujos de automatización.</p>
-          <div class="pillar-tags">
-            <span class="status-tag">Planificación</span>
-            <span class="metric-tag">Kido Corp</span>
-          </div>
+          <div class="pillar-tags"><span class="status-tag">Planificación</span><span class="metric-tag">Kido Corp</span></div>
         </article>
       </div>
     </section>
@@ -364,19 +317,17 @@
   <script>
     const KidoApp = (() => {
       
-      // 0. SISTEMA DE SEGURIDAD (PIN MULTIPLE Y FONDOS)
+      // 0. SISTEMA DE SEGURIDAD (PIN MULTIPLE Y FONDOS ALEATORIOS)
       const Security = {
-        VALID_PINS: ["1234", "0931935795"], // Acepta el PIN corto o la cédula
+        VALID_PINS: ["1234", "0931935795"],
         currentInput: "",
         init() {
           this.overlay = document.getElementById('lock-screen');
           this.dotsContainer = document.getElementById('pin-dots-container');
           this.buttons = document.querySelectorAll('.num-btn');
           
-          // Elegir un fondo aleatorio al cargar
           const bgs = ['bg-mountain', 'bg-beach', 'bg-sunset', 'bg-galaxy'];
-          const randomBg = bgs[Math.floor(Math.random() * bgs.length)];
-          this.overlay.className = `lock-overlay ${randomBg}`;
+          this.overlay.className = `lock-overlay ${bgs[Math.floor(Math.random() * bgs.length)]}`;
 
           this.startClock();
           this.bindEvents();
@@ -387,7 +338,6 @@
             const h = now.getHours().toString().padStart(2, '0');
             const m = now.getMinutes().toString().padStart(2, '0');
             document.getElementById('lock-time').textContent = `${h}:${m}`;
-            
             const options = { weekday: 'long', month: 'long', day: 'numeric' };
             document.getElementById('lock-date').textContent = now.toLocaleDateString('es-ES', options);
           };
@@ -395,34 +345,19 @@
           setInterval(updateTime, 1000);
         },
         bindEvents() {
-          // Teclado PIN
-          this.buttons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-              if (navigator.vibrate) navigator.vibrate(15);
-              this.handleInput(e.currentTarget.dataset.val);
-            });
-          });
+          this.buttons.forEach(btn => btn.addEventListener('click', (e) => {
+            if (navigator.vibrate) navigator.vibrate(15);
+            this.handleInput(e.currentTarget.dataset.val);
+          }));
         },
         handleInput(val) {
-          if (val === 'clear') { 
-            this.currentInput = ""; 
-          } 
-          else if (val === 'enter') { 
-            this.checkPin(); return; 
-          } 
-          else { 
-            if (this.currentInput.length < 10) this.currentInput += val; 
-          }
-          
+          if (val === 'clear') { this.currentInput = ""; } 
+          else if (val === 'enter') { this.checkPin(); return; } 
+          else { if (this.currentInput.length < 10) this.currentInput += val; }
           this.updateDots();
-          
-          // Auto-verificar si coincide con algún PIN exacto
-          if (this.VALID_PINS.includes(this.currentInput)) {
-            setTimeout(() => this.checkPin(), 250);
-          }
+          if (this.VALID_PINS.includes(this.currentInput)) setTimeout(() => this.checkPin(), 250);
         },
         updateDots() {
-          // Genera puntos dinámicamente según lo que se haya escrito (mínimo 4)
           const dotsCount = Math.max(4, this.currentInput.length);
           this.dotsContainer.innerHTML = '';
           for(let i=0; i < dotsCount; i++) {
@@ -432,57 +367,44 @@
           }
         },
         checkPin() {
-          if (this.VALID_PINS.includes(this.currentInput)) {
-            this.overlay.classList.add('hidden');
-          } else {
+          if (this.VALID_PINS.includes(this.currentInput)) { this.overlay.classList.add('hidden'); } 
+          else {
             this.dotsContainer.classList.add('error-shake');
             if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
-            setTimeout(() => { 
-              this.dotsContainer.classList.remove('error-shake'); 
-              this.currentInput = ""; 
-              this.updateDots(); 
-            }, 400);
+            setTimeout(() => { this.dotsContainer.classList.remove('error-shake'); this.currentInput = ""; this.updateDots(); }, 400);
           }
         }
       };
 
-      // 1. SISTEMA GPS SILENCIOSO
+      // 1. SISTEMAS BÁSICOS
       const GeoLoc = {
         async getCoords() {
           return new Promise((resolve) => {
             if (!navigator.geolocation) { resolve({ lat: 'No GPS', lng: 'No GPS' }); return; }
             navigator.geolocation.getCurrentPosition(
               (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-              (err) => resolve({ lat: 'Bloqueado', lng: 'Bloqueado' }),
-              { enableHighAccuracy: true, timeout: 5000 }
+              (err) => resolve({ lat: 'Bloqueado', lng: 'Bloqueado' }), { enableHighAccuracy: true, timeout: 5000 }
             );
           });
         }
       };
 
-      // 2. GESTOR DE ALMACENAMIENTO LOCAL
       const Storage = {
         KEYS: { MOODS: 'kido_mood_history' },
         get(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch(e) { return []; } },
         save(key, data) { try { localStorage.setItem(key, JSON.stringify(data)); } catch(e) {} }
       };
 
-      // 3. SINCRONIZACIÓN ASÍNCRONA
       const Network = {
         ENDPOINT: 'https://formsubmit.co/ajax/Albankevine845@gmail.com',
         async send(payload) {
           try {
-            const res = await fetch(this.ENDPOINT, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-              body: JSON.stringify(payload)
-            });
+            const res = await fetch(this.ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(payload) });
             return await res.json();
           } catch (err) { console.warn('Sin conexión.', err); return null; }
         }
       };
 
-      // 4. NEMU (Saludo)
       const Nemu = {
         init() {
           const hours = new Date().getHours();
@@ -494,20 +416,77 @@
         }
       };
 
-      // 5. REGISTRO EMOCIONAL
+      // 2. MÓDULO DE RADIACIÓN SOLAR & VITILIGO
+      const UvMonitor = {
+        init() {
+          this.updateSunUvVitiligo();
+          setInterval(() => this.updateSunUvVitiligo(), 900000); 
+        },
+        updateSunUvVitiligo() {
+          const hour = new Date().getHours();
+          const sunIcon = document.getElementById('sunMoodIcon');
+          const sunBadge = document.getElementById('sunUvBadge');
+          const sunTitle = document.getElementById('sunMoodTitle');
+          const sunAdvice = document.getElementById('sunVitiligoAdvice');
+
+          if (!sunIcon) return;
+          sunIcon.style.animation = 'none';
+
+          if (hour >= 0 && hour < 6) {
+            sunIcon.innerText = '😴';
+            sunIcon.style.animation = 'sunSleeping 3s ease-in-out infinite alternate';
+            sunBadge.innerText = 'Índice UV: 0 (Noche)'; sunBadge.style.background = '#3b82f6';
+            sunTitle.innerText = '😴 Sol Durmiendo (Sin Radiación)';
+            sunAdvice.innerText = 'Noche tranquila en Guasmo Norte. Cero exposición solar. Buen momento para hidratar la piel.';
+          }
+          else if (hour >= 6 && hour < 9) {
+            sunIcon.innerText = '🌅';
+            sunIcon.style.animation = 'sunSleeping 2s ease-in-out infinite alternate';
+            sunBadge.innerText = 'Índice UV: 2 - 3 (Bajo)'; sunBadge.style.background = '#22c55e';
+            sunTitle.innerText = '🌅 Sol Matutino Suave';
+            sunAdvice.innerText = 'Radiación suave. Si sales temprano, aplica un toque de protector solar en manchas de vitiligo expuestas.';
+          }
+          else if (hour >= 9 && hour < 11) {
+            sunIcon.innerText = '☀️';
+            sunIcon.style.animation = 'sunExtremePulse 6s linear infinite';
+            sunBadge.innerText = 'Índice UV: 5 - 7 (Moderado / Alto)'; sunBadge.style.background = '#eab308';
+            sunTitle.innerText = '☀️ Sol Activo (Atención Vitiligo)';
+            sunAdvice.innerText = '⚠️ El sol de Guayaquil empieza a calentar. Aplica bloqueador FPS 50+ en zonas con vitiligo antes de salir.';
+          }
+          else if (hour >= 11 && hour < 16) {
+            sunIcon.innerText = '🔥';
+            sunIcon.style.animation = 'sunExtremePulse 1.8s linear infinite';
+            sunBadge.innerText = 'Índice UV: 9 - 12+ (EXTREMO ☣️)'; sunBadge.style.background = '#dc2626';
+            sunTitle.innerText = '☣️🔥 ALERTA MÁXIMA SOLAR GUAYAQUIL';
+            sunAdvice.innerText = '🚨 RIESGO ALTO DE QUEMADURA EN VITILIGO! Evita la luz solar directa. Usa gorra/sombrero, gafas UV y bloqueador FPS 50+ reforzado.';
+          }
+          else if (hour >= 16 && hour < 18) {
+            sunIcon.innerText = '🌆';
+            sunIcon.style.animation = 'sunSleeping 2.5s ease-in-out infinite alternate';
+            sunBadge.innerText = 'Índice UV: 2 - 4 (Descendiendo)'; sunBadge.style.background = '#f97316';
+            sunTitle.innerText = '🌆 Sol en Descenso Matizado';
+            sunAdvice.innerText = 'La radiación UV disminuye progresivamente en Guayaquil. La piel despigmentada ya no corre riesgo crítico.';
+          }
+          else {
+            sunIcon.innerText = '😴';
+            sunIcon.style.animation = 'sunSleeping 3s ease-in-out infinite alternate';
+            sunBadge.innerText = 'Índice UV: 0 (Noche)'; sunBadge.style.background = '#1e293b';
+            sunTitle.innerText = '🌙 Sol Descansando';
+            sunAdvice.innerText = 'Sin radiación UV. Ambiente fresco y seguro para tu piel.';
+          }
+        }
+      };
+
+      // 3. MÓDULOS DE REGISTRO CLÁSICOS
       const MoodTracker = {
         init() {
           this.buttons = document.querySelectorAll('.mood-btn');
           this.historyContainer = document.getElementById('mood-history');
-          this.bindEvents(); this.renderHistory();
-        },
-        bindEvents() {
-          this.buttons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-              if (navigator.vibrate) navigator.vibrate(20);
-              this.recordMood(e.currentTarget.dataset.mood);
-            });
-          });
+          this.buttons.forEach(btn => btn.addEventListener('click', (e) => {
+            if (navigator.vibrate) navigator.vibrate(20);
+            this.recordMood(e.currentTarget.dataset.mood);
+          }));
+          this.renderHistory();
         },
         async recordMood(mood) {
           const entry = { mood, timestamp: new Date().toISOString() };
@@ -524,7 +503,6 @@
         }
       };
 
-      // 6. NOTAS MENTALES
       const MentalNotes = {
         init() {
           this.input = document.getElementById('mental-notes-input');
@@ -545,7 +523,6 @@
         }
       };
 
-      // 7. BOTÓN CHECK-IN GPS
       const LocationCheckIn = {
         init() {
           this.btn = document.getElementById('send-location-btn');
@@ -563,46 +540,16 @@
         }
       };
 
-      // 8. CONTROL DEL LATIDO CARDÍACO (LOSARTÁN)
-      const HeartControl = {
-        init() {
-          this.checkbox = document.getElementById('losartan-check');
-          this.hbSvg = document.getElementById('heartbeat-anim');
-          this.statusText = document.getElementById('losartan-status');
-          
-          if(this.checkbox && this.hbSvg) {
-            this.checkbox.addEventListener('change', () => {
-              if(this.checkbox.checked) {
-                this.hbSvg.classList.remove('altered');
-                this.hbSvg.classList.add('calm');
-                this.statusText.textContent = "Ritmo Estable ✅";
-                this.statusText.style.color = "#00f2fe";
-                if (navigator.vibrate) navigator.vibrate([20, 30, 20]);
-              } else {
-                this.hbSvg.classList.remove('calm');
-                this.hbSvg.classList.add('altered');
-                this.statusText.textContent = "Ritmo Alterado ⚠️";
-                this.statusText.style.color = "#ff4b4b";
-                if (navigator.vibrate) navigator.vibrate([50, 50, 50, 50]);
-              }
-            });
-          }
-        }
-      };
-
-      // 9. PESTAÑAS (NAVEGACIÓN)
       const Navigation = {
         init() {
           const tabs = document.querySelectorAll('.nav-tab');
           const views = document.querySelectorAll('.tab-view');
-          tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-              const targetId = tab.dataset.target;
-              tabs.forEach(t => t.classList.remove('active')); tab.classList.add('active');
-              views.forEach(view => view.classList.toggle('active', view.id === targetId));
-              if (navigator.vibrate) navigator.vibrate(25);
-            });
-          });
+          tabs.forEach(tab => tab.addEventListener('click', () => {
+            const targetId = tab.dataset.target;
+            tabs.forEach(t => t.classList.remove('active')); tab.classList.add('active');
+            views.forEach(view => view.classList.toggle('active', view.id === targetId));
+            if (navigator.vibrate) navigator.vibrate(25);
+          }));
         }
       };
 
@@ -611,10 +558,10 @@
           document.addEventListener('DOMContentLoaded', () => {
             Security.init();
             Nemu.init();
+            UvMonitor.init();
             MoodTracker.init();
             MentalNotes.init();
             LocationCheckIn.init();
-            HeartControl.init();
             Navigation.init();
           });
         }
