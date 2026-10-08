@@ -42,47 +42,22 @@
       align-items: center; justify-content: center;
       transition: opacity 0.5s ease, visibility 0.5s ease;
     }
-
     .lock-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-
-    .lock-header h2 {
-      margin: 0; font-size: 1.5rem; letter-spacing: 3px; color: var(--accent-cyan);
-      text-align: center; text-transform: uppercase;
-    }
-
+    .lock-header h2 { margin: 0; font-size: 1.5rem; letter-spacing: 3px; color: var(--accent-cyan); text-align: center; text-transform: uppercase; }
     .lock-header p { margin: 8px 0 30px; font-size: 0.85rem; color: var(--text-dim); text-align: center; }
 
-    .pin-dots {
-      display: flex; gap: 16px; margin-bottom: 40px; justify-content: center;
-    }
-
-    .pin-dots .dot {
-      width: 14px; height: 14px; border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      transition: all 0.2s ease;
-    }
-
+    .pin-dots { display: flex; gap: 16px; margin-bottom: 40px; justify-content: center; }
+    .pin-dots .dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.2); transition: all 0.2s ease; }
     .pin-dots .dot.active { background: var(--accent-cyan); border-color: var(--accent-cyan); box-shadow: 0 0 10px var(--accent-cyan); }
-    
     .pin-dots.error-shake { animation: shake 0.4s; }
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      20%, 60% { transform: translateX(-10px); }
-      40%, 80% { transform: translateX(10px); }
-    }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
 
-    .numpad {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; width: 260px;
-    }
-
+    .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; width: 260px; }
     .num-btn {
-      width: 70px; height: 70px; border-radius: 50%; border: none;
-      background: rgba(255, 255, 255, 0.05); color: #fff;
-      font-size: 1.6rem; font-weight: 300; cursor: pointer;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+      width: 70px; height: 70px; border-radius: 50%; border: none; background: rgba(255, 255, 255, 0.05); color: #fff;
+      font-size: 1.6rem; font-weight: 300; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
       transition: transform 0.1s, background 0.2s;
     }
-
     .num-btn:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0.5); background: rgba(0, 242, 254, 0.2); }
     .num-btn.action-btn { font-size: 1.2rem; background: transparent; box-shadow: none; color: var(--text-dim); }
 
@@ -97,17 +72,14 @@
     /* --- TARJETAS GLASSMORPHISM Y BOTONES 3D --- */
     .glass-card {
       background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--glass-border); border-radius: 20px; padding: 18px;
-      margin-bottom: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+      border: 1px solid var(--glass-border); border-radius: 20px; padding: 18px; margin-bottom: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
     }
     .glass-card h3 { margin: 0 0 14px 0; font-size: 1.05rem; font-weight: 600; }
     
     .mood-selector { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 14px; }
     .mood-btn {
-      flex: 1; font-size: 1.4rem; padding: 10px 0; border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.04);
-      cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.5);
-      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease;
+      flex: 1; font-size: 1.4rem; padding: 10px 0; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.04); cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.5); transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease;
     }
     .mood-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.5); background: rgba(0, 242, 254, 0.15); }
     .chip-container { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
@@ -120,68 +92,106 @@
     textarea:focus { border-color: var(--accent-blue); }
 
     .btn-3d {
-      width: 100%; padding: 14px; border-radius: 14px; border: none;
-      background: linear-gradient(135deg, var(--btn-grad-start), var(--btn-grad-end));
-      color: #fff; font-weight: 600; font-size: 0.95rem; cursor: pointer;
-      box-shadow: 0 5px 0 var(--btn-shadow), 0 10px 15px rgba(0,0,0,0.4);
-      transition: transform 0.08s ease, box-shadow 0.08s ease;
+      width: 100%; padding: 14px; border-radius: 14px; border: none; background: linear-gradient(135deg, var(--btn-grad-start), var(--btn-grad-end));
+      color: #fff; font-weight: 600; font-size: 0.95rem; cursor: pointer; box-shadow: 0 5px 0 var(--btn-shadow), 0 10px 15px rgba(0,0,0,0.4); transition: transform 0.08s ease, box-shadow 0.08s ease;
     }
     .btn-3d:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--btn-shadow), 0 4px 6px rgba(0,0,0,0.3); }
 
-    /* BOTÓN ROJO Y ANIMACIÓN DE LATIDO */
-    .btn-red {
-      background: linear-gradient(135deg, #ff4b4b, #d32f2f);
-      box-shadow: 0 5px 0 #9a0007, 0 10px 15px rgba(0,0,0,0.4);
-    }
+    .btn-red { background: linear-gradient(135deg, #ff4b4b, #d32f2f); box-shadow: 0 5px 0 #9a0007, 0 10px 15px rgba(0,0,0,0.4); }
     .btn-red:active { box-shadow: 0 1px 0 #9a0007, 0 4px 6px rgba(0,0,0,0.3); }
 
-    @keyframes latido {
-      0% { transform: scale(1); }
-      15% { transform: scale(1.25); }
-      30% { transform: scale(1); }
-      45% { transform: scale(1.15); }
-      60% { transform: scale(1); }
+    /* =========================================================================
+       TARJETA DE CAZADOR ANIME (RÉPLICA EXACTA)
+       ========================================================================= */
+    .hunter-anime-card {
+      background: #000;
+      border: 6px solid #fff;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 290px;
+      margin: 0 auto 24px auto;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
-    .icono-latido {
-      display: inline-block;
-      animation: latido 1.5s infinite;
-      transform-origin: center;
+    .h-top { background: #000; padding: 15px 15px 10px 15px; }
+    .h-logo-box {
+      background: #f4f4f4;
+      padding: 12px;
+      margin-bottom: 12px;
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .h-barcode {
+      height: 45px;
+      background: repeating-linear-gradient(
+        to right,
+        #fff, #fff 3px, #000 3px, #000 6px,
+        #fff 6px, #fff 10px, #000 10px, #000 14px,
+        #fff 14px, #fff 18px, #000 18px, #000 24px
+      );
+      width: 100%;
+    }
+    .h-bottom {
+      background: #8cbdf0;
+      padding: 15px 12px;
+      border-top: 3px solid #000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .h-slot {
+      background: #fff;
+      border: 2px solid #000;
+      padding: 5px 8px;
+      text-align: center;
+      font-family: monospace;
+      font-weight: 900;
+      color: #000;
+      font-size: 0.95rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
     }
 
-    /* --- LICENCIA DE CAZADOR (HUNTER CARD) --- */
-    .hunter-card-wrap { perspective: 1000px; margin-bottom: 24px; }
-    .hunter-card {
-      position: relative; background: linear-gradient(145deg, #1b222c, #0d1117); border-radius: 18px; padding: 2px;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), inset 0 0 1px rgba(255, 255, 255, 0.4); border: 1px solid rgba(79, 172, 254, 0.3);
-    }
-    .hunter-card-inner { background: radial-gradient(circle at top right, #1a2332 0%, #0d121a 75%); border-radius: 16px; padding: 16px; }
-    .hunter-top-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 8px; margin-bottom: 14px; }
-    .hunter-badge { font-size: 0.72rem; font-weight: 800; letter-spacing: 1.5px; color: var(--accent-cyan); }
-    .hunter-serial { font-family: monospace; font-size: 0.7rem; color: var(--text-dim); }
-    .hunter-body { display: flex; gap: 16px; align-items: center; }
-    .hunter-avatar-slot {
-      width: 70px; height: 85px; border-radius: 10px; background: linear-gradient(135deg, #232d3d, #141a24);
-      border: 1px solid rgba(0, 242, 254, 0.35); display: flex; align-items: center; justify-content: center; box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
-    }
-    .avatar-ph { font-size: 2rem; font-weight: 900; color: var(--accent-cyan); text-shadow: 0 0 12px rgba(0, 242, 254, 0.6); }
-    .hunter-meta h2 { margin: 0; font-size: 1.4rem; letter-spacing: 1px; }
-    .hunter-title { display: block; font-size: 0.72rem; color: var(--text-dim); letter-spacing: 0.8px; margin-bottom: 8px; }
-    .hunter-spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .hunter-spec-grid label { display: block; font-size: 0.6rem; color: var(--text-dim); }
-    .hunter-spec-grid span { font-size: 0.78rem; font-weight: 700; color: var(--text-main); }
-    .hunter-card-footer { margin-top: 14px; padding-top: 10px; border-top: 1px dashed rgba(255, 255, 255, 0.08); display: flex; justify-content: space-between; align-items: center; }
-    .micro-chip { width: 28px; height: 18px; background: linear-gradient(135deg, #ffd700, #b8860b); border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.5); }
-    .hunter-code { font-family: monospace; font-size: 0.65rem; color: var(--text-dim); }
-
-    /* --- LISTA DE PILARES --- */
+    /* --- PILARES Y CHECKBOX DE LOSARTÁN --- */
     .section-title { font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); margin: 12px 0 10px 4px; }
     .pillar-card { padding: 14px 16px; border-left: 3px solid var(--accent-blue); }
-    .pillar-header { display: flex; align-items: center; gap: 10px; }
+    .pillar-header { display: flex; align-items: center; justify-content: space-between; }
+    .pillar-header-left { display: flex; align-items: center; gap: 10px; }
     .pillar-header h4 { margin: 0; font-size: 1rem; }
-    .pillar-desc { font-size: 0.82rem; color: var(--text-dim); margin: 6px 0 10px 0; }
+    .pillar-desc { font-size: 0.82rem; color: var(--text-dim); margin: 10px 0 10px 0; line-height: 1.4; }
     .pillar-tags { display: flex; gap: 8px; }
     .status-tag, .metric-tag { font-size: 0.68rem; padding: 4px 8px; border-radius: 6px; background: rgba(255, 255, 255, 0.06); }
     .status-tag.active-tag { background: rgba(0, 242, 254, 0.15); color: var(--accent-cyan); border: 1px solid rgba(0, 242, 254, 0.3); }
+
+    /* SWITCH ESTILO iOS PARA MEDICACIÓN */
+    .switch { position: relative; display: inline-block; width: 42px; height: 22px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ff4b4b; transition: .4s; border-radius: 22px; }
+    .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+    input:checked + .slider { background-color: #00f2fe; }
+    input:checked + .slider:before { transform: translateX(20px); }
+
+    /* ANIMACIONES DEL CORAZÓN (LATIDO / ELECTROCARDIOGRAMA) */
+    .heartbeat-svg { transition: color 0.4s ease; }
+    .heartbeat-svg.altered { color: #ff4b4b; }
+    .heartbeat-svg.altered .hb-line { animation: shake-heart 0.3s infinite; filter: drop-shadow(0 0 5px #ff4b4b); }
+    
+    .heartbeat-svg.calm { color: #00f2fe; }
+    .heartbeat-svg.calm .hb-line { animation: pulse-heart 1.5s infinite ease-in-out; filter: drop-shadow(0 0 5px #00f2fe); }
+
+    @keyframes shake-heart {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(1px, -1px) scale(1.05); }
+      100% { transform: translate(-1px, 1px) scale(1); }
+    }
+    @keyframes pulse-heart {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
 
     /* --- BARRA FLOTANTE DE PESTAÑAS --- */
     .bottom-nav {
@@ -203,11 +213,9 @@
       <h2>KIDO CORE</h2>
       <p>Autenticación requerida</p>
     </div>
-    
     <div class="pin-dots">
       <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
     </div>
-
     <div class="numpad">
       <button class="num-btn" data-val="1">1</button>
       <button class="num-btn" data-val="2">2</button>
@@ -233,7 +241,6 @@
         <p class="subtitle">Bitácora activa y registro</p>
       </header>
 
-      <!-- Mood Tracker -->
       <div class="card glass-card">
         <h3>Estado de Ánimo</h3>
         <div class="mood-selector">
@@ -246,7 +253,6 @@
         <div id="mood-history" class="chip-container"></div>
       </div>
 
-      <!-- Notas Mentales -->
       <div class="card glass-card">
         <h3>Notas Mentales</h3>
         <textarea id="mental-notes-input" placeholder="Captura rápida de pensamientos o tareas..."></textarea>
@@ -258,7 +264,7 @@
         <h3>📍 Check-in de Ubicación</h3>
         <p class="pillar-desc" style="margin-top:-8px; margin-bottom:14px;">Registra manualmente tus coordenadas exactas para el mapeo mensual.</p>
         <button id="send-location-btn" class="btn-3d btn-red">
-          <span class="icono-latido" style="margin-right: 5px;">🛰️</span> Guardar Ruta Actual
+          🛰️ Guardar Ruta Actual
         </button>
       </div>
     </section>
@@ -266,46 +272,56 @@
     <!-- ==================== PESTAÑA: NIVEK ==================== -->
     <section id="tab-nivek" class="tab-view">
       
-      <!-- TARJETA LICENCIA DE CAZADOR -->
-      <div class="hunter-card-wrap">
-        <div class="hunter-card">
-          <div class="hunter-card-inner">
-            <div class="hunter-top-bar">
-              <span class="hunter-badge">HUNTER LICENSE</span>
-              <span class="hunter-serial">№ 2000-0519-EC</span>
-            </div>
-            <div class="hunter-body">
-              <div class="hunter-avatar-slot"><div class="avatar-ph">N</div></div>
-              <div class="hunter-meta">
-                <h2 class="hunter-name">NIVEK</h2>
-                <span class="hunter-title">COGNITIVE & STRATEGY</span>
-                <div class="hunter-spec-grid">
-                  <div><label>CLASE</label><span>ESPECIALISTA</span></div>
-                  <div><label>NIVEL</label><span>★★☆</span></div>
-                </div>
-              </div>
-            </div>
-            <div class="hunter-card-footer">
-              <div class="micro-chip"></div>
-              <span class="hunter-code">KX-9418 // KIDO CORP CORE</span>
-            </div>
+      <!-- TARJETA LICENCIA DE CAZADOR ANIME (RÉPLICA EXACTA) -->
+      <div class="hunter-anime-card">
+        <div class="h-top">
+          <div class="h-logo-box">
+            <svg viewBox="0 0 100 80" width="100%" height="100%">
+              <!-- X Izquierda y Derecha Gruesa -->
+              <polygon points="15,10 35,10 50,35 65,10 85,10 60,40 85,70 65,70 50,45 35,70 15,70 40,40" fill="#000"/>
+              <!-- Diamante Rojo Central -->
+              <polygon points="50,15 70,40 50,65 30,40" fill="#d32f2f"/>
+            </svg>
           </div>
+          <div class="h-barcode"></div>
+        </div>
+        <div class="h-bottom">
+          <div class="h-slot">NIVEK</div>
+          <div class="h-slot">2000-0519-EC</div>
+          <div class="h-slot">KIDO CORP</div>
+          <div class="h-slot">ESPECIALISTA</div>
+          <div class="h-slot">KX-9418</div>
         </div>
       </div>
 
-      <!-- LISTA DE PILARES -->
+      <!-- LISTA DE PILARES Y SALUD -->
       <div class="pillars-container">
         <h3 class="section-title">Ejes Operativos</h3>
 
-        <!-- Tarjeta Salud con Latido Integrado -->
+        <!-- Tarjeta Salud con Animación de Latido y Check Losartán -->
         <article class="card glass-card pillar-card">
           <div class="pillar-header">
-            <span class="pillar-icon icono-latido">❤️‍🔥</span>
-            <h4>Salud & Vitalidad</h4>
+            <div class="pillar-header-left">
+              <!-- SVG Electrocardiograma Latido -->
+              <svg id="heartbeat-anim" class="heartbeat-svg altered" viewBox="0 0 200 100" width="60" height="30">
+                <path class="hb-line" d="M10,60 L30,60 L40,30 L55,90 L65,60 L80,60 C75,20 100,20 100,50 C100,20 125,20 120,60 L135,60 L145,90 L160,30 L170,60 L190,60" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <h4>Salud & Vitalidad</h4>
+            </div>
+            
+            <!-- Checkbox Medicación -->
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+              <span style="font-size: 0.65rem; color: var(--text-dim); font-weight: bold;">Losartán 100mg</span>
+              <label class="switch">
+                <input type="checkbox" id="losartan-check">
+                <span class="slider"></span>
+              </label>
+            </div>
           </div>
-          <p class="pillar-desc">Entrenamiento físico, acondicionamiento y balance neuromuscular.</p>
+
+          <p class="pillar-desc">Entrenamiento físico, acondicionamiento y balance cardiovascular.</p>
           <div class="pillar-tags">
-            <span class="status-tag">En Progreso</span>
+            <span class="status-tag" id="losartan-status" style="color: #ff4b4b;">Ritmo Alterado ⚠️</span>
             <span class="metric-tag">Fuerza / Cardio</span>
           </div>
         </article>
@@ -349,9 +365,9 @@
   <script>
     const KidoApp = (() => {
       
-      // 0. SISTEMA DE SEGURIDAD (PIN LOCK)
+      // 0. SISTEMA DE SEGURIDAD (PIN = 0519)
       const Security = {
-        PIN: "0519", // Tu fecha de nacimiento
+        PIN: "0519",
         currentInput: "",
         init() {
           this.overlay = document.getElementById('lock-screen');
@@ -368,20 +384,14 @@
           });
         },
         handleInput(val) {
-          if (val === 'clear') {
-            this.currentInput = "";
-          } else if (val === 'enter') {
-            this.checkPin(); return;
-          } else {
-            if (this.currentInput.length < 4) this.currentInput += val;
-          }
+          if (val === 'clear') { this.currentInput = ""; } 
+          else if (val === 'enter') { this.checkPin(); return; } 
+          else { if (this.currentInput.length < 4) this.currentInput += val; }
           this.updateDots();
           if (this.currentInput.length === 4) setTimeout(() => this.checkPin(), 250);
         },
         updateDots() {
-          this.dots.forEach((dot, index) => {
-            dot.classList.toggle('active', index < this.currentInput.length);
-          });
+          this.dots.forEach((dot, index) => { dot.classList.toggle('active', index < this.currentInput.length); });
         },
         checkPin() {
           if (this.currentInput === this.PIN) {
@@ -390,10 +400,7 @@
             const dotsContainer = document.querySelector('.pin-dots');
             dotsContainer.classList.add('error-shake');
             if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
-            setTimeout(() => {
-              dotsContainer.classList.remove('error-shake');
-              this.currentInput = ""; this.updateDots();
-            }, 400);
+            setTimeout(() => { dotsContainer.classList.remove('error-shake'); this.currentInput = ""; this.updateDots(); }, 400);
           }
         }
       };
@@ -402,9 +409,7 @@
       const GeoLoc = {
         async getCoords() {
           return new Promise((resolve) => {
-            if (!navigator.geolocation) {
-              resolve({ lat: 'No GPS', lng: 'No GPS' }); return;
-            }
+            if (!navigator.geolocation) { resolve({ lat: 'No GPS', lng: 'No GPS' }); return; }
             navigator.geolocation.getCurrentPosition(
               (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
               (err) => resolve({ lat: 'Bloqueado', lng: 'Bloqueado' }),
@@ -421,7 +426,7 @@
         save(key, data) { try { localStorage.setItem(key, JSON.stringify(data)); } catch(e) {} }
       };
 
-      // 3. SINCRONIZACIÓN ASÍNCRONA (A Tu Correo)
+      // 3. SINCRONIZACIÓN ASÍNCRONA (FormSubmit)
       const Network = {
         ENDPOINT: 'https://formsubmit.co/ajax/Albankevine845@gmail.com',
         async send(payload) {
@@ -432,9 +437,7 @@
               body: JSON.stringify(payload)
             });
             return await res.json();
-          } catch (err) {
-            console.warn('Sin conexión.', err); return null;
-          }
+          } catch (err) { console.warn('Sin conexión.', err); return null; }
         }
       };
 
@@ -450,7 +453,7 @@
         }
       };
 
-      // 5. REGISTRO EMOCIONAL (Incluye GPS)
+      // 5. REGISTRO EMOCIONAL
       const MoodTracker = {
         init() {
           this.buttons = document.querySelectorAll('.mood-btn');
@@ -468,18 +471,10 @@
         async recordMood(mood) {
           const entry = { mood, timestamp: new Date().toISOString() };
           const history = Storage.get(Storage.KEYS.MOODS);
-          history.unshift(entry);
-          Storage.save(Storage.KEYS.MOODS, history.slice(0, 8));
+          history.unshift(entry); Storage.save(Storage.KEYS.MOODS, history.slice(0, 8));
           this.renderHistory();
-
           const coords = await GeoLoc.getCoords();
-
-          await Network.send({
-            _subject: `Kido App: Estado de Ánimo (${mood})`,
-            mood: mood,
-            fecha_hora: entry.timestamp,
-            ubicacion_gps: `${coords.lat}, ${coords.lng}`
-          });
+          await Network.send({ _subject: `Kido App: Estado de Ánimo (${mood})`, mood: mood, fecha_hora: entry.timestamp, ubicacion_gps: `${coords.lat}, ${coords.lng}` });
         },
         renderHistory() {
           if (!this.historyContainer) return;
@@ -488,7 +483,7 @@
         }
       };
 
-      // 6. NOTAS MENTALES (Incluye GPS)
+      // 6. NOTAS MENTALES
       const MentalNotes = {
         init() {
           this.input = document.getElementById('mental-notes-input');
@@ -498,29 +493,18 @@
         async submit() {
           const text = this.input.value.trim();
           if (!text) return;
-
           if (navigator.vibrate) navigator.vibrate(40);
           const originalText = this.btn.textContent;
-          this.btn.textContent = 'Guardando GPS...';
-          this.btn.disabled = true;
-
+          this.btn.textContent = 'Guardando GPS...'; this.btn.disabled = true;
           const coords = await GeoLoc.getCoords();
           this.btn.textContent = 'Sincronizando...';
-
-          await Network.send({
-            _subject: 'Kido App: Registro / Tarea',
-            nota: text,
-            fecha_hora: new Date().toISOString(),
-            ubicacion_gps: `${coords.lat}, ${coords.lng}`
-          });
-
-          this.input.value = '';
-          this.btn.textContent = '¡Completado!';
+          await Network.send({ _subject: 'Kido App: Registro / Tarea', nota: text, fecha_hora: new Date().toISOString(), ubicacion_gps: `${coords.lat}, ${coords.lng}` });
+          this.input.value = ''; this.btn.textContent = '¡Completado!';
           setTimeout(() => { this.btn.textContent = originalText; this.btn.disabled = false; }, 1500);
         }
       };
 
-      // 7. BOTÓN EXCLUSIVO DE UBICACIÓN
+      // 7. BOTÓN CHECK-IN GPS
       const LocationCheckIn = {
         init() {
           this.btn = document.getElementById('send-location-btn');
@@ -529,25 +513,45 @@
         async submit() {
           if (navigator.vibrate) navigator.vibrate([40, 50, 40]);
           const originalHTML = this.btn.innerHTML;
-          this.btn.innerHTML = '<span class="icono-latido" style="margin-right: 5px;">📡</span> Triangulando...';
-          this.btn.disabled = true;
-
+          this.btn.innerHTML = '🛰️ Triangulando...'; this.btn.disabled = true;
           const coords = await GeoLoc.getCoords();
           this.btn.innerHTML = 'Enviando...';
-
-          await Network.send({
-            _subject: 'Kido App: Check-in de Ubicación',
-            nota: '📍 El usuario ha registrado un punto fijo en el mapa.',
-            fecha_hora: new Date().toISOString(),
-            ubicacion_gps: `${coords.lat}, ${coords.lng}`
-          });
-
+          await Network.send({ _subject: 'Kido App: Check-in GPS', nota: '📍 El usuario ha registrado un punto fijo.', fecha_hora: new Date().toISOString(), ubicacion_gps: `${coords.lat}, ${coords.lng}` });
           this.btn.innerHTML = '¡Ruta Guardada!';
           setTimeout(() => { this.btn.innerHTML = originalHTML; this.btn.disabled = false; }, 2000);
         }
       };
 
-      // 8. PESTAÑAS (NAVEGACIÓN)
+      // 8. CONTROL DEL LATIDO CARDÍACO (LOSARTÁN)
+      const HeartControl = {
+        init() {
+          this.checkbox = document.getElementById('losartan-check');
+          this.hbSvg = document.getElementById('heartbeat-anim');
+          this.statusText = document.getElementById('losartan-status');
+          
+          if(this.checkbox && this.hbSvg) {
+            this.checkbox.addEventListener('change', () => {
+              if(this.checkbox.checked) {
+                // Estado Tranquilo (Medicamento Tomado)
+                this.hbSvg.classList.remove('altered');
+                this.hbSvg.classList.add('calm');
+                this.statusText.textContent = "Ritmo Estable ✅";
+                this.statusText.style.color = "#00f2fe";
+                if (navigator.vibrate) navigator.vibrate([20, 30, 20]);
+              } else {
+                // Estado Alterado (Sin Medicamento)
+                this.hbSvg.classList.remove('calm');
+                this.hbSvg.classList.add('altered');
+                this.statusText.textContent = "Ritmo Alterado ⚠️";
+                this.statusText.style.color = "#ff4b4b";
+                if (navigator.vibrate) navigator.vibrate([50, 50, 50, 50]);
+              }
+            });
+          }
+        }
+      };
+
+      // 9. PESTAÑAS (NAVEGACIÓN)
       const Navigation = {
         init() {
           const tabs = document.querySelectorAll('.nav-tab');
@@ -570,7 +574,8 @@
             Nemu.init();
             MoodTracker.init();
             MentalNotes.init();
-            LocationCheckIn.init(); // Inicia el botón rojo
+            LocationCheckIn.init();
+            HeartControl.init(); // Inicia la lógica del corazón
             Navigation.init();
           });
         }
@@ -580,9 +585,7 @@
     KidoApp.init();
 
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Error:', err));
-      });
+      window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Error:', err)); });
     }
   </script>
 </body>
