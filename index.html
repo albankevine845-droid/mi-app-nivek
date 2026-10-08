@@ -35,7 +35,7 @@
     }
 
     /* =========================================================================
-       PANTALLA DE BLOQUEO (TODA LA PANTALLA DESENFOCADA & FONDO ALEATORIO)
+       PANTALLA DE BLOQUEO (iOS LIQUID GLASS)
        ========================================================================= */
     .lock-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -94,14 +94,15 @@
     .glass-card h3 { margin: 0 0 14px 0; font-size: 1.05rem; font-weight: 600; }
     
     /* =========================================================================
-       MÓDULO: RADIACIÓN SOLAR & VITILIGO
+       MÓDULOS: RADIACIÓN SOLAR & LUNA
        ========================================================================= */
-    .sun-glass-card {
+    .sun-glass-card, .moon-glass-card {
       background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
       border: 1px solid var(--glass-border); border-radius: 24px; padding: 18px; margin-bottom: 16px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); position: relative; overflow: hidden;
     }
 
+    /* Animaciones Solares */
     @keyframes sunExtremePulse {
       0% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 15px #f97316) drop-shadow(0 0 35px #ef4444); }
       50% { transform: scale(1.2) rotate(180deg); filter: drop-shadow(0 0 30px #facc15) drop-shadow(0 0 50px #dc2626); }
@@ -111,8 +112,18 @@
       0% { transform: translateY(0px) rotate(-5deg); filter: drop-shadow(0 0 8px #38bdf8); }
       100% { transform: translateY(-6px) rotate(5deg); filter: drop-shadow(0 0 18px #818cf8); }
     }
+
+    /* Animaciones Lunares */
+    @keyframes moonFloat {
+      0% { transform: translateY(0px) rotate(0deg); filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6)); }
+      50% { transform: translateY(-8px) rotate(3deg); filter: drop-shadow(0 0 25px rgba(255, 255, 255, 1)); }
+      100% { transform: translateY(0px) rotate(0deg); filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6)); }
+    }
+
     .sun-card-header { display: flex; justify-content: space-between; align-items: center; }
     .sun-mood-icon { font-size: 2.8rem; display: inline-block; transition: all 0.5s ease; }
+    .moon-anim-icon { font-size: 2.8rem; display: inline-block; animation: moonFloat 4s ease-in-out infinite; }
+    
     .sun-uv-badge { font-size: 0.85rem; font-weight: 900; padding: 4px 12px; border-radius: 12px; color: #fff; display: inline-block; margin-top: 4px; }
     .vitiligo-alert-box { background: rgba(0, 0, 0, 0.25); border: 1px solid var(--glass-border); border-radius: 16px; padding: 12px; margin-top: 12px; font-size: 0.78rem; line-height: 1.4; }
 
@@ -133,7 +144,6 @@
     .btn-red { background: linear-gradient(135deg, #ff4b4b, #d32f2f); box-shadow: 0 5px 0 #9a0007, 0 10px 15px rgba(0,0,0,0.4); }
     .btn-red:active { box-shadow: 0 1px 0 #9a0007, 0 4px 6px rgba(0,0,0,0.3); }
 
-    /* Animación de latido simple para iconos estéticos */
     @keyframes latido { 0% { transform: scale(1); } 15% { transform: scale(1.25); } 30% { transform: scale(1); } 45% { transform: scale(1.15); } 60% { transform: scale(1); } }
     .icono-latido { display: inline-block; animation: latido 1.5s infinite; transform-origin: center; }
 
@@ -211,6 +221,22 @@
         <p class="subtitle">Bitácora activa y registro</p>
       </header>
 
+      <!-- MÓDULO: LUNA Y NOCHE (Se oculta de día mediante JS) -->
+      <div id="moon-module" class="moon-glass-card" style="display: none;">
+        <div class="sun-card-header">
+          <div>
+            <div style="font-size: 0.95rem; font-weight: 900; color: var(--text-main);">🌙 Ciclo Lunar & Noche</div>
+            <div style="font-size: 0.73rem; color: var(--text-muted); font-weight: 600;">Estado del Satélite</div>
+            <span class="sun-uv-badge" id="moonPhaseBadge" style="background: #334155; border: 1px solid rgba(255,255,255,0.2);">Calculando...</span>
+          </div>
+          <span class="moon-anim-icon" id="moonIcon">🌕</span>
+        </div>
+        <div class="vitiligo-alert-box" style="border-color: rgba(255,255,255,0.1);">
+          <strong>💡 Dato Nocturno:</strong><br>
+          <span id="moonRandomFact" style="color: #cbd5e1;">Buscando en los astros...</span>
+        </div>
+      </div>
+
       <!-- MÓDULO: RADIACIÓN SOLAR & VITILIGO -->
       <div class="sun-glass-card">
         <div class="sun-card-header">
@@ -280,7 +306,6 @@
       <div class="pillars-container">
         <h3 class="section-title">Ejes Operativos</h3>
 
-        <!-- Pilar Salud (Restaurado a la versión limpia con latido estético) -->
         <article class="card glass-card pillar-card">
           <div class="pillar-header">
             <span class="pillar-icon icono-latido">❤️‍🔥</span>
@@ -293,12 +318,12 @@
           </div>
         </article>
 
-        <!-- Otros Pilares -->
         <article class="card glass-card pillar-card">
           <div class="pillar-header"><span class="pillar-icon">🧠</span><h4>Estudio & Investigación</h4></div>
           <p class="pillar-desc">Exploración conceptual, lecturas avanzadas y desarrollo analítico.</p>
           <div class="pillar-tags"><span class="status-tag active-tag">Activo</span><span class="metric-tag">Investigación</span></div>
         </article>
+        
         <article class="card glass-card pillar-card">
           <div class="pillar-header"><span class="pillar-icon">⚡</span><h4>Trabajo & Proyectos</h4></div>
           <p class="pillar-desc">Dirección de iniciativas creativas, sistemas y flujos de automatización.</p>
@@ -317,7 +342,7 @@
   <script>
     const KidoApp = (() => {
       
-      // 0. SISTEMA DE SEGURIDAD (PIN MULTIPLE Y FONDOS ALEATORIOS)
+      // 0. SISTEMA DE SEGURIDAD
       const Security = {
         VALID_PINS: ["1234", "0931935795"],
         currentInput: "",
@@ -416,7 +441,66 @@
         }
       };
 
-      // 2. MÓDULO DE RADIACIÓN SOLAR & VITILIGO
+      // 2. NUEVO: MÓDULO LUNAR (Oculto de Día)
+      const MoonMonitor = {
+        facts: [
+          "La Luna se aleja de la Tierra 3.8 cm cada año. Aprovecha a mirarla hoy.",
+          "Siempre vemos la misma cara de la Luna debido a su rotación sincrónica.",
+          "Las fases lunares afectan sutilmente el estuario del Golfo de Guayaquil.",
+          "La gravedad lunar estabiliza la oscilación de nuestro planeta, regulando el clima.",
+          "El polvo lunar huele a pólvora quemada, según reportes de los astronautas del Apolo.",
+          "Un día lunar dura aproximadamente 29.5 días terrestres. ¡Un día largo!",
+          "No hay sonido en la Luna, el silencio es absoluto por la falta de atmósfera.",
+          "La Luna refleja solo el 12% de la luz del sol que recibe, pero brilla intenso en la noche."
+        ],
+        init() {
+          this.updateMoon();
+          // Revisa cada hora si ya anocheció o amaneció
+          setInterval(() => this.updateMoon(), 3600000); 
+        },
+        getMoonPhase() {
+          // Algoritmo matemático ligero para calcular fase lunar aproximada
+          const now = new Date();
+          const lp = 2551443; // Segundos del ciclo lunar (aprox 29.53 días)
+          const newMoon = new Date(1970, 0, 7, 20, 35, 0).getTime();
+          const phase = ((now.getTime() - newMoon) / 1000) % lp;
+          const days = Math.floor(phase / (24 * 3600)) + 1;
+          
+          if (days <= 1 || days >= 29) return { name: "Luna Nueva", icon: "🌑" };
+          if (days > 1 && days < 7) return { name: "Creciente Cóncava", icon: "🌒" };
+          if (days >= 7 && days <= 8) return { name: "Cuarto Creciente", icon: "🌓" };
+          if (days > 8 && days < 14) return { name: "Creciente Convexa", icon: "🌔" };
+          if (days >= 14 && days <= 15) return { name: "Luna Llena", icon: "🌕" };
+          if (days > 15 && days < 22) return { name: "Menguante Convexa", icon: "🌖" };
+          if (days >= 22 && days <= 23) return { name: "Cuarto Menguante", icon: "🌗" };
+          return { name: "Menguante Cóncava", icon: "🌘" };
+        },
+        updateMoon() {
+          const hour = new Date().getHours();
+          const moonModule = document.getElementById('moon-module');
+          if(!moonModule) return;
+
+          // Mostrar SOLO en la noche (De 18:00 PM a 05:59 AM)
+          if (hour >= 18 || hour < 6) {
+            moonModule.style.display = 'block';
+            
+            const phaseInfo = this.getMoonPhase();
+            document.getElementById('moonPhaseBadge').innerText = `Fase: ${phaseInfo.name}`;
+            document.getElementById('moonIcon').innerText = phaseInfo.icon;
+            
+            // Dato Random basado en el día del año (para que rote diario, no cada segundo)
+            const start = new Date(new Date().getFullYear(), 0, 0);
+            const diff = new Date() - start;
+            const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+            
+            document.getElementById('moonRandomFact').innerText = this.facts[dayOfYear % this.facts.length];
+          } else {
+            moonModule.style.display = 'none';
+          }
+        }
+      };
+
+      // 3. MÓDULO RADIACIÓN SOLAR
       const UvMonitor = {
         init() {
           this.updateSunUvVitiligo();
@@ -477,7 +561,7 @@
         }
       };
 
-      // 3. MÓDULOS DE REGISTRO CLÁSICOS
+      // 4. MÓDULOS DE REGISTRO CLÁSICOS
       const MoodTracker = {
         init() {
           this.buttons = document.querySelectorAll('.mood-btn');
@@ -558,6 +642,7 @@
           document.addEventListener('DOMContentLoaded', () => {
             Security.init();
             Nemu.init();
+            MoonMonitor.init(); // Arranca controlador Lunar Nocturno
             UvMonitor.init();
             MoodTracker.init();
             MentalNotes.init();
