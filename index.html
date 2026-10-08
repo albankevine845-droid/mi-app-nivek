@@ -128,6 +128,26 @@
     }
     .btn-3d:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--btn-shadow), 0 4px 6px rgba(0,0,0,0.3); }
 
+    /* BOTÓN ROJO Y ANIMACIÓN DE LATIDO */
+    .btn-red {
+      background: linear-gradient(135deg, #ff4b4b, #d32f2f);
+      box-shadow: 0 5px 0 #9a0007, 0 10px 15px rgba(0,0,0,0.4);
+    }
+    .btn-red:active { box-shadow: 0 1px 0 #9a0007, 0 4px 6px rgba(0,0,0,0.3); }
+
+    @keyframes latido {
+      0% { transform: scale(1); }
+      15% { transform: scale(1.25); }
+      30% { transform: scale(1); }
+      45% { transform: scale(1.15); }
+      60% { transform: scale(1); }
+    }
+    .icono-latido {
+      display: inline-block;
+      animation: latido 1.5s infinite;
+      transform-origin: center;
+    }
+
     /* --- LICENCIA DE CAZADOR (HUNTER CARD) --- */
     .hunter-card-wrap { perspective: 1000px; margin-bottom: 24px; }
     .hunter-card {
@@ -140,11 +160,11 @@
     .hunter-serial { font-family: monospace; font-size: 0.7rem; color: var(--text-dim); }
     .hunter-body { display: flex; gap: 16px; align-items: center; }
     .hunter-avatar-slot {
-      width: 72px; height: 85px; border-radius: 10px; background: linear-gradient(135deg, #232d3d, #141a24);
-      border: 1px solid rgba(0, 242, 254, 0.35); display: flex; align-items: center; justify-content: center; box-shadow: inset 0 2px 5px rgba(0,0,0,0.6); flex-shrink: 0;
+      width: 70px; height: 85px; border-radius: 10px; background: linear-gradient(135deg, #232d3d, #141a24);
+      border: 1px solid rgba(0, 242, 254, 0.35); display: flex; align-items: center; justify-content: center; box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
     }
-    .avatar-ph { font-size: 2.2rem; font-weight: 900; color: var(--accent-cyan); text-shadow: 0 0 12px rgba(0, 242, 254, 0.6); }
-    .hunter-meta h2 { margin: 0; font-size: 1.35rem; letter-spacing: 1px; }
+    .avatar-ph { font-size: 2rem; font-weight: 900; color: var(--accent-cyan); text-shadow: 0 0 12px rgba(0, 242, 254, 0.6); }
+    .hunter-meta h2 { margin: 0; font-size: 1.4rem; letter-spacing: 1px; }
     .hunter-title { display: block; font-size: 0.72rem; color: var(--text-dim); letter-spacing: 0.8px; margin-bottom: 8px; }
     .hunter-spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .hunter-spec-grid label { display: block; font-size: 0.6rem; color: var(--text-dim); }
@@ -153,12 +173,12 @@
     .micro-chip { width: 28px; height: 18px; background: linear-gradient(135deg, #ffd700, #b8860b); border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.5); }
     .hunter-code { font-family: monospace; font-size: 0.65rem; color: var(--text-dim); }
 
-    /* --- PILARES DE GESTIÓN --- */
-    .section-title { font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); margin: 16px 0 10px 4px; }
+    /* --- LISTA DE PILARES --- */
+    .section-title { font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); margin: 12px 0 10px 4px; }
     .pillar-card { padding: 14px 16px; border-left: 3px solid var(--accent-blue); }
     .pillar-header { display: flex; align-items: center; gap: 10px; }
     .pillar-header h4 { margin: 0; font-size: 1rem; }
-    .pillar-desc { font-size: 0.82rem; color: var(--text-dim); margin: 6px 0 10px 0; line-height: 1.4; }
+    .pillar-desc { font-size: 0.82rem; color: var(--text-dim); margin: 6px 0 10px 0; }
     .pillar-tags { display: flex; gap: 8px; }
     .status-tag, .metric-tag { font-size: 0.68rem; padding: 4px 8px; border-radius: 6px; background: rgba(255, 255, 255, 0.06); }
     .status-tag.active-tag { background: rgba(0, 242, 254, 0.15); color: var(--accent-cyan); border: 1px solid rgba(0, 242, 254, 0.3); }
@@ -232,11 +252,21 @@
         <textarea id="mental-notes-input" placeholder="Captura rápida de pensamientos o tareas..."></textarea>
         <button id="send-notes-btn" class="btn-3d">Guardar y Sincronizar</button>
       </div>
+
+      <!-- BOTÓN ROJO: Check-in GPS -->
+      <div class="card glass-card">
+        <h3>📍 Check-in de Ubicación</h3>
+        <p class="pillar-desc" style="margin-top:-8px; margin-bottom:14px;">Registra manualmente tus coordenadas exactas para el mapeo mensual.</p>
+        <button id="send-location-btn" class="btn-3d btn-red">
+          <span class="icono-latido" style="margin-right: 5px;">🛰️</span> Guardar Ruta Actual
+        </button>
+      </div>
     </section>
 
     <!-- ==================== PESTAÑA: NIVEK ==================== -->
     <section id="tab-nivek" class="tab-view">
-      <!-- Tarjeta Hunter -->
+      
+      <!-- TARJETA LICENCIA DE CAZADOR -->
       <div class="hunter-card-wrap">
         <div class="hunter-card">
           <div class="hunter-card-inner">
@@ -247,11 +277,11 @@
             <div class="hunter-body">
               <div class="hunter-avatar-slot"><div class="avatar-ph">N</div></div>
               <div class="hunter-meta">
-                <h2>NIVEK</h2>
+                <h2 class="hunter-name">NIVEK</h2>
                 <span class="hunter-title">COGNITIVE & STRATEGY</span>
                 <div class="hunter-spec-grid">
                   <div><label>CLASE</label><span>ESPECIALISTA</span></div>
-                  <div><label>RANGO</label><span>★★☆</span></div>
+                  <div><label>NIVEL</label><span>★★☆</span></div>
                 </div>
               </div>
             </div>
@@ -263,28 +293,50 @@
         </div>
       </div>
 
-      <!-- Pilares -->
+      <!-- LISTA DE PILARES -->
       <div class="pillars-container">
         <h3 class="section-title">Ejes Operativos</h3>
 
+        <!-- Tarjeta Salud con Latido Integrado -->
         <article class="card glass-card pillar-card">
-          <div class="pillar-header"><span>❤️‍🔥</span><h4>Salud & Vitalidad</h4></div>
+          <div class="pillar-header">
+            <span class="pillar-icon icono-latido">❤️‍🔥</span>
+            <h4>Salud & Vitalidad</h4>
+          </div>
           <p class="pillar-desc">Entrenamiento físico, acondicionamiento y balance neuromuscular.</p>
-          <div class="pillar-tags"><span class="status-tag">En Progreso</span><span class="metric-tag">Fuerza / Cardio</span></div>
+          <div class="pillar-tags">
+            <span class="status-tag">En Progreso</span>
+            <span class="metric-tag">Fuerza / Cardio</span>
+          </div>
         </article>
 
+        <!-- Tarjeta Estudio -->
         <article class="card glass-card pillar-card">
-          <div class="pillar-header"><span>🧠</span><h4>Estudio & Investigación</h4></div>
+          <div class="pillar-header">
+            <span class="pillar-icon">🧠</span>
+            <h4>Estudio & Investigación</h4>
+          </div>
           <p class="pillar-desc">Exploración conceptual, lecturas avanzadas y desarrollo analítico.</p>
-          <div class="pillar-tags"><span class="status-tag active-tag">Activo</span><span class="metric-tag">Investigación</span></div>
+          <div class="pillar-tags">
+            <span class="status-tag active-tag">Activo</span>
+            <span class="metric-tag">Investigación</span>
+          </div>
         </article>
 
+        <!-- Tarjeta Trabajo -->
         <article class="card glass-card pillar-card">
-          <div class="pillar-header"><span>⚡</span><h4>Trabajo & Proyectos</h4></div>
+          <div class="pillar-header">
+            <span class="pillar-icon">⚡</span>
+            <h4>Trabajo & Proyectos</h4>
+          </div>
           <p class="pillar-desc">Dirección de iniciativas creativas, sistemas y flujos de automatización.</p>
-          <div class="pillar-tags"><span class="status-tag">Planificación</span><span class="metric-tag">Kido Corp</span></div>
+          <div class="pillar-tags">
+            <span class="status-tag">Planificación</span>
+            <span class="metric-tag">Kido Corp</span>
+          </div>
         </article>
       </div>
+
     </section>
 
     <!-- Barra de Navegación Inferior -->
@@ -299,7 +351,7 @@
       
       // 0. SISTEMA DE SEGURIDAD (PIN LOCK)
       const Security = {
-        PIN: "0519", // PIN DE ACCESO (Tu fecha de nacimiento)
+        PIN: "0519", // Tu fecha de nacimiento
         currentInput: "",
         init() {
           this.overlay = document.getElementById('lock-screen');
@@ -333,7 +385,7 @@
         },
         checkPin() {
           if (this.currentInput === this.PIN) {
-            this.overlay.classList.add('hidden'); // Desbloqueado
+            this.overlay.classList.add('hidden');
           } else {
             const dotsContainer = document.querySelector('.pin-dots');
             dotsContainer.classList.add('error-shake');
@@ -420,14 +472,13 @@
           Storage.save(Storage.KEYS.MOODS, history.slice(0, 8));
           this.renderHistory();
 
-          // Capturamos el GPS antes de enviar
           const coords = await GeoLoc.getCoords();
 
           await Network.send({
             _subject: `Kido App: Estado de Ánimo (${mood})`,
             mood: mood,
             fecha_hora: entry.timestamp,
-            ubicacion_gps: `${coords.lat}, ${coords.lng}` // Listo para la futura triangulación
+            ubicacion_gps: `${coords.lat}, ${coords.lng}`
           });
         },
         renderHistory() {
@@ -469,7 +520,34 @@
         }
       };
 
-      // 7. PESTAÑAS (NAVEGACIÓN)
+      // 7. BOTÓN EXCLUSIVO DE UBICACIÓN
+      const LocationCheckIn = {
+        init() {
+          this.btn = document.getElementById('send-location-btn');
+          if (this.btn) this.btn.addEventListener('click', () => this.submit());
+        },
+        async submit() {
+          if (navigator.vibrate) navigator.vibrate([40, 50, 40]);
+          const originalHTML = this.btn.innerHTML;
+          this.btn.innerHTML = '<span class="icono-latido" style="margin-right: 5px;">📡</span> Triangulando...';
+          this.btn.disabled = true;
+
+          const coords = await GeoLoc.getCoords();
+          this.btn.innerHTML = 'Enviando...';
+
+          await Network.send({
+            _subject: 'Kido App: Check-in de Ubicación',
+            nota: '📍 El usuario ha registrado un punto fijo en el mapa.',
+            fecha_hora: new Date().toISOString(),
+            ubicacion_gps: `${coords.lat}, ${coords.lng}`
+          });
+
+          this.btn.innerHTML = '¡Ruta Guardada!';
+          setTimeout(() => { this.btn.innerHTML = originalHTML; this.btn.disabled = false; }, 2000);
+        }
+      };
+
+      // 8. PESTAÑAS (NAVEGACIÓN)
       const Navigation = {
         init() {
           const tabs = document.querySelectorAll('.nav-tab');
@@ -488,10 +566,11 @@
       return {
         init() {
           document.addEventListener('DOMContentLoaded', () => {
-            Security.init(); // Arranca la pantalla de bloqueo
+            Security.init();
             Nemu.init();
             MoodTracker.init();
             MentalNotes.init();
+            LocationCheckIn.init(); // Inicia el botón rojo
             Navigation.init();
           });
         }
@@ -500,7 +579,6 @@
 
     KidoApp.init();
 
-    // REGISTRO DEL SERVICE WORKER (Para que funcione Offline como App nativa)
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Error:', err));
