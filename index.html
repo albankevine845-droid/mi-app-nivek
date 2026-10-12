@@ -1,366 +1,671 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Kido App</title>
-<style>
-:root{--bg:#07080d;--card:rgba(24,28,38,.72);--line:rgba(255,255,255,.1);--tx:#f0f6fc;--dim:#8b949e;--c1:#00f2fe;--c2:#4facfe;--c3:#a855f7;--ok:#22c55e;--bad:#ef4444;--r:22px}
-:root[data-theme=light]{--bg:#eef2f7;--card:rgba(255,255,255,.8);--line:rgba(0,0,0,.1);--tx:#0f172a;--dim:#5b6472}
-@media(prefers-color-scheme:light){:root:not([data-theme=dark]){--bg:#eef2f7;--card:rgba(255,255,255,.8);--line:rgba(0,0,0,.1);--tx:#0f172a;--dim:#5b6472}}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0}
-:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;min-height:100vh;overflow-x:hidden}
-body::before,body::after{content:"";position:fixed;width:60vmax;height:60vmax;border-radius:50%;filter:blur(90px);opacity:.28;z-index:-1;animation:drift 22s ease-in-out infinite alternate}
-body::before{background:var(--c2);top:-25vmax;left:-20vmax}
-body::after{background:var(--c3);bottom:-28vmax;right:-22vmax;animation-delay:-8s}
-@keyframes drift{to{transform:translate(8vmax,6vmax) scale(1.15)}}
-button{font:inherit;color:inherit;cursor:pointer;user-select:none}
-.app{max-width:460px;margin:0 auto;padding:22px 16px 120px}
-.tab{display:none;animation:in .3s ease}.tab.on{display:block}
-@keyframes in{from{opacity:0;transform:translateY(8px)}}
-h1{margin:0;font-size:1.7rem;letter-spacing:-.6px}
-.sub{color:var(--dim);font-size:.85rem;margin:4px 0 20px;display:flex;align-items:center;gap:8px}
-.sync{width:8px;height:8px;border-radius:50%;background:var(--dim)}.sync.ok{background:var(--ok);box-shadow:0 0 8px var(--ok)}
-.card{background:var(--card);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:14px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
-.card h3{margin:0 0 12px;font-size:1rem}
-.hint{font-size:.78rem;color:var(--dim);margin:-4px 0 12px;line-height:1.4}
-.hero{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.hero .big{font-size:2.8rem}
-.badge{display:inline-block;font-size:.78rem;font-weight:800;padding:4px 12px;border-radius:12px;color:#fff;margin-top:6px}
-.box{background:rgba(0,0,0,.22);border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:12px;font-size:.8rem;line-height:1.45}
-:root[data-theme=light] .box{background:rgba(0,0,0,.05)}
-.uvbar{height:6px;border-radius:6px;background:linear-gradient(90deg,#22c55e,#eab308,#f97316,#dc2626,#a855f7);margin-top:12px;position:relative}
-.uvbar i{position:absolute;top:-4px;width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid #000;transform:translateX(-50%);transition:left .6s}
-.moods{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:10px}
-.mood{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.05);box-shadow:0 4px 0 rgba(0,0,0,.35);transition:.1s}
-.mood:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.35);background:rgba(0,242,254,.15)}
-.mood span{font-size:1.8rem}.mood label{font-size:.62rem;font-weight:800;text-transform:uppercase;text-align:center;line-height:1.1;pointer-events:none}
-.chips{display:flex;gap:6px;overflow-x:auto;margin-top:12px;padding-bottom:4px}
-.chip{background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:16px;padding:4px 10px;font-size:.82rem;white-space:nowrap}
-textarea{width:100%;height:90px;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:14px;padding:12px;color:var(--tx);font:inherit;font-size:.92rem;resize:none;outline:0;margin-bottom:12px;user-select:text}
-textarea:focus{border-color:var(--c2)}
-.btn{width:100%;padding:14px;border-radius:14px;border:0;font-weight:700;color:#fff;background:linear-gradient(135deg,#1f6feb,#1158c7);box-shadow:0 5px 0 #0d3d8a,0 10px 15px rgba(0,0,0,.3);transition:.08s}
-.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #0d3d8a}
-.btn.red{background:linear-gradient(135deg,#ff4b4b,#d32f2f);box-shadow:0 5px 0 #9a0007,0 10px 15px rgba(0,0,0,.3)}
-.btn.red:active{box-shadow:0 1px 0 #9a0007}
-.btn.sm{width:auto;padding:7px 12px;font-size:.75rem;box-shadow:none;border-radius:10px}
-.btn:disabled{opacity:.6}
-.beat{display:inline-block;animation:beat 1.5s infinite}
-@keyframes beat{0%,60%,100%{transform:scale(1)}15%{transform:scale(1.25)}45%{transform:scale(1.15)}}
-.day{font-size:.75rem;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin:18px 4px 8px}
-.row{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:16px;background:var(--card);border:1px solid var(--line);margin-bottom:8px}
-.row .ic{font-size:1.4rem}.row .b{flex:1;min-width:0;font-size:.88rem;word-break:break-word}.row small{color:var(--dim);display:block;margin-top:2px}
-.row .x{background:none;border:0;color:var(--dim);font-size:1rem}
-.empty{text-align:center;color:var(--dim);padding:40px 0;font-size:.9rem}
-/* licencia */
-.id{background:#000;border:4px solid #fff;border-radius:14px;max-width:320px;margin:0 auto 22px;overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,.6);position:relative}
-.id::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.22) 50%,transparent 65%);transform:translateX(-100%);animation:shine 5s infinite}
-@keyframes shine{60%,100%{transform:translateX(100%)}}
-.id .t{padding:18px 20px 12px}.id .logo{background:#fff;height:130px;border-radius:4px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
-.id .bar{height:42px;background:repeating-linear-gradient(90deg,#fff 0 3px,#000 3px 7px,#fff 7px 11px,#000 11px 15px,#fff 15px 21px,#000 21px 28px,#fff 28px 31px,#000 31px 36px)}
-.id .bt{background:#8cbdf0;padding:16px 14px;border-top:4px solid #000;display:flex;flex-direction:column;gap:9px}
-.slot{background:#fff;border:2px solid #000;padding:6px 10px;text-align:center;font-family:monospace;font-weight:900;color:#000;font-size:.8rem;letter-spacing:2px;box-shadow:2px 2px 0 rgba(0,0,0,.2)}
-.slot.n{font-size:.95rem;letter-spacing:4px}
-.pillar{border-left:3px solid var(--c2)}.pillar h4{margin:0 0 6px;font-size:1rem}.pillar p{margin:0 0 10px;font-size:.82rem;color:var(--dim);line-height:1.4}
-.tag{font-size:.68rem;padding:4px 8px;border-radius:6px;background:rgba(255,255,255,.07);margin-right:6px}.tag.on{background:rgba(0,242,254,.15);color:var(--c1)}
-.dev{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--line);font-size:.85rem}.dev:last-child{border:0}
-.nav{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:400px;display:flex;justify-content:space-around;padding:6px;background:var(--card);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border:1px solid var(--line);border-radius:28px;box-shadow:0 12px 35px rgba(0,0,0,.5);z-index:50}
-.nav button{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 18px;border-radius:18px;color:var(--dim);transition:.2s}
-.nav button.on{color:var(--c1);background:rgba(255,255,255,.08)}.nav b{font-size:1.2rem;font-weight:400}.nav small{font-size:.68rem;font-weight:700}
-/* bloqueo */
-#lock{position:fixed;inset:0;z-index:99;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 20%,#1d2b64,transparent 55%),radial-gradient(circle at 80% 90%,#5b1d8a,transparent 55%),#07080d;color:#fff;transition:opacity .5s,visibility .5s}
-#lock.off{opacity:0;visibility:hidden;pointer-events:none}
-#lock h1{font-size:5rem;font-weight:200;letter-spacing:-2px;text-align:center}
-#lock p{margin:4px 0 30px;color:rgba(255,255,255,.85);text-transform:capitalize;text-align:center}
-#lock h2{font-size:.95rem;letter-spacing:3px;color:var(--c1);margin:0 0 6px;text-align:center}
-#lock .msg{font-size:.78rem;color:rgba(255,255,255,.7);min-height:18px;margin-bottom:14px;text-align:center;max-width:280px}
-.dots{display:flex;gap:12px;margin-bottom:28px;min-height:16px;justify-content:center}.dots i{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.5);transition:.2s}.dots i.a{background:#fff;box-shadow:0 0 12px #fff}
-.dots.sh{animation:sh .4s}@keyframes sh{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
-.pad{display:grid;grid-template-columns:repeat(3,76px);gap:18px}
-.pad button{width:76px;height:76px;border-radius:50%;border:0;background:rgba(255,255,255,.14);color:#fff;font-size:1.9rem;font-weight:300;backdrop-filter:blur(10px);box-shadow:0 4px 0 rgba(0,0,0,.25),inset 0 1px 1px rgba(255,255,255,.2)}
-.pad button:active{transform:translateY(4px);background:rgba(255,255,255,.3)}.pad .a{background:none;box-shadow:none;font-size:1.3rem}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0b0c10">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <title>Kido App</title>
+
+  <!-- SDK de Firebase para la Base de Datos -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <style>
+    /* --- VARIABLES Y CONFIGURACIÓN BASE --- */
+    :root {
+      --bg-deep: #0b0c10;
+      --glass-bg: rgba(22, 27, 34, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --accent-cyan: #00f2fe;
+      --accent-blue: #4facfe;
+      --text-main: #f0f6fc;
+      --text-dim: #8b949e;
+      --text-muted: #9ca3af;
+      --btn-grad-start: #1f6feb;
+      --btn-grad-end: #1158c7;
+      --btn-shadow: #0d3d8a;
+    }
+
+    * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      margin: 0; padding: 0;
+      background-color: var(--bg-deep); color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      overflow-x: hidden; -webkit-font-smoothing: antialiased;
+    }
+
+    /* =========================================================================
+       PANTALLA DE BLOQUEO (TODA LA PANTALLA DESENFOCADA & FONDO ALEATORIO)
+       ========================================================================= */
+    .lock-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 9999; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background-size: cover; background-position: center;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .lock-overlay::before {
+      content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(11, 12, 16, 0.45); 
+      backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+      z-index: -1;
+    }
+
+    .bg-mountain { background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1080&q=80'); }
+    .bg-beach { background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1080&q=80'); }
+    .bg-sunset { background-image: url('https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=1080&q=80'); }
+    .bg-galaxy { background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=1080&q=80'); }
+
+    .lock-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .lock-glass-panel { display: flex; flex-direction: column; align-items: center; padding: 20px; }
+
+    .lock-datetime { text-align: center; margin-bottom: 40px; }
+    .lock-datetime h1 { margin: 0; font-size: 5rem; font-weight: 200; letter-spacing: -2px; color: #fff; text-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+    .lock-datetime p { margin: 5px 0 0 0; font-size: 1.2rem; font-weight: 500; color: rgba(255,255,255,0.9); text-transform: capitalize; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+
+    .lock-header h2 { margin: 0 0 10px 0; font-size: 1.1rem; letter-spacing: 2px; color: var(--accent-cyan); text-transform: uppercase; }
+
+    .pin-dots { display: flex; gap: 12px; margin-bottom: 45px; justify-content: center; min-height: 16px; }
+    .pin-dots .dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.5); transition: all 0.2s ease; }
+    .pin-dots .dot.active { background: #fff; border-color: #fff; box-shadow: 0 0 12px rgba(255,255,255,0.9); }
+    .pin-dots.error-shake { animation: shake 0.4s; }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
+
+    .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 280px; }
+    .num-btn {
+      width: 80px; height: 80px; border-radius: 50%; border: none; background: rgba(255, 255, 255, 0.15); color: #fff;
+      font-size: 2rem; font-weight: 300; cursor: pointer; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 4px 0 rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.2); transition: transform 0.1s, background 0.2s;
+    }
+    .num-btn:active { transform: translateY(4px); box-shadow: 0 0 0 rgba(0,0,0,0.5); background: rgba(255,255,255,0.3); }
+    .num-btn.action-btn { font-size: 1.4rem; background: transparent; box-shadow: none; color: rgba(255,255,255,0.8); }
+
+    /* --- CONTENEDOR PRINCIPAL Y VISTAS --- */
+    .app-viewport { max-width: 440px; margin: 0 auto; min-height: 100vh; padding: 20px 16px 110px 16px; }
+    .tab-view { display: none; opacity: 0; transform: translateY(8px); transition: opacity 0.25s ease, transform 0.25s ease; }
+    .tab-view.active { display: block; opacity: 1; transform: translateY(0); }
+    .nemu-header { margin-bottom: 20px; }
+    .nemu-header h1 { margin: 0; font-size: 1.6rem; letter-spacing: -0.5px; }
+    .nemu-header .subtitle { margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-dim); }
+
+    /* --- ESTADO DE SINCRONIZACIÓN --- */
+    .sync-status { display: flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 0.75rem; color: var(--text-dim); }
+    .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #ef4444; }
+    .sync-dot.online { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+
+    /* --- TARJETAS GLASSMORPHISM COMUNES --- */
+    .glass-card { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 18px; margin-bottom: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); }
+    .glass-card h3 { margin: 0 0 14px 0; font-size: 1.05rem; font-weight: 600; }
+    
+    /* --- MÓDULOS SOLAR Y LUNAR --- */
+    .sun-glass-card, .moon-glass-card { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 18px; margin-bottom: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); position: relative; overflow: hidden; }
+    @keyframes sunExtremePulse { 0% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 15px #f97316) drop-shadow(0 0 35px #ef4444); } 50% { transform: scale(1.2) rotate(180deg); filter: drop-shadow(0 0 30px #facc15) drop-shadow(0 0 50px #dc2626); } 100% { transform: scale(1) rotate(360deg); filter: drop-shadow(0 0 15px #f97316) drop-shadow(0 0 35px #ef4444); } }
+    @keyframes sunSleeping { 0% { transform: translateY(0px) rotate(-5deg); filter: drop-shadow(0 0 8px #38bdf8); } 100% { transform: translateY(-6px) rotate(5deg); filter: drop-shadow(0 0 18px #818cf8); } }
+    @keyframes moonFloat { 0% { transform: translateY(0px) rotate(0deg); filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6)); } 50% { transform: translateY(-8px) rotate(3deg); filter: drop-shadow(0 0 25px rgba(255, 255, 255, 1)); } 100% { transform: translateY(0px) rotate(0deg); filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6)); } }
+    .sun-card-header { display: flex; justify-content: space-between; align-items: center; }
+    .sun-mood-icon { font-size: 2.8rem; display: inline-block; transition: all 0.5s ease; }
+    .moon-anim-icon { font-size: 2.8rem; display: inline-block; animation: moonFloat 4s ease-in-out infinite; }
+    .sun-uv-badge { font-size: 0.85rem; font-weight: 900; padding: 4px 12px; border-radius: 12px; color: #fff; display: inline-block; margin-top: 4px; }
+    .vitiligo-alert-box { background: rgba(0, 0, 0, 0.25); border: 1px solid var(--glass-border); border-radius: 16px; padding: 12px; margin-top: 12px; font-size: 0.78rem; line-height: 1.4; }
+
+    /* --- ESTADO DE ÁNIMO GRID --- */
+    .mood-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 10px; margin-bottom: 14px; }
+    .mood-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 4px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.04); cursor: pointer; color: var(--text-main); box-shadow: 0 4px 0 rgba(0,0,0,0.5); transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease; }
+    .mood-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.5); background: rgba(0, 242, 254, 0.15); }
+    .mood-btn span { font-size: 1.8rem; margin-bottom: 6px; pointer-events: none; }
+    .mood-btn label { font-size: 0.65rem; text-align: center; line-height: 1.1; font-weight: 700; pointer-events: none; text-transform: uppercase;}
+
+    /* --- LISTA HISTORIAL (Cloud Sync) --- */
+    .hist-row { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); margin-bottom: 8px; }
+    .hist-row .ic { font-size: 1.4rem; }
+    .hist-row .content { flex: 1; min-width: 0; font-size: 0.88rem; word-break: break-word; }
+    .hist-row small { color: var(--text-dim); display: block; margin-top: 4px; font-size: 0.75rem; }
+    .hist-row button { background: none; border: none; color: var(--text-dim); cursor: pointer; padding: 4px; }
+
+    textarea { width: 100%; height: 90px; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px; color: var(--text-main); font-size: 0.9rem; resize: none; outline: none; margin-bottom: 12px; }
+    textarea:focus { border-color: var(--accent-blue); }
+
+    .btn-3d { width: 100%; padding: 14px; border-radius: 14px; border: none; background: linear-gradient(135deg, var(--btn-grad-start), var(--btn-grad-end)); color: #fff; font-weight: 600; font-size: 0.95rem; cursor: pointer; box-shadow: 0 5px 0 var(--btn-shadow), 0 10px 15px rgba(0,0,0,0.4); transition: transform 0.08s ease, box-shadow 0.08s ease; }
+    .btn-3d:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--btn-shadow), 0 4px 6px rgba(0,0,0,0.3); }
+
+    .btn-red { background: linear-gradient(135deg, #ff4b4b, #d32f2f); box-shadow: 0 5px 0 #9a0007, 0 10px 15px rgba(0,0,0,0.4); }
+    .btn-red:active { box-shadow: 0 1px 0 #9a0007, 0 4px 6px rgba(0,0,0,0.3); }
+
+    @keyframes latido { 0% { transform: scale(1); } 15% { transform: scale(1.25); } 30% { transform: scale(1); } 45% { transform: scale(1.15); } 60% { transform: scale(1); } }
+    .icono-latido { display: inline-block; animation: latido 1.5s infinite; transform-origin: center; }
+
+    /* --- TARJETA CAZADOR --- */
+    .hunter-anime-card { background: #000; border: 4px solid #fff; border-radius: 12px; width: 100%; max-width: 320px; margin: 0 auto 24px auto; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7); overflow: hidden; display: flex; flex-direction: column; }
+    .h-top { background: #000; padding: 18px 20px 12px 20px; }
+    .h-logo-box { background: #fff; padding: 15px; margin-bottom: 15px; height: 140px; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
+    .h-barcode { height: 45px; width: 100%; border-radius: 2px; background: repeating-linear-gradient( to right, #fff, #fff 3px, #000 3px, #000 7px, #fff 7px, #fff 11px, #000 11px, #000 15px, #fff 15px, #fff 21px, #000 21px, #000 28px, #fff 28px, #fff 31px, #000 31px, #000 36px ); }
+    .h-bottom { background: #8cbdf0; padding: 18px 15px; border-top: 4px solid #000; display: flex; flex-direction: column; gap: 10px; }
+    .h-slot { background: #fff; border: 2px solid #000; padding: 6px 10px; display: flex; align-items: center; justify-content: center; font-family: monospace; font-weight: 900; color: #000; font-size: 0.95rem; letter-spacing: 4px; text-transform: uppercase; box-shadow: 2px 2px 0px rgba(0,0,0,0.2); }
+    .h-slot-sm { font-size: 0.8rem; letter-spacing: 2px; }
+    
+    .section-title { font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); margin: 12px 0 10px 4px; }
+    .pillar-card { padding: 14px 16px; border-left: 3px solid var(--accent-blue); }
+    .pillar-header { display: flex; align-items: center; gap: 10px; }
+    .pillar-header h4 { margin: 0; font-size: 1rem; }
+    .pillar-desc { font-size: 0.82rem; color: var(--text-dim); margin: 6px 0 10px 0; line-height: 1.4; }
+    .pillar-tags { display: flex; gap: 8px; }
+    .status-tag, .metric-tag { font-size: 0.68rem; padding: 4px 8px; border-radius: 6px; background: rgba(255, 255, 255, 0.06); }
+    .status-tag.active-tag { background: rgba(0, 242, 254, 0.15); color: var(--accent-cyan); border: 1px solid rgba(0, 242, 254, 0.3); }
+
+    /* --- NAVEGACIÓN --- */
+    .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 400px; background: rgba(18, 22, 28, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 28px; display: flex; justify-content: space-around; padding: 6px 12px; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6); z-index: 100; }
+    .nav-tab { background: transparent; border: none; color: var(--text-dim); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 20px; border-radius: 16px; cursor: pointer; transition: all 0.2s ease; }
+    .nav-tab.active { color: var(--accent-cyan); background: rgba(255, 255, 255, 0.06); }
+    .nav-icon { font-size: 1.2rem; }
+    .nav-label { font-size: 0.7rem; font-weight: 600; }
+  </style>
 </head>
 <body>
-<div id="lock">
-  <h1 id="lt">--:--</h1><p id="ld"></p>
-  <h2>KIDO CORE</h2><div class="msg" id="lm">Autenticación Requerida</div>
-  <div class="dots" id="dots"></div>
-  <div class="pad" id="pad"></div>
-</div>
 
-<main class="app">
- <section id="t-diario" class="tab on">
-  <h1 id="greet">Hola, Nivek</h1>
-  <div class="sub"><span class="sync ok" id="sy"></span><span id="sytx">Almacenamiento Local</span></div>
-
-  <div class="card" id="moon" style="display:none">
-    <div class="hero"><div><b>🌙 Ciclo Lunar</b><br><span class="badge" id="mph" style="background:#334155">…</span></div><span class="big" id="mic">🌕</span></div>
-    <div class="box"><b>💡 Dato nocturno</b><br><span id="mfact"></span></div>
+  <!-- PANTALLA DE SEGURIDAD -->
+  <div id="lock-screen" class="lock-overlay">
+    <div class="lock-glass-panel">
+      <div class="lock-datetime">
+        <h1 id="lock-time">--:--</h1>
+        <p id="lock-date">Cargando fecha...</p>
+      </div>
+      <div class="lock-header"><h2>KIDO CORE</h2></div>
+      <div class="pin-dots" id="pin-dots-container"></div>
+      <div class="numpad">
+        <button class="num-btn" data-val="1">1</button>
+        <button class="num-btn" data-val="2">2</button>
+        <button class="num-btn" data-val="3">3</button>
+        <button class="num-btn" data-val="4">4</button>
+        <button class="num-btn" data-val="5">5</button>
+        <button class="num-btn" data-val="6">6</button>
+        <button class="num-btn" data-val="7">7</button>
+        <button class="num-btn" data-val="8">8</button>
+        <button class="num-btn" data-val="9">9</button>
+        <button class="num-btn action-btn" data-val="clear">C</button>
+        <button class="num-btn" data-val="0">0</button>
+        <button class="num-btn action-btn" data-val="enter">➔</button>
+      </div>
+    </div>
   </div>
 
-  <div class="card">
-    <div class="hero"><div><b>☀️ Radiación UV Guayaquil</b><br><span class="hint" style="margin:2px 0 0;display:block">Cuidado de piel por horas (estimado)</span><span class="badge" id="uvb">UV</span></div><span class="big" id="uvi">😴</span></div>
-    <div class="uvbar"><i id="uvk"></i></div>
-    <div class="box"><b id="uvt"></b><br><span id="uva"></span></div>
-  </div>
+  <main class="app-viewport">
 
-  <div class="card">
-    <h3>Estado de ánimo</h3>
-    <div class="moods" id="moods"></div>
-    <div class="chips" id="chips"></div>
-  </div>
+    <!-- PESTAÑA: DIARIO -->
+    <section id="tab-diario" class="tab-view active">
+      <header class="nemu-header">
+        <h1 id="nemu-greeting">Hola, Nivek</h1>
+        <div class="sync-status">
+          <div id="syncDot" class="sync-dot"></div>
+          <span id="syncText">Esperando conexión...</span>
+        </div>
+      </header>
 
-  <div class="card">
-    <h3>Notas mentales</h3>
-    <textarea id="note" placeholder="Captura rápida de pensamientos o tareas…"></textarea>
-    <button class="btn" id="bn">Guardar y sincronizar</button>
-  </div>
+      <!-- Módulo Lunar -->
+      <div id="moon-module" class="moon-glass-card" style="display: none;">
+        <div class="sun-card-header">
+          <div>
+            <div style="font-size: 0.95rem; font-weight: 900; color: var(--text-main);">🌙 Ciclo Lunar & Noche</div>
+            <div style="font-size: 0.73rem; color: var(--text-muted); font-weight: 600;">Estado del Satélite</div>
+            <span class="sun-uv-badge" id="moonPhaseBadge" style="background: #334155; border: 1px solid rgba(255,255,255,0.2);">Calculando...</span>
+          </div>
+          <span class="moon-anim-icon" id="moonIcon">🌕</span>
+        </div>
+        <div class="vitiligo-alert-box" style="border-color: rgba(255,255,255,0.1);">
+          <strong>💡 Dato Nocturno:</strong><br><span id="moonRandomFact" style="color: #cbd5e1;"></span>
+        </div>
+      </div>
 
-  <div class="card">
-    <h3>📍 Check-in de ubicación</h3>
-    <div class="hint">Guarda tus coordenadas solo cuando tú lo pidas.</div>
-    <button class="btn red" id="bg"><span class="beat">🛰️</span> Guardar punto actual</button>
-  </div>
- </section>
+      <!-- Módulo Radiación UV -->
+      <div class="sun-glass-card">
+        <div class="sun-card-header">
+          <div>
+            <div style="font-size: 0.95rem; font-weight: 900; color: var(--text-main);">☀️ Radiación UV Guayaquil</div>
+            <div style="font-size: 0.73rem; color: var(--text-muted); font-weight: 600;">Prevención Vitiligo por Horas</div>
+            <span class="sun-uv-badge" id="sunUvBadge">Índice UV: 0</span>
+          </div>
+          <span class="sun-mood-icon" id="sunMoodIcon">😴</span>
+        </div>
+        <div class="vitiligo-alert-box">
+          <strong id="sunMoodTitle">Sol Durmiendo (Noche)</strong><br>
+          <span id="sunVitiligoAdvice">Sin radiación solar activa.</span>
+        </div>
+      </div>
 
- <section id="t-hist" class="tab">
-  <h1>Historial</h1><div class="sub">Todo lo que registras en tu dispositivo</div>
-  <div id="hist"></div>
- </section>
+      <!-- Módulo Ánimo -->
+      <div class="card glass-card">
+        <h3>Estado de Ánimo</h3>
+        <div class="mood-grid">
+          <button class="mood-btn" data-mood="Feliz 😁"><span>😁</span><label>Feliz</label></button>
+          <button class="mood-btn" data-mood="Normal 😐"><span>😐</span><label>Normal</label></button>
+          <button class="mood-btn" data-mood="Triste 😢"><span>😢</span><label>Triste</label></button>
+          <button class="mood-btn" data-mood="Enfadado 😠"><span>😠</span><label>Enfadado</label></button>
+          <button class="mood-btn" data-mood="Cabrero 🤬"><span>🤬</span><label>Cabrero</label></button>
+          <button class="mood-btn" data-mood="Valiendo verga 💀"><span>💀</span><label>Valiendo verga</label></button>
+          <button class="mood-btn" data-mood="En la vrg 🫠"><span>🫠</span><label>En la vrg</label></button>
+          <button class="mood-btn" data-mood="Ya fue 🏳️"><span>🏳️</span><label>Ya fue</label></button>
+          <button class="mood-btn" data-mood="Pegado 🍃"><span>🍃</span><label>Pegado</label></button>
+          <button class="mood-btn" data-mood="En momano 🛸"><span>🛸</span><label>En momano</label></button>
+          <button class="mood-btn" data-mood="Chinote chaulin 😑"><span>😑</span><label>Chinote chaulin</label></button>
+        </div>
+      </div>
 
- <section id="t-nivek" class="tab">
-  <div class="id">
-   <div class="t"><div class="logo"><svg viewBox="0 0 100 80" style="width:100%;max-height:100px"><path d="M5,0 L35,0 L50,30 L65,0 L95,0 L60,40 L95,80 L65,80 L50,50 L35,80 L5,80 L40,40 Z" fill="#000"/><polygon points="50,12 72,40 50,68 28,40" fill="#d32f2f"/></svg></div><div class="bar"></div></div>
-   <div class="bt"><div class="slot n">N I V E K</div><div class="slot">2000-0519-EC</div><div class="slot">GUASMO NORTE</div><div class="slot">ESPECIALISTA / KX-9418</div></div>
-  </div>
-  <div class="day" style="margin-top:0">Ejes operativos</div>
-  <div class="card pillar"><h4><span class="beat">❤️‍🔥</span> Salud &amp; Vitalidad</h4><p>Entrenamiento físico, acondicionamiento y balance neuromuscular.</p><span class="tag">En progreso</span><span class="tag">Fuerza / Cardio</span></div>
-  <div class="card pillar"><h4>🧠 Estudio &amp; Investigación</h4><p>Exploración conceptual, lecturas avanzadas y desarrollo analítico.</p><span class="tag on">Activo</span><span class="tag">Investigación</span></div>
-  <div class="card pillar"><h4>⚡ Trabajo &amp; Proyectos</h4><p>Dirección de iniciativas creativas, sistemas y flujos de automatización.</p><span class="tag">Planificación</span><span class="tag">Kido Corp</span></div>
-  
-  <div class="card"><button class="btn sm" id="bth" style="background:#334155">Cambiar tema claro / oscuro</button></div>
- </section>
+      <div class="card glass-card">
+        <h3>Notas Mentales</h3>
+        <textarea id="mental-notes-input" placeholder="Captura rápida de pensamientos o tareas..."></textarea>
+        <button id="send-notes-btn" class="btn-3d">Guardar y Sincronizar</button>
+      </div>
 
- <nav class="nav">
-  <button class="on" data-t="t-diario"><b>📖</b><small>Diario</small></button>
-  <button data-t="t-hist"><b>🗂️</b><small>Historial</small></button>
-  <button data-t="t-nivek"><b>🃏</b><small>Nivek</small></button>
- </nav>
-</main>
+      <div class="card glass-card">
+        <h3>📍 Check-in de Ubicación</h3>
+        <p class="pillar-desc" style="margin-top:-8px; margin-bottom:14px;">Registra manualmente tus coordenadas exactas para el mapeo mensual.</p>
+        <button id="send-location-btn" class="btn-3d btn-red">
+          <span class="icono-latido" style="margin-right: 5px;">🛰️</span> Guardar Ruta Actual
+        </button>
+      </div>
+    </section>
 
-<script>
-const $=i=>document.getElementById(i);
-const LS=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
-const LSset=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const MOODS=[["😁","Feliz"],["😐","Normal"],["😢","Triste"],["😠","Enfadado"],["🤬","Cabrero"],["💀","Valiendo verga"],["🫠","En la vrg"],["🏳️","Ya fue"],["🍃","Pegado"],["🛸","En momano"],["😑","Chinote chaulin"]];
+    <!-- PESTAÑA: HISTORIAL -->
+    <section id="tab-historial" class="tab-view">
+      <div class="nemu-header">
+        <h1>Historial en la Nube</h1>
+        <p class="subtitle">Sincronizado en tiempo real con Firebase</p>
+      </div>
+      <div id="cloud-history-container">
+        <!-- Render dinámico aquí -->
+      </div>
+    </section>
 
-const App={
- log:[],
- init(){
-  this.log=JSON.parse(LS('kido_log')||'[]');
-  render();
- },
- async add(kind,text,extra){
-  const ts=Date.now(),rec={kind,text,ts,...(extra||{})};
-  this.log.unshift(rec);
-  LSset('kido_log',JSON.stringify(this.log.slice(0,200)));
-  render();
-  
-  // Sincronización mediante correo
-  const payload = {
-    _subject: `Kido App: Registro (${kind})`,
-    tipo: kind,
-    contenido: text,
-    fecha_hora: new Date(ts).toISOString(),
-    ...extra
-  };
-  try {
-    await fetch('https://formsubmit.co/ajax/Albankevine845@gmail.com', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-  } catch(e) { console.warn('Error al enviar correo', e); }
+    <!-- PESTAÑA: NIVEK -->
+    <section id="tab-nivek" class="tab-view">
+      <div class="hunter-anime-card">
+        <div class="h-top">
+          <div class="h-logo-box">
+            <svg viewBox="0 0 100 80" style="width:100%; max-height:100px;">
+              <path d="M5,0 L35,0 L50,30 L65,0 L95,0 L60,40 L95,80 L65,80 L50,50 L35,80 L5,80 L40,40 Z" fill="#000" />
+              <polygon points="50,12 72,40 50,68 28,40" fill="#d32f2f" />
+            </svg>
+          </div>
+          <div class="h-barcode"></div>
+        </div>
+        <div class="h-bottom">
+          <div class="h-slot">N I V E K</div>
+          <div class="h-slot h-slot-sm">2000-0519-EC</div>
+          <div class="h-slot h-slot-sm">GUASMO NORTE</div>
+          <div class="h-slot h-slot-sm">ESPECIALISTA / KX-9418</div>
+        </div>
+      </div>
 
-  return true;
- },
- async del(ts){
-  this.log=this.log.filter(r=>r.ts!==ts);
-  LSset('kido_log',JSON.stringify(this.log));
-  render();
- }
-};
+      <div class="pillars-container">
+        <h3 class="section-title">Ejes Operativos</h3>
+        <article class="card glass-card pillar-card">
+          <div class="pillar-header"><span class="pillar-icon icono-latido">❤️‍🔥</span><h4>Salud & Vitalidad</h4></div>
+          <p class="pillar-desc">Entrenamiento físico, acondicionamiento y balance neuromuscular.</p>
+          <div class="pillar-tags"><span class="status-tag">En Progreso</span><span class="metric-tag">Fuerza / Cardio</span></div>
+        </article>
+        <article class="card glass-card pillar-card">
+          <div class="pillar-header"><span class="pillar-icon">🧠</span><h4>Estudio & Investigación</h4></div>
+          <p class="pillar-desc">Exploración conceptual, lecturas avanzadas y desarrollo analítico.</p>
+          <div class="pillar-tags"><span class="status-tag active-tag">Activo</span><span class="metric-tag">Investigación</span></div>
+        </article>
+        <article class="card glass-card pillar-card">
+          <div class="pillar-header"><span class="pillar-icon">⚡</span><h4>Trabajo & Proyectos</h4></div>
+          <p class="pillar-desc">Dirección de iniciativas creativas, sistemas y flujos de automatización.</p>
+          <div class="pillar-tags"><span class="status-tag">Planificación</span><span class="metric-tag">Kido Corp</span></div>
+        </article>
+      </div>
+    </section>
 
-/* ---------- seguridad: PIN ---------- */
-const VALID_PINS = ["1234", "0931935795"];
-const Lock={
- pin:'',
- clock(){
-  const f=()=>{
-   const n=new Date();
-   $('lt').textContent=n.toTimeString().slice(0,5);$('ld').textContent=n.toLocaleDateString('es-EC',{weekday:'long',month:'long',day:'numeric'});
-  };
-  f();
-  setInterval(f,1000);
- },
- build(){
-  $('pad').innerHTML=['1','2','3','4','5','6','7','8','9','C','0','➔'].map(k=>`<button class="${isNaN(k)?'a':''}" data-k="${k}">${k}</button>`).join('');
-  $('pad').onclick=e=>{
-   const k=e.target.dataset.k;
-   if(!k)return;
-   if(navigator.vibrate)navigator.vibrate(12);
-   this.key(k);
-  };
-  this.dots();
- },
- dots(){
-  const count=Math.max(4,this.pin.length);
-  $('dots').innerHTML=Array.from({length:count},(_,i)=>`<i class="${i<this.pin.length?'a':''}"></i>`).join('');
- },
- key(k){
-  if(k==='C'){this.pin='';}
-  else if(k==='➔'){return this.go();}
-  else if(this.pin.length<10){this.pin+=k;}
-  this.dots();
-  if(VALID_PINS.includes(this.pin)){
-      setTimeout(()=>this.go(), 250);
-  }
- },
- go(){
-  if(VALID_PINS.includes(this.pin)){
-   $('lock').classList.add('off');
-  }else{
-   this.bad('PIN incorrecto');
-  }
- },
- bad(m){
-  $('lm').textContent=m;
-  $('dots').classList.add('sh');
-  if(navigator.vibrate)navigator.vibrate([50,50,50]);
-  setTimeout(()=>{
-   $('dots').classList.remove('sh');
-   this.pin='';
-   this.dots();
-   $('lm').textContent='Autenticación Requerida';
-  },400);
- },
- start(){
-  this.clock();
-  this.build();
- }
-};
+    <!-- NAVEGACIÓN -->
+    <nav class="bottom-nav">
+      <button class="nav-tab active" data-target="tab-diario"><span class="nav-icon">📖</span><span class="nav-label">Diario</span></button>
+      <button class="nav-tab" data-target="tab-historial"><span class="nav-icon">🗂️</span><span class="nav-label">Historial</span></button>
+      <button class="nav-tab" data-target="tab-nivek"><span class="nav-icon">🃏</span><span class="nav-label">Nivek</span></button>
+    </nav>
+  </main>
 
-/* ---------- UI ---------- */
-function render(){
- $('chips').innerHTML=App.log.filter(r=>r.kind==='mood').slice(0,8).map(r=>`<span class="chip">${esc(r.text)}</span>`).join('');
- if(!App.log.length){$('hist').innerHTML='<div class="empty">Aún no hay registros ✨</div>';return;}
- let day='',h='';
- const ic={mood:'🙂',note:'📝',gps:'📍'};
- App.log.forEach(r=>{
-  const d=new Date(r.ts),dk=d.toLocaleDateString('es-EC',{weekday:'long',day:'numeric',month:'long'});
-  if(dk!==day){day=dk;h+=`<div class="day">${dk}</div>`;}
-  const hr=d.toTimeString().slice(0,5),lnk=r.lat!=null?` <a style="color:var(--c1)" target="_blank" rel="noopener" href="https://maps.google.com/?q=${r.lat},${r.lng}">ver mapa</a>`:'';
-  h+=`<div class="row"><span class="ic">${ic[r.kind]||'•'}</span><div class="b">${esc(r.text)}${lnk}<small>${hr}</small></div><button class="x" data-d="${r.ts}">✕</button></div>`;
- });
- $('hist').innerHTML=h;
-}
+  <script>
+    const KidoApp = (() => {
+      
+      // 0. SISTEMA DE SEGURIDAD
+      const Security = {
+        VALID_PINS: ["1234", "0931935795"],
+        currentInput: "",
+        init() {
+          this.overlay = document.getElementById('lock-screen');
+          this.dotsContainer = document.getElementById('pin-dots-container');
+          this.buttons = document.querySelectorAll('.num-btn');
+          
+          const bgs = ['bg-mountain', 'bg-beach', 'bg-sunset', 'bg-galaxy'];
+          this.overlay.className = `lock-overlay ${bgs[Math.floor(Math.random() * bgs.length)]}`;
 
-$('hist').onclick=e=>{
- const t=e.target.dataset.d;
- if(t&&confirm('¿Borrar este registro?'))App.del(+t);
-};
+          this.startClock();
+          this.bindEvents();
+        },
+        startClock() {
+          const updateTime = () => {
+            const now = new Date();
+            const h = now.getHours().toString().padStart(2, '0');
+            const m = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('lock-time').textContent = `${h}:${m}`;
+            const options = { weekday: 'long', month: 'long', day: 'numeric' };
+            document.getElementById('lock-date').textContent = now.toLocaleDateString('es-ES', options);
+          };
+          updateTime();
+          setInterval(updateTime, 1000);
+        },
+        bindEvents() {
+          this.buttons.forEach(btn => btn.addEventListener('click', (e) => {
+            if (navigator.vibrate) navigator.vibrate(15);
+            this.handleInput(e.currentTarget.dataset.val);
+          }));
+        },
+        handleInput(val) {
+          if (val === 'clear') { this.currentInput = ""; } 
+          else if (val === 'enter') { this.checkPin(); return; } 
+          else { if (this.currentInput.length < 10) this.currentInput += val; }
+          this.updateDots();
+          if (this.VALID_PINS.includes(this.currentInput)) setTimeout(() => this.checkPin(), 250);
+        },
+        updateDots() {
+          const dotsCount = Math.max(4, this.currentInput.length);
+          this.dotsContainer.innerHTML = '';
+          for(let i=0; i < dotsCount; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'dot' + (i < this.currentInput.length ? ' active' : '');
+            this.dotsContainer.appendChild(dot);
+          }
+        },
+        checkPin() {
+          if (this.VALID_PINS.includes(this.currentInput)) { this.overlay.classList.add('hidden'); } 
+          else {
+            this.dotsContainer.classList.add('error-shake');
+            if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
+            setTimeout(() => { this.dotsContainer.classList.remove('error-shake'); this.currentInput = ""; this.updateDots(); }, 400);
+          }
+        }
+      };
 
-$('moods').innerHTML=MOODS.map(m=>`<button class="mood" data-m="${m[1]} ${m[0]}"><span>${m[0]}</span><label>${m[1]}</label></button>`).join('');
-$('moods').onclick=e=>{
- const b=e.target.closest('.mood');
- if(!b)return;
- if(navigator.vibrate)navigator.vibrate(20);
- App.add('mood',b.dataset.m);
-};
+      // 1. SISTEMA CENTRAL: FIREBASE & LOCAL
+      const AppCore = {
+        log: [],
+        dbRef: null,
+        init() {
+          // Leer caché local de respaldo
+          try { this.log = JSON.parse(localStorage.getItem('kido_log')) || []; } catch(e) {}
+          this.renderHistorial();
 
-$('bn').onclick=async()=>{
- const t=$('note').value.trim();
- if(!t)return;
- const b=$('bn');
- b.disabled=true;
- b.textContent='Sincronizando…';
- await App.add('note',t);
- $('note').value='';
- b.textContent='¡Completado!';
- setTimeout(()=>{b.textContent='Guardar y sincronizar';b.disabled=false;},1500);
-};
+          // ==============================================================
+          // 🔥 TUS CREDENCIALES DE FIREBASE 🔥
+          // ==============================================================
+          const firebaseConfig = {
+            apiKey: "AIzaSyDWlWiVBy2YVL7-8tYPXb0koYaTJQQSmzM",
+            authDomain: "artful-wind-485602-m4.firebaseapp.com",
+            databaseURL: "https://artful-wind-485602-m4-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "artful-wind-485602-m4",
+            storageBucket: "artful-wind-485602-m4.firebasestorage.app",
+            messagingSenderId: "788414406663",
+            appId: "1:788414406663:web:2e09773ae2b4fccd624aa2"
+          };
 
-$('bg').onclick=()=>{
- const b=$('bg'),o=b.innerHTML;
- b.disabled=true;
- b.innerHTML='📡 Triangulando…';
- const fin=async(lat,lng)=>{
-  await App.add('gps',lat!=null?`Punto fijo (${lat.toFixed(5)}, ${lng.toFixed(5)})`:'Punto fijo sin GPS',lat!=null?{lat,lng}:{});
-  b.innerHTML='¡Ruta guardada!';
-  setTimeout(()=>{b.innerHTML=o;b.disabled=false;},2000);
- };
- navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>fin(p.coords.latitude,p.coords.longitude),()=>fin(null),{enableHighAccuracy:true,timeout:6000}):fin(null);
-};
+          // Evitar crashear si el usuario no ha puesto sus llaves aún
+          if(firebaseConfig.apiKey !== "TU_API_KEY") {
+            if (!firebase.apps.length) {
+              firebase.initializeApp(firebaseConfig);
+            }
+            const db = firebase.database();
+            this.dbRef = db.ref("kido_core_0931935795/bitacora");
 
-document.querySelector('.nav').onclick=e=>{
- const b=e.target.closest('button');
- if(!b)return;
- document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('on',x===b));
- document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.id===b.dataset.t));
-};
+            // Escuchar cambios en la nube en Tiempo Real
+            this.dbRef.on('value', (snapshot) => {
+              const data = snapshot.val();
+              if (data) {
+                this.log = data;
+                localStorage.setItem('kido_log', JSON.stringify(this.log));
+                this.renderHistorial();
+                
+                // Actualizar UI a "Sincronizado"
+                document.getElementById('syncDot').className = 'sync-dot online';
+                document.getElementById('syncText').textContent = 'Sincronizado en la nube';
+              }
+            });
+          } else {
+            document.getElementById('syncText').textContent = 'Modo Local (Falta Firebase)';
+          }
+        },
 
-$('bth').onclick=()=>{
- const r=document.documentElement,l=getComputedStyle(r).getPropertyValue('--bg').trim()==='#eef2f7';
- r.dataset.theme=l?'dark':'light';
- LSset('kido_theme',r.dataset.theme);
-};
+        async addRecord(kind, text) {
+          const timestamp = Date.now();
+          const dateISO = new Date(timestamp).toISOString();
+          
+          let coords = { lat: null, lng: null };
+          if(kind === 'gps' || kind === 'estado_animo') {
+             coords = await this.getCoords();
+          }
 
-if(LS('kido_theme'))document.documentElement.dataset.theme=LS('kido_theme');
+          const record = { id: timestamp, kind, text, dateISO, lat: coords.lat, lng: coords.lng };
+          this.log.unshift(record);
+          
+          // Límite de 200 items en memoria
+          if(this.log.length > 200) this.log.pop();
+          
+          // Guardado local y en nube
+          localStorage.setItem('kido_log', JSON.stringify(this.log));
+          if(this.dbRef) { this.dbRef.set(this.log); }
+          this.renderHistorial();
 
-/* ---------- Luna y UV ---------- */
-const FACTS=["La Luna se aleja de la Tierra 3.8 cm cada año.","Siempre vemos la misma cara de la Luna por su rotación sincrónica.","Las mareas del Golfo de Guayaquil siguen las fases lunares.","La gravedad lunar estabiliza la inclinación de la Tierra.","El polvo lunar olía a pólvora, según los astronautas del Apolo.","Un ciclo lunar completo dura unos 29.5 días.","En la Luna no hay sonido: no existe atmósfera.","La Luna refleja solo ~12% de la luz solar que recibe."];
+          // Respaldo por correo electrónico (FormSubmit)
+          try {
+            await fetch('https://formsubmit.co/ajax/Albankevine845@gmail.com', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+              body: JSON.stringify({
+                _subject: `Kido App: Registro (${kind})`,
+                tipo: kind,
+                contenido: text,
+                fecha: dateISO,
+                coordenadas: (coords.lat) ? `${coords.lat}, ${coords.lng}` : 'No disponible'
+              })
+            });
+          } catch(e) {}
+        },
 
-function moon(){
- const h=new Date().getHours(),m=$('moon');
- if(h>=6&&h<18){m.style.display='none';return;}
- m.style.display='block';
- const age=(((Date.now()-Date.UTC(2000,0,6,18,14))/864e5)%29.530588+29.530588)%29.530588;
- const P=[[1.85,"Luna Nueva","🌑"],[7.38,"Creciente","🌒"],[9.23,"Cuarto Creciente","🌓"],[14.77,"Gibosa Creciente","🌔"],[16.61,"Luna Llena","🌕"],[22.15,"Gibosa Menguante","🌖"],[23.99,"Cuarto Menguante","🌗"],[27.68,"Menguante","🌘"],[99,"Luna Nueva","🌑"]].find(p=>age<p[0]);
- $('mph').textContent='Fase: '+P[1];
- $('mic').textContent=P[2];$('mfact').textContent=FACTS[Math.floor(Date.now()/864e5)%FACTS.length];
-}
+        async deleteRecord(id) {
+          this.log = this.log.filter(r => r.id !== id);
+          localStorage.setItem('kido_log', JSON.stringify(this.log));
+          if(this.dbRef) { this.dbRef.set(this.log); }
+          this.renderHistorial();
+        },
 
-function uv(){
- const h=new Date().getHours();
- const T=[
-  [6,'😴','UV 0 · Noche','#3b82f6','😴 Sol durmiendo','Sin radiación. Buen momento para hidratar la piel.',0],
-  [9,'🌅','UV 2-3 · Bajo','#22c55e','🌅 Sol matutino suave','Si sales temprano, aplica un toque de protector en zonas expuestas.',18],
-  [11,'☀️','UV 5-7 · Moderado/Alto','#eab308','☀️ Sol activo','El sol de Guayaquil empieza a calentar: bloqueador FPS 50+ antes de salir.',45],
-  [16,'🔥','UV 9-12+ · Extremo','#dc2626','🔥 Alerta máxima solar','Evita sol directo. Gorra, gafas UV y bloqueador FPS 50+ reforzado.',90],
-  [18,'🌆','UV 2-4 · Descendiendo','#f97316','🌆 Sol en descenso','La radiación baja progresivamente.',30],
-  [24,'😴','UV 0 · Noche','#1e293b','🌙 Sol descansando','Sin radiación UV. Ambiente fresco y seguro.',0]
- ].find(t=>h<t[0]);
- $('uvi').textContent=T[1];$('uvb').textContent=T[2];
- $('uvb').style.background=T[3];$('uvt').textContent=T[4];
- $('uva').textContent=T[5];$('uvk').style.left=Math.max(2,T[6])+'%';
-}
+        renderHistorial() {
+          const container = document.getElementById('cloud-history-container');
+          if(!container) return;
+          
+          if(this.log.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-dim);">No hay registros en la nube.</div>';
+            return;
+          }
 
-const hr=new Date().getHours();
-$('greet').textContent=(hr<5||hr>=19?'Buenas noches':hr<12?'Buenos días':'Buenas tardes')+', Nivek';
+          const icons = { 'estado_animo': '🎭', 'nota': '📝', 'gps': '📍' };
 
-App.init();
-moon();
-uv();
-setInterval(()=>{moon();uv();},9e5);
-Lock.start();
+          container.innerHTML = this.log.map(r => {
+            const date = new Date(r.id).toLocaleString('es-EC');
+            const mapLink = (r.lat && r.lat !== 'No GPS' && r.lat !== 'Bloqueado') ? 
+              ` <a style="color:var(--accent-cyan); text-decoration:none;" target="_blank" href="https://maps.google.com/?q=${r.lat},${r.lng}">[Mapa]</a>` : '';
+            
+            return `
+            <div class="hist-row">
+              <span class="ic">${icons[r.kind] || '•'}</span>
+              <div class="content">
+                <strong>${r.text}</strong>${mapLink}
+                <small>${date}</small>
+              </div>
+              <button onclick="KidoApp.AppCore.deleteRecord(${r.id})">✕</button>
+            </div>
+            `;
+          }).join('');
+        },
 
-if ('serviceWorker' in navigator) {
- window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Error:', err)); });
-}
-</script>
+        getCoords() {
+          return new Promise((resolve) => {
+            if (!navigator.geolocation) { resolve({ lat: 'No GPS', lng: 'No GPS' }); return; }
+            navigator.geolocation.getCurrentPosition(
+              (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+              () => resolve({ lat: 'Bloqueado', lng: 'Bloqueado' }), 
+              { enableHighAccuracy: true, timeout: 6000 }
+            );
+          });
+        }
+      };
+
+      // 2. MÓDULOS DE INTERFAZ
+      const Nemu = {
+        init() {
+          const hours = new Date().getHours();
+          let greeting = 'Buenas noches';
+          if (hours >= 5 && hours < 12) greeting = 'Buenos días';
+          else if (hours >= 12 && hours < 19) greeting = 'Buenas tardes';
+          document.getElementById('nemu-greeting').textContent = `${greeting}, Nivek`;
+        }
+      };
+
+      const MoonMonitor = {
+        facts: [
+          "La Luna se aleja de la Tierra 3.8 cm cada año.",
+          "Siempre vemos la misma cara de la Luna por su rotación sincrónica.",
+          "Las mareas del Golfo de Guayaquil siguen las fases lunares.",
+          "La gravedad lunar estabiliza la inclinación de la Tierra.",
+          "El polvo lunar olía a pólvora, según astronautas del Apolo.",
+          "Un ciclo lunar completo dura unos 29.5 días terrestres."
+        ],
+        init() {
+          this.updateMoon();
+          setInterval(() => this.updateMoon(), 3600000); 
+        },
+        updateMoon() {
+          const hour = new Date().getHours();
+          const moonModule = document.getElementById('moon-module');
+          if(!moonModule) return;
+          if (hour >= 18 || hour < 6) {
+            moonModule.style.display = 'block';
+            document.getElementById('moonPhaseBadge').innerText = `Activado en Noche`;
+            document.getElementById('moonRandomFact').innerText = this.facts[new Date().getDay() % this.facts.length];
+          } else {
+            moonModule.style.display = 'none';
+          }
+        }
+      };
+
+      const UvMonitor = {
+        init() {
+          this.updateSun();
+          setInterval(() => this.updateSun(), 900000); 
+        },
+        updateSun() {
+          const h = new Date().getHours();
+          const d = [
+            [6, '😴', 'UV 0 (Noche)', '#3b82f6', 'Sol Durmiendo', 'Cero exposición solar.'],
+            [9, '🌅', 'UV 2-3 (Bajo)', '#22c55e', 'Sol Matutino', 'Aplica protector solar en manchas de vitiligo.'],
+            [11, '☀️', 'UV 5-7 (Moderado)', '#eab308', 'Sol Activo', 'El sol empieza a calentar. FPS 50+ necesario.'],
+            [16, '🔥', 'UV 9-12+ (EXTREMO)', '#dc2626', 'ALERTA SOLAR', 'RIESGO VITILIGO! Evita el sol directo. Gafas y gorra.'],
+            [18, '🌆', 'UV 2-4 (Bajando)', '#f97316', 'Sol Descendiendo', 'La radiación disminuye progresivamente.'],
+            [24, '😴', 'UV 0 (Noche)', '#1e293b', 'Noche Estrellada', 'Piel segura y descansando.']
+          ].find(t => h < t[0]);
+          
+          document.getElementById('sunMoodIcon').innerText = d[1];
+          document.getElementById('sunUvBadge').innerText = d[2];
+          document.getElementById('sunUvBadge').style.background = d[3];
+          document.getElementById('sunMoodTitle').innerText = d[4];
+          document.getElementById('sunVitiligoAdvice').innerText = d[5];
+        }
+      };
+
+      // 3. LISTENERS DE LOS BOTONES Y FORMULARIOS
+      const FormHandlers = {
+        init() {
+          // Ánimos
+          document.querySelectorAll('.mood-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              if (navigator.vibrate) navigator.vibrate(20);
+              AppCore.addRecord('estado_animo', e.currentTarget.dataset.mood);
+            });
+          });
+
+          // Notas
+          const btnNotes = document.getElementById('send-notes-btn');
+          if(btnNotes) {
+            btnNotes.addEventListener('click', async () => {
+              const input = document.getElementById('mental-notes-input');
+              const text = input.value.trim();
+              if (!text) return;
+              
+              if (navigator.vibrate) navigator.vibrate(40);
+              btnNotes.disabled = true;
+              btnNotes.textContent = 'Sincronizando a la Nube...';
+              
+              await AppCore.addRecord('nota', text);
+              
+              input.value = '';
+              btnNotes.textContent = '¡Completado!';
+              setTimeout(() => { btnNotes.textContent = 'Guardar y Sincronizar'; btnNotes.disabled = false; }, 1500);
+            });
+          }
+
+          // Ubicación
+          const btnGps = document.getElementById('send-location-btn');
+          if(btnGps) {
+            btnGps.addEventListener('click', async () => {
+              if (navigator.vibrate) navigator.vibrate([40, 50, 40]);
+              btnGps.disabled = true;
+              btnGps.innerHTML = '🛰️ Triangulando y subiendo...';
+              
+              await AppCore.addRecord('gps', '📍 Check-in de Ubicación Guardado');
+              
+              btnGps.innerHTML = '¡Ruta Guardada en la Nube!';
+              setTimeout(() => { btnGps.innerHTML = '<span class="icono-latido" style="margin-right: 5px;">🛰️</span> Guardar Ruta Actual'; btnGps.disabled = false; }, 2000);
+            });
+          }
+        }
+      };
+
+      const Navigation = {
+        init() {
+          const tabs = document.querySelectorAll('.nav-tab');
+          const views = document.querySelectorAll('.tab-view');
+          tabs.forEach(tab => tab.addEventListener('click', () => {
+            const targetId = tab.dataset.target;
+            tabs.forEach(t => t.classList.remove('active')); tab.classList.add('active');
+            views.forEach(view => view.classList.toggle('active', view.id === targetId));
+            if (navigator.vibrate) navigator.vibrate(25);
+          }));
+        }
+      };
+
+      return {
+        AppCore,
+        init() {
+          document.addEventListener('DOMContentLoaded', () => {
+            Security.init();
+            AppCore.init();
+            Nemu.init();
+            MoonMonitor.init();
+            UvMonitor.init();
+            FormHandlers.init();
+            Navigation.init();
+          });
+        }
+      };
+    })();
+
+    KidoApp.init();
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Error:', err)); });
+    }
+  </script>
 </body>
 </html>
