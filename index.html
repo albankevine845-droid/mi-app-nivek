@@ -20,26 +20,60 @@
   <style>
     /* --- VARIABLES Y CONFIGURACIÓN BASE --- */
     :root {
-      --bg-deep: #0b0c10;
-      --glass-bg: rgba(22, 27, 34, 0.75);
-      --glass-border: rgba(255, 255, 255, 0.12);
-      --accent-cyan: #00f2fe;
-      --accent-blue: #4facfe;
-      --text-main: #f0f6fc;
-      --text-dim: #8b949e;
-      --text-muted: #9ca3af;
-      --btn-grad-start: #1f6feb;
-      --btn-grad-end: #1158c7;
-      --btn-shadow: #0d3d8a;
+      --bg-deep: #0b0c10; --glass-bg: rgba(22, 27, 34, 0.75); --glass-border: rgba(255, 255, 255, 0.12);
+      --accent-cyan: #00f2fe; --accent-blue: #4facfe; --text-main: #f0f6fc; --text-dim: #8b949e;
+      --text-muted: #9ca3af; --btn-grad-start: #1f6feb; --btn-grad-end: #1158c7; --btn-shadow: #0d3d8a;
     }
 
     * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
 
     body {
-      margin: 0; padding: 0;
-      background-color: var(--bg-deep); color: var(--text-main);
+      margin: 0; padding: 0; background-color: var(--bg-deep); color: var(--text-main);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       overflow-x: hidden; -webkit-font-smoothing: antialiased;
+    }
+
+    /* =========================================================================
+       GATOS GUARDIANES (TAMAGOTCHI)
+       ========================================================================= */
+    .tamagotchi-cat {
+      position: fixed; width: 65px; height: 65px; border-radius: 50%; z-index: 100000;
+      background-size: cover; background-position: center; border: 2px solid rgba(255,255,255,0.15);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.6); pointer-events: none; transition: 0.3s ease;
+    }
+    
+    .cat-black {
+      background-image: url('Abstract_expressionism_capturing_raw_coastal_202605012326 (1).jpeg');
+      top: 12%; left: 5%; animation: floatCat1 18s ease-in-out infinite;
+    }
+    
+    .cat-tabby {
+      background-image: url('Gato_blanco_marrón_estirándose_p…_202607062320 (1).jpeg');
+      bottom: 20%; right: 5%; animation: floatCat2 22s ease-in-out infinite;
+    }
+
+    @keyframes floatCat1 {
+      0%, 100% { transform: translate(0, 0) scaleX(1) translateY(0); }
+      25% { transform: translate(20px, 30px) scaleX(1) translateY(-10px); }
+      50% { transform: translate(40px, 0px) scaleX(-1) translateY(0); }
+      75% { transform: translate(20px, -20px) scaleX(-1) translateY(10px); }
+    }
+
+    @keyframes floatCat2 {
+      0%, 100% { transform: translate(0, 0) scaleX(1) translateY(0); }
+      25% { transform: translate(-30px, -20px) scaleX(1) translateY(10px); }
+      50% { transform: translate(-50px, 10px) scaleX(-1) translateY(0); }
+      75% { transform: translate(-20px, 30px) scaleX(-1) translateY(-10px); }
+    }
+
+    .tamagotchi-cat.angry {
+      animation: catShake 0.4s infinite !important;
+      border-color: #ef4444; box-shadow: 0 0 25px #ef4444; filter: contrast(1.2);
+    }
+    @keyframes catShake {
+      0%, 100% { transform: translateX(0) scale(1.1); }
+      25% { transform: translateX(-8px) scale(1.1); }
+      75% { transform: translateX(8px) scale(1.1); }
     }
 
     /* =========================================================================
@@ -98,7 +132,7 @@
     .mood-btn span { font-size: 1.8rem; margin-bottom: 6px; pointer-events: none; }
     .mood-btn label { font-size: 0.65rem; text-align: center; font-weight: 700; pointer-events: none; text-transform: uppercase;}
 
-    /* --- CALENDARIO INTERACTIVO --- */
+    /* --- CALENDARIO INTERACTIVO Y COLORES --- */
     .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     .cal-nav-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: #fff; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: 0.2s; }
     .cal-nav-btn:active { background: var(--accent-cyan); color: #000; transform: scale(0.9); }
@@ -110,12 +144,19 @@
     .cal-day.today { border-color: var(--accent-cyan); background: rgba(0, 242, 254, 0.1); color: var(--accent-cyan); }
     .cal-day.empty { visibility: hidden; }
 
-    /* Indicadores de Puntos en el Calendario */
-    .cal-day .dots-wrapper { position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); display: flex; gap: 3px; }
+    /* Contenedor de puntos en el calendario */
+    .cal-day .dots-wrapper { position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; width: 80%; }
     .cal-day .cal-dot { width: 5px; height: 5px; border-radius: 50%; }
-    .cal-dot.default { background: var(--accent-cyan); box-shadow: 0 0 5px var(--accent-cyan); }
-    .cal-dot.dot-losartan { background: #ef4444; box-shadow: 0 0 6px #ef4444; animation: dotPulseRed 1.5s infinite; }
-    .cal-dot.dot-gallo { background: #22c55e; box-shadow: 0 0 6px #22c55e; animation: dotPulseGreen 1.5s infinite; }
+    
+    /* Colores Específicos para Dots del Calendario */
+    .dot-cyan { background: #00f2fe; box-shadow: 0 0 5px #00f2fe; }
+    .dot-losartan { background: #ef4444; box-shadow: 0 0 6px #ef4444; animation: dotPulseRed 1.5s infinite; }
+    .dot-gallo { background: #22c55e; box-shadow: 0 0 6px #22c55e; animation: dotPulseGreen 1.5s infinite; }
+    .dot-mall { background: #f97316; box-shadow: 0 0 5px #f97316; }
+    .dot-casa { background: #3b82f6; box-shadow: 0 0 5px #3b82f6; }
+    .dot-bosque { background: #14b8a6; box-shadow: 0 0 5px #14b8a6; }
+    .dot-edu { background: #a855f7; box-shadow: 0 0 5px #a855f7; }
+    .dot-salida { background: #eab308; box-shadow: 0 0 5px #eab308; }
 
     @keyframes dotPulseRed { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.4); opacity: 1; } }
     @keyframes dotPulseGreen { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.4); opacity: 1; } }
@@ -130,12 +171,19 @@
     
     .opt-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
     .opt-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: var(--text-main); padding: 8px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
-    .opt-btn.active { background: var(--accent-cyan); color: #000; border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(0,242,254,0.5); }
     
-    /* Botones Especiales de Medicación/Relax */
-    .opt-btn.spec-losartan { border-color: rgba(239, 68, 68, 0.4); color: #fca5a5; box-shadow: 0 0 10px rgba(239,68,68,0.1); }
+    /* Colores Activos en el Modal */
+    .opt-btn.active.spec-cyan { background: #00f2fe; color: #000; border-color: #00f2fe; box-shadow: 0 0 10px rgba(0,242,254,0.5); }
+    .opt-btn.active.spec-mall { background: #f97316; color: #fff; border-color: #f97316; box-shadow: 0 0 10px rgba(249,115,22,0.5); }
+    .opt-btn.active.spec-casa { background: #3b82f6; color: #fff; border-color: #3b82f6; box-shadow: 0 0 10px rgba(59,130,246,0.5); }
+    .opt-btn.active.spec-bosque { background: #14b8a6; color: #fff; border-color: #14b8a6; box-shadow: 0 0 10px rgba(20,184,166,0.5); }
+    .opt-btn.active.spec-edu { background: #a855f7; color: #fff; border-color: #a855f7; box-shadow: 0 0 10px rgba(168,85,247,0.5); }
+    .opt-btn.active.spec-salida { background: #eab308; color: #000; border-color: #eab308; box-shadow: 0 0 10px rgba(234,179,8,0.5); }
+
+    /* Botones Especiales Medicación/Relax */
+    .opt-btn.spec-losartan { border-color: rgba(239, 68, 68, 0.5); color: #fca5a5; }
     .opt-btn.spec-losartan.active { background: #ef4444; color: #fff; border-color: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.6); }
-    .opt-btn.spec-gallo { border-color: rgba(134, 239, 172, 0.4); color: #86efac; box-shadow: 0 0 10px rgba(34,197,94,0.1); }
+    .opt-btn.spec-gallo { border-color: rgba(34, 197, 94, 0.5); color: #86efac; }
     .opt-btn.spec-gallo.active { background: #22c55e; color: #fff; border-color: #22c55e; box-shadow: 0 0 15px rgba(34, 197, 94, 0.6); }
 
     .custom-opt-box { display: flex; gap: 8px; margin-bottom: 20px; }
@@ -201,7 +249,7 @@
     .status-tag.active-tag { background: rgba(0, 242, 254, 0.15); color: var(--accent-cyan); border: 1px solid rgba(0, 242, 254, 0.3); }
 
     /* --- NAVEGACIÓN --- */
-    .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 400px; background: rgba(18, 22, 28, 0.85); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 28px; display: flex; justify-content: space-around; padding: 6px 12px; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6); z-index: 100; }
+    .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 400px; background: rgba(18, 22, 28, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 28px; display: flex; justify-content: space-around; padding: 6px 12px; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6); z-index: 100; }
     .nav-tab { background: transparent; border: none; color: var(--text-dim); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 20px; border-radius: 16px; cursor: pointer; transition: 0.2s; }
     .nav-tab.active { color: var(--accent-cyan); background: rgba(255, 255, 255, 0.06); }
     .nav-icon { font-size: 1.2rem; }
@@ -209,6 +257,10 @@
   </style>
 </head>
 <body>
+
+  <!-- TAMAGOTCHI GATOS GUARDIANES -->
+  <div id="guardianCat1" class="tamagotchi-cat cat-black"></div>
+  <div id="guardianCat2" class="tamagotchi-cat cat-tabby"></div>
 
   <!-- PANTALLA DE SEGURIDAD -->
   <div id="lock-screen" class="lock-overlay">
@@ -270,7 +322,7 @@
         </div>
       </header>
 
-      <!-- MÓDULO CALENDARIO INTERACTIVO (Lunes a Domingo con Puntos Animados) -->
+      <!-- MÓDULO CALENDARIO INTERACTIVO (Lunes a Domingo) -->
       <div class="card glass-card">
         <div class="cal-header">
           <button class="cal-nav-btn" onclick="KidoApp.CalendarModule.prevMonth()">&lt;</button>
@@ -487,7 +539,7 @@
   <script>
     const KidoApp = (() => {
       
-      // 0. SISTEMA DE SEGURIDAD
+      // 0. SISTEMA DE SEGURIDAD Y GATOS GUARDIANES
       const Security = {
         VALID_PINS: ["1234", "0931935795"], currentInput: "",
         init() {
@@ -533,7 +585,19 @@
           } else {
             this.dotsContainer.classList.add('error-shake');
             if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
-            setTimeout(() => { this.dotsContainer.classList.remove('error-shake'); this.currentInput = ""; this.updateDots(); }, 400);
+            
+            // Enfadamos a los gatos guardianes
+            const cat1 = document.getElementById('guardianCat1');
+            const cat2 = document.getElementById('guardianCat2');
+            if(cat1) cat1.classList.add('angry');
+            if(cat2) cat2.classList.add('angry');
+            
+            setTimeout(() => { 
+              this.dotsContainer.classList.remove('error-shake'); 
+              if(cat1) cat1.classList.remove('angry');
+              if(cat2) cat2.classList.remove('angry');
+              this.currentInput = ""; this.updateDots(); 
+            }, 500);
           }
         }
       };
@@ -574,7 +638,6 @@
           }
         },
 
-        // GPS DE ALTA PRECISIÓN GARANTIZADO
         getAccurateCoords() {
           return new Promise((resolve) => {
             if (!navigator.geolocation) { resolve({ lat: 'No GPS', lng: 'No GPS' }); return; }
@@ -682,7 +745,7 @@
       };
 
       // =========================================================
-      // MÓDULO CALENDARIO INTERACTIVO (LUNES A DOMINGO & PUNTOS ANIMADOS)
+      // MÓDULO CALENDARIO INTERACTIVO Y COLORES INTELIGENTES
       // =========================================================
       const CalendarModule = {
         currentDate: new Date(),
@@ -715,26 +778,30 @@
             const loopDateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
             const isToday = (loopDateStr === todayStr) ? 'today' : '';
             
-            // Analizar eventos del día para los puntos de colores
+            // Lógica para detectar palabras clave y agregar puntos de colores en el calendario
             const dayLogs = AppCore.log.filter(r => r.kind === 'calendario' && r.extra === loopDateStr);
-            let hasDefault = false, hasLosartan = false, hasGallo = false;
+            let activeDots = new Set();
 
             if (dayLogs.length > 0) {
-              const combinedText = dayLogs.map(r => r.text).join(' ');
-              if (combinedText.includes('Losartán')) hasLosartan = true;
-              if (combinedText.includes('Gallo')) hasGallo = true;
+              const text = dayLogs.map(r => r.text).join(' ').toLowerCase();
+              if (text.includes('losartán')) activeDots.add('dot-losartan');
+              if (text.includes('gallo')) activeDots.add('dot-gallo');
+              if (text.includes('mall del fortín')) activeDots.add('dot-mall');
+              if (text.includes('casa')) activeDots.add('dot-casa');
+              if (text.includes('bosque')) activeDots.add('dot-bosque');
+              if (text.includes('iam') || text.includes('ups')) activeDots.add('dot-edu');
+              if (text.includes('salida')) activeDots.add('dot-salida');
               
-              // Verifica si hay otras actividades además de Losartán o Gallo
-              const stripped = combinedText.replace(/💊 Losartán 100 mg/g, '').replace(/🌿 Gallo/g, '').replace(/Rutina/g, '').replace(/[(),:0-9-]/g, '').trim();
-              if (stripped.length > 2) hasDefault = true;
+              // Si no encontró nada específico pero hay registro, pon un punto cyan por defecto
+              if(activeDots.size === 0) activeDots.add('dot-cyan');
             }
 
             let dotsHtml = '';
-            if(hasDefault || hasLosartan || hasGallo) {
+            if(activeDots.size > 0) {
               dotsHtml = `<div class="dots-wrapper">`;
-              if(hasDefault) dotsHtml += `<div class="cal-dot default"></div>`;
-              if(hasLosartan) dotsHtml += `<div class="cal-dot dot-losartan"></div>`;
-              if(hasGallo) dotsHtml += `<div class="cal-dot dot-gallo"></div>`;
+              Array.from(activeDots).forEach(d => {
+                dotsHtml += `<div class="cal-dot ${d}"></div>`;
+              });
               dotsHtml += `</div>`;
             }
             
@@ -755,13 +822,25 @@
           document.getElementById('cal-modal-date').innerText = `${optionsNames[dayOfWeek]}, ${day}`;
           
           let presetOptions = [];
-          if (dayOfWeek >= 1 && dayOfWeek <= 5) presetOptions = ["Mall del Fortín", "Casa", "Casa wdd", "bosque", "ups"];
-          else if (dayOfWeek === 6) presetOptions = ["casa", "IAM", "casa rafi"];
-          else if (dayOfWeek === 0) presetOptions = ["salida"];
+          if (dayOfWeek >= 1 && dayOfWeek <= 5) presetOptions = [
+            { text: "Mall del Fortín", cls: "spec-mall" },
+            { text: "Casa", cls: "spec-casa" },
+            { text: "Casa wdd", cls: "spec-casa" },
+            { text: "bosque", cls: "spec-bosque" },
+            { text: "ups", cls: "spec-edu" }
+          ];
+          else if (dayOfWeek === 6) presetOptions = [
+            { text: "casa", cls: "spec-casa" },
+            { text: "IAM", cls: "spec-edu" },
+            { text: "casa rafi", cls: "spec-casa" }
+          ];
+          else if (dayOfWeek === 0) presetOptions = [
+            { text: "salida", cls: "spec-salida" }
+          ];
 
           const optContainer = document.getElementById('cal-options-container');
           
-          let optionsHtml = presetOptions.map(opt => `<button class="opt-btn" onclick="this.classList.toggle('active')">${opt}</button>`).join('');
+          let optionsHtml = presetOptions.map(opt => `<button class="opt-btn ${opt.cls}" onclick="this.classList.toggle('active')">${opt.text}</button>`).join('');
           
           // Opciones Fijas Especiales
           optionsHtml += `<button class="opt-btn spec-losartan" onclick="this.classList.toggle('active')">💊 Losartán 100 mg</button>`;
@@ -776,7 +855,8 @@
         addCustomOption() {
           const val = document.getElementById('custom-cal-input').value.trim();
           if(val) {
-            document.getElementById('cal-options-container').innerHTML += `<button class="opt-btn active" onclick="this.classList.toggle('active')">${val}</button>`;
+            // El default será cyan (spec-cyan)
+            document.getElementById('cal-options-container').innerHTML += `<button class="opt-btn spec-cyan active" onclick="this.classList.toggle('active')">${val}</button>`;
             document.getElementById('custom-cal-input').value = '';
           }
         },
