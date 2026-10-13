@@ -98,18 +98,27 @@
     .mood-btn span { font-size: 1.8rem; margin-bottom: 6px; pointer-events: none; }
     .mood-btn label { font-size: 0.65rem; text-align: center; font-weight: 700; pointer-events: none; text-transform: uppercase;}
 
-    /* --- CALENDARIO INTERACTIVO (NUEVO) --- */
+    /* --- CALENDARIO INTERACTIVO --- */
     .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     .cal-nav-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: #fff; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: 0.2s; }
     .cal-nav-btn:active { background: var(--accent-cyan); color: #000; transform: scale(0.9); }
     .cal-month-title { font-weight: 800; font-size: 1.1rem; text-transform: uppercase; color: var(--accent-cyan); letter-spacing: 1px; }
     .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
     .cal-day-name { font-size: 0.65rem; color: var(--text-dim); font-weight: 900; text-transform: uppercase; margin-bottom: 4px; }
-    .cal-day { position: relative; padding: 10px 0; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid transparent; cursor: pointer; transition: 0.2s; font-size: 0.9rem; font-weight: 600; }
+    .cal-day { position: relative; padding: 10px 0; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid transparent; cursor: pointer; transition: 0.2s; font-size: 0.9rem; font-weight: 600; display: flex; flex-direction: column; align-items: center; }
     .cal-day:active { transform: scale(0.9); background: rgba(255,255,255,0.1); }
     .cal-day.today { border-color: var(--accent-cyan); background: rgba(0, 242, 254, 0.1); color: var(--accent-cyan); }
-    .cal-day.has-event::after { content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; background: var(--accent-cyan); border-radius: 50%; box-shadow: 0 0 5px var(--accent-cyan); }
     .cal-day.empty { visibility: hidden; }
+
+    /* Indicadores de Puntos en el Calendario */
+    .cal-day .dots-wrapper { position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); display: flex; gap: 3px; }
+    .cal-day .cal-dot { width: 5px; height: 5px; border-radius: 50%; }
+    .cal-dot.default { background: var(--accent-cyan); box-shadow: 0 0 5px var(--accent-cyan); }
+    .cal-dot.dot-losartan { background: #ef4444; box-shadow: 0 0 6px #ef4444; animation: dotPulseRed 1.5s infinite; }
+    .cal-dot.dot-gallo { background: #22c55e; box-shadow: 0 0 6px #22c55e; animation: dotPulseGreen 1.5s infinite; }
+
+    @keyframes dotPulseRed { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.4); opacity: 1; } }
+    @keyframes dotPulseGreen { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.4); opacity: 1; } }
 
     /* MODAL LIQUID GLASS PARA CALENDARIO */
     .glass-modal { position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center; justify-content: center; background: rgba(5, 7, 10, 0.7); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); opacity: 0; pointer-events: none; transition: 0.3s ease; }
@@ -118,9 +127,17 @@
     .glass-modal.active .glass-modal-content { transform: scale(1); }
     .modal-title { font-size: 1.2rem; font-weight: 900; color: var(--accent-cyan); margin-bottom: 5px; text-transform: uppercase; }
     .modal-subtitle { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 20px; }
+    
     .opt-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
     .opt-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: var(--text-main); padding: 8px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
     .opt-btn.active { background: var(--accent-cyan); color: #000; border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(0,242,254,0.5); }
+    
+    /* Botones Especiales de Medicación/Relax */
+    .opt-btn.spec-losartan { border-color: rgba(239, 68, 68, 0.4); color: #fca5a5; box-shadow: 0 0 10px rgba(239,68,68,0.1); }
+    .opt-btn.spec-losartan.active { background: #ef4444; color: #fff; border-color: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.6); }
+    .opt-btn.spec-gallo { border-color: rgba(134, 239, 172, 0.4); color: #86efac; box-shadow: 0 0 10px rgba(34,197,94,0.1); }
+    .opt-btn.spec-gallo.active { background: #22c55e; color: #fff; border-color: #22c55e; box-shadow: 0 0 15px rgba(34, 197, 94, 0.6); }
+
     .custom-opt-box { display: flex; gap: 8px; margin-bottom: 20px; }
     .custom-opt-box input { flex: 1; padding: 10px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); color: #fff; outline: none; }
     .custom-opt-box button { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: #fff; padding: 0 14px; border-radius: 12px; cursor: pointer; font-weight: bold; }
@@ -141,8 +158,6 @@
     .btn-3d:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--btn-shadow); }
     .btn-red { background: linear-gradient(135deg, #ff4b4b, #d32f2f); box-shadow: 0 5px 0 #9a0007, 0 10px 15px rgba(0,0,0,0.4); }
     .btn-red:active { box-shadow: 0 1px 0 #9a0007; }
-    @keyframes latido { 0% { transform: scale(1); } 15% { transform: scale(1.25); } 30% { transform: scale(1); } 45% { transform: scale(1.15); } 60% { transform: scale(1); } }
-    .icono-latido { display: inline-block; animation: latido 1.5s infinite; transform-origin: center; }
 
     /* --- ZONA GPS TÁCTICA --- */
     .gps-hud-card { background: rgba(10, 15, 30, 0.85); background-image: radial-gradient(circle at 10% 10%, rgba(56, 189, 248, 0.1) 0%, transparent 50%); backdrop-filter: blur(25px); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 28px; padding: 20px; margin-bottom: 24px; box-shadow: var(--glass-shadow); animation: hudGlowPulse 4s infinite; }
@@ -167,13 +182,14 @@
     .animated-route-line { stroke-dasharray: 8, 8; animation: routeDashAnimation 1.2s linear infinite; }
     @keyframes routeDashAnimation { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }
 
-    /* --- TARJETA CAZADOR --- */
-    .hunter-anime-card { background: #000; border: 4px solid #fff; border-radius: 12px; width: 100%; max-width: 320px; margin: 0 auto 24px auto; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7); display: flex; flex-direction: column; }
+    /* --- TARJETA CAZADOR Y PILARES --- */
+    .hunter-anime-card { background: #000; border: 4px solid #fff; border-radius: 12px; width: 100%; max-width: 320px; margin: 0 auto 24px auto; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7); overflow: hidden; display: flex; flex-direction: column; }
     .h-top { background: #000; padding: 18px 20px 12px 20px; }
     .h-logo-box { background: #fff; padding: 15px; margin-bottom: 15px; height: 140px; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
     .h-barcode { height: 45px; width: 100%; background: repeating-linear-gradient( to right, #fff, #fff 3px, #000 3px, #000 7px, #fff 7px, #fff 11px, #000 11px, #000 15px, #fff 15px, #fff 21px, #000 21px, #000 28px, #fff 28px, #fff 31px, #000 31px, #000 36px ); }
     .h-bottom { background: #8cbdf0; padding: 18px 15px; border-top: 4px solid #000; display: flex; flex-direction: column; gap: 10px; }
     .h-slot { background: #fff; border: 2px solid #000; padding: 6px 10px; text-align: center; font-family: monospace; font-weight: 900; color: #000; font-size: 0.95rem; letter-spacing: 4px; box-shadow: 2px 2px 0px rgba(0,0,0,0.2); }
+    .h-slot-sm { font-size: 0.8rem; letter-spacing: 2px; }
     
     .section-title { font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); margin: 12px 0 10px 4px; }
     .pillar-card { padding: 14px 16px; border-left: 3px solid var(--accent-blue); }
@@ -186,7 +202,7 @@
 
     /* --- NAVEGACIÓN --- */
     .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 400px; background: rgba(18, 22, 28, 0.85); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 28px; display: flex; justify-content: space-around; padding: 6px 12px; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6); z-index: 100; }
-    .nav-tab { background: transparent; border: none; color: var(--text-dim); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 20px; border-radius: 16px; cursor: pointer; }
+    .nav-tab { background: transparent; border: none; color: var(--text-dim); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 20px; border-radius: 16px; cursor: pointer; transition: 0.2s; }
     .nav-tab.active { color: var(--accent-cyan); background: rgba(255, 255, 255, 0.06); }
     .nav-icon { font-size: 1.2rem; }
     .nav-label { font-size: 0.7rem; font-weight: 600; }
@@ -254,24 +270,20 @@
         </div>
       </header>
 
-      <!-- MÓDULO CALENDARIO INTERACTIVO (NUEVO) -->
+      <!-- MÓDULO CALENDARIO INTERACTIVO (Lunes a Domingo con Puntos Animados) -->
       <div class="card glass-card">
         <div class="cal-header">
           <button class="cal-nav-btn" onclick="KidoApp.CalendarModule.prevMonth()">&lt;</button>
           <div class="cal-month-title" id="cal-month-label">MES AÑO</div>
           <button class="cal-nav-btn" onclick="KidoApp.CalendarModule.nextMonth()">&gt;</button>
         </div>
+        
         <div class="cal-grid">
-          <div class="cal-day-name">Do</div><div class="cal-day-name">Lu</div><div class="cal-day-name">Ma</div>
-          <div class="cal-day-name">Mi</div><div class="cal-day-name">Ju</div><div class="cal-day-name">Vi</div><div class="cal-day-name">Sa</div>
+          <div class="cal-day-name">Lu</div><div class="cal-day-name">Ma</div><div class="cal-day-name">Mi</div>
+          <div class="cal-day-name">Ju</div><div class="cal-day-name">Vi</div><div class="cal-day-name">Sa</div><div class="cal-day-name">Do</div>
         </div>
         <div class="cal-grid" id="cal-days-container">
           <!-- Días renderizados por JS -->
-        </div>
-
-        <div style="display:flex; gap:8px; margin-top:16px;">
-          <button class="btn-3d btn-red" style="flex:1; padding: 10px; font-size: 0.8rem;" onclick="KidoApp.CalendarModule.sendReport('daily')">📊 Reporte Diario</button>
-          <button class="btn-3d" style="flex:1; padding: 10px; font-size: 0.8rem;" onclick="KidoApp.CalendarModule.sendReport('monthly')">📅 Reporte Mensual</button>
         </div>
       </div>
 
@@ -332,7 +344,7 @@
 
       <div class="card glass-card">
         <h3>📍 Check-in de Ubicación</h3>
-        <p class="pillar-desc" style="margin-top:-8px; margin-bottom:14px;">Registra manualmente tus coordenadas exactas para el mapeo mensual.</p>
+        <p class="pillar-desc" style="margin-top:-8px; margin-bottom:14px;">Registra tus coordenadas en tiempo real con precisión GPS máxima.</p>
         <button id="send-location-btn" class="btn-3d btn-red">
           <span class="icono-latido" style="margin-right: 5px;">🛰️</span> Guardar Ruta Actual
         </button>
@@ -392,7 +404,7 @@
       <div id="cloud-history-container"></div>
     </section>
 
-    <!-- PESTAÑA: NIVEK -->
+    <!-- PESTAÑA: NIVEK (CENTRAL DE REPORTES Y PILARES) -->
     <section id="tab-nivek" class="tab-view">
       <div class="hunter-anime-card">
         <div class="h-top">
@@ -410,6 +422,38 @@
           <div class="h-slot h-slot-sm">GUASMO NORTE</div>
           <div class="h-slot h-slot-sm">ESPECIALISTA / KX-9418</div>
         </div>
+      </div>
+
+      <!-- CENTRAL DE REPORTES MANUALES -->
+      <div class="pillars-container" style="margin-bottom: 24px;">
+        <h3 class="section-title">Central de Reportes (Manual)</h3>
+
+        <article class="card glass-card pillar-card">
+          <div class="pillar-header">
+            <span class="pillar-icon" style="font-size:1.2rem;">📍</span>
+            <h4>Reporte de Rutas (GPS)</h4>
+          </div>
+          <p class="pillar-desc">Extrae las coordenadas y puntos de control registrados durante el día de hoy.</p>
+          <button class="btn-3d btn-red" style="padding:8px; font-size:0.8rem; margin-top:8px; width:100%;" onclick="KidoApp.ReportsModule.sendReport('gps')">Generar Informe</button>
+        </article>
+
+        <article class="card glass-card pillar-card">
+          <div class="pillar-header">
+            <span class="pillar-icon" style="font-size:1.2rem;">📅</span>
+            <h4>Reporte de Rutinas & Ánimo</h4>
+          </div>
+          <p class="pillar-desc">Consolida las actividades del calendario y los estados de ánimo registrados hoy.</p>
+          <button class="btn-3d" style="padding:8px; font-size:0.8rem; margin-top:8px; width:100%;" onclick="KidoApp.ReportsModule.sendReport('rutinas')">Generar Informe</button>
+        </article>
+
+        <article class="card glass-card pillar-card">
+          <div class="pillar-header">
+            <span class="pillar-icon" style="font-size:1.2rem;">📊</span>
+            <h4>Reporte General (Mensual)</h4>
+          </div>
+          <p class="pillar-desc">Vaciado completo de la base de datos de este mes. Incluye notas, GPS y calendario.</p>
+          <button class="btn-3d" style="background:linear-gradient(135deg, #0284c7, #0369a1); box-shadow: 0 5px 0 #0369a1; padding:8px; font-size:0.8rem; margin-top:8px; width:100%;" onclick="KidoApp.ReportsModule.sendReport('mensual')">Generar Informe</button>
+        </article>
       </div>
 
       <div class="pillars-container">
@@ -522,7 +566,7 @@
                 this.log = data;
                 localStorage.setItem('kido_log', JSON.stringify(this.log));
                 this.renderHistorial();
-                CalendarModule.render(); // Actualizar puntos del calendario al sincronizar
+                CalendarModule.render(); 
                 document.getElementById('syncDot').className = 'sync-dot online';
                 document.getElementById('syncText').textContent = 'Sincronizado en la nube';
               }
@@ -530,13 +574,25 @@
           }
         },
 
+        // GPS DE ALTA PRECISIÓN GARANTIZADO
+        getAccurateCoords() {
+          return new Promise((resolve) => {
+            if (!navigator.geolocation) { resolve({ lat: 'No GPS', lng: 'No GPS' }); return; }
+            navigator.geolocation.getCurrentPosition(
+              (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+              (err) => resolve({ lat: TacticalMap.currentLat, lng: TacticalMap.currentLon }), 
+              { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 } 
+            );
+          });
+        },
+
         async addRecord(kind, text, extraInfo = "") {
           const timestamp = Date.now();
           const dateISO = new Date(timestamp).toISOString();
           let coords = { lat: null, lng: null };
           
-          if(kind === 'gps' || kind === 'estado_animo' || kind === 'calendario') {
-             coords = { lat: TacticalMap.currentLat, lng: TacticalMap.currentLon };
+          if(kind === 'gps' || kind === 'estado_animo' || kind === 'calendario' || kind === 'nota') {
+             coords = await this.getAccurateCoords();
           }
 
           const record = { id: timestamp, kind, text, dateISO, lat: coords.lat, lng: coords.lng, extra: extraInfo };
@@ -579,28 +635,75 @@
       };
 
       // =========================================================
-      // NUEVO: MÓDULO CALENDARIO INTERACTIVO (LIQUID GLASS)
+      // CENTRAL DE REPORTES (NIVEK TAB)
+      // =========================================================
+      const ReportsModule = {
+        async sendReport(type) {
+          if(navigator.vibrate) navigator.vibrate(30);
+          const localNow = new Date();
+          const localDateStr = localNow.toLocaleDateString('es-EC'); 
+
+          const isToday = (ts) => new Date(ts).toLocaleDateString('es-EC') === localDateStr;
+          const isThisMonth = (ts) => {
+             const d = new Date(ts);
+             return d.getMonth() === localNow.getMonth() && d.getFullYear() === localNow.getFullYear();
+          };
+
+          let logs = []; let title = ""; let content = `Resumen Inteligente Kido App (${localDateStr}):\n\n`;
+
+          if (type === 'gps') {
+            logs = AppCore.log.filter(r => r.kind === 'gps' && isToday(r.id));
+            title = `Reporte de Rutas GPS (${localDateStr})`;
+            if (logs.length === 0) return alert('No hay rutas GPS guardadas el día de hoy.');
+            logs.reverse().forEach(r => { content += `- ${new Date(r.id).toLocaleTimeString('es-EC')}: ${r.text} | Coordenadas: ${r.lat}, ${r.lng}\n`; });
+          } 
+          else if (type === 'rutinas') {
+            logs = AppCore.log.filter(r => (r.kind === 'calendario' || r.kind === 'estado_animo') && isToday(r.id));
+            title = `Reporte de Rutinas y Ánimo (${localDateStr})`;
+            if (logs.length === 0) return alert('No hay rutinas ni estados de ánimo guardados el día de hoy.');
+            logs.reverse().forEach(r => { content += `- ${new Date(r.id).toLocaleTimeString('es-EC')}: [${r.kind.toUpperCase()}] ${r.text}\n`; });
+          } 
+          else if (type === 'mensual') {
+            logs = AppCore.log.filter(r => isThisMonth(r.id));
+            const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            title = `Reporte General Mensual (${monthNames[localNow.getMonth()]} ${localNow.getFullYear()})`;
+            if (logs.length === 0) return alert('No hay registros guardados en lo que va de este mes.');
+            logs.reverse().forEach(r => { content += `- ${new Date(r.id).toLocaleDateString('es-EC')} ${new Date(r.id).toLocaleTimeString('es-EC')}: [${r.kind.toUpperCase()}] ${r.text}\n`; });
+          }
+
+          try {
+            await fetch('https://formsubmit.co/ajax/Albankevine845@gmail.com', {
+              method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+              body: JSON.stringify({ _subject: `Kido App: ${title}`, reporte: content })
+            });
+            alert("✅ ¡Reporte generado y enviado a tu correo!");
+          } catch(e) { alert("❌ Error al enviar el reporte. Verifica tu conexión."); }
+        }
+      };
+
+      // =========================================================
+      // MÓDULO CALENDARIO INTERACTIVO (LUNES A DOMINGO & PUNTOS ANIMADOS)
       // =========================================================
       const CalendarModule = {
         currentDate: new Date(),
-        selectedFullDate: null, // "YYYY-MM-DD"
+        selectedFullDate: null,
         
         init() { this.render(); },
         
         render() {
           const year = this.currentDate.getFullYear();
-          const month = this.currentDate.getMonth(); // 0-11
+          const month = this.currentDate.getMonth(); 
           
           const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
           document.getElementById('cal-month-label').innerText = `${monthNames[month]} ${year}`;
           
-          const firstDay = new Date(year, month, 1).getDay(); // 0 (Dom) - 6 (Sab)
+          let firstDay = new Date(year, month, 1).getDay();
+          firstDay = firstDay === 0 ? 6 : firstDay - 1; 
+
           const daysInMonth = new Date(year, month + 1, 0).getDate();
-          
           const container = document.getElementById('cal-days-container');
           container.innerHTML = '';
 
-          // Huecos iniciales
           for (let i = 0; i < firstDay; i++) {
             container.innerHTML += `<div class="cal-day empty"></div>`;
           }
@@ -612,10 +715,30 @@
             const loopDateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
             const isToday = (loopDateStr === todayStr) ? 'today' : '';
             
-            // Comprobar si hay registro en AppCore para este día
-            const hasEvent = AppCore.log.some(r => r.kind === 'calendario' && r.extra === loopDateStr) ? 'has-event' : '';
+            // Analizar eventos del día para los puntos de colores
+            const dayLogs = AppCore.log.filter(r => r.kind === 'calendario' && r.extra === loopDateStr);
+            let hasDefault = false, hasLosartan = false, hasGallo = false;
+
+            if (dayLogs.length > 0) {
+              const combinedText = dayLogs.map(r => r.text).join(' ');
+              if (combinedText.includes('Losartán')) hasLosartan = true;
+              if (combinedText.includes('Gallo')) hasGallo = true;
+              
+              // Verifica si hay otras actividades además de Losartán o Gallo
+              const stripped = combinedText.replace(/💊 Losartán 100 mg/g, '').replace(/🌿 Gallo/g, '').replace(/Rutina/g, '').replace(/[(),:0-9-]/g, '').trim();
+              if (stripped.length > 2) hasDefault = true;
+            }
+
+            let dotsHtml = '';
+            if(hasDefault || hasLosartan || hasGallo) {
+              dotsHtml = `<div class="dots-wrapper">`;
+              if(hasDefault) dotsHtml += `<div class="cal-dot default"></div>`;
+              if(hasLosartan) dotsHtml += `<div class="cal-dot dot-losartan"></div>`;
+              if(hasGallo) dotsHtml += `<div class="cal-dot dot-gallo"></div>`;
+              dotsHtml += `</div>`;
+            }
             
-            container.innerHTML += `<div class="cal-day ${isToday} ${hasEvent}" onclick="KidoApp.CalendarModule.openModal(${year}, ${month}, ${day})">${day}</div>`;
+            container.innerHTML += `<div class="cal-day ${isToday}" onclick="KidoApp.CalendarModule.openModal(${year}, ${month}, ${day})">${day}${dotsHtml}</div>`;
           }
         },
 
@@ -637,7 +760,14 @@
           else if (dayOfWeek === 0) presetOptions = ["salida"];
 
           const optContainer = document.getElementById('cal-options-container');
-          optContainer.innerHTML = presetOptions.map(opt => `<button class="opt-btn" onclick="this.classList.toggle('active')">${opt}</button>`).join('');
+          
+          let optionsHtml = presetOptions.map(opt => `<button class="opt-btn" onclick="this.classList.toggle('active')">${opt}</button>`).join('');
+          
+          // Opciones Fijas Especiales
+          optionsHtml += `<button class="opt-btn spec-losartan" onclick="this.classList.toggle('active')">💊 Losartán 100 mg</button>`;
+          optionsHtml += `<button class="opt-btn spec-gallo" onclick="this.classList.toggle('active')">🌿 Gallo</button>`;
+          
+          optContainer.innerHTML = optionsHtml;
           
           document.getElementById('custom-cal-input').value = '';
           document.getElementById('cal-modal').classList.add('active');
@@ -653,58 +783,21 @@
 
         saveDayOptions() {
           const activeBtns = document.querySelectorAll('#cal-options-container .opt-btn.active');
-          if(activeBtns.length === 0) {
-            document.getElementById('cal-modal').classList.remove('active'); return;
-          }
+          if(activeBtns.length === 0) { document.getElementById('cal-modal').classList.remove('active'); return; }
           
           if(navigator.vibrate) navigator.vibrate(20);
           const selections = Array.from(activeBtns).map(b => b.innerText);
           const text = `Rutina (${this.selectedFullDate}): ` + selections.join(", ");
           
-          // Se guarda con kind: 'calendario' y extra es la fecha YYYY-MM-DD
           AppCore.addRecord('calendario', text, this.selectedFullDate);
           document.getElementById('cal-modal').classList.remove('active');
-        },
-
-        async sendReport(type) {
-          if(navigator.vibrate) navigator.vibrate(30);
-          const today = new Date();
-          const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-          const currentMonthPrefix = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`;
-          
-          let logs = [];
-          let title = "";
-
-          if (type === 'daily') {
-            logs = AppCore.log.filter(r => r.kind === 'calendario' && r.extra === todayStr);
-            title = `Reporte Diario de Calendario (${todayStr})`;
-          } else {
-            logs = AppCore.log.filter(r => r.kind === 'calendario' && r.extra && r.extra.startsWith(currentMonthPrefix));
-            title = `Reporte Mensual Consolidado (${currentMonthPrefix})`;
-          }
-
-          if (logs.length === 0) {
-            alert(`No hay registros guardados en el calendario para este reporte.`);
-            return;
-          }
-
-          let content = `Resumen Kido App:\n\n`;
-          logs.reverse().forEach(r => { content += `- ${r.text}\n`; });
-
-          try {
-            await fetch('https://formsubmit.co/ajax/Albankevine845@gmail.com', {
-              method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-              body: JSON.stringify({ _subject: `Kido App: ${title}`, reporte: content })
-            });
-            alert("✅ ¡Reporte de Calendario enviado a tu correo!");
-          } catch(e) { alert("❌ Error al enviar el reporte."); }
         }
       };
 
       // ZONA TÁCTICA MAPAS & RADAR
       const TacticalMap = {
         map: null, marker: null, routeLine: null, markers: [],
-        currentLat: -2.2530, currentLon: -79.8970,
+        currentLat: -2.2530, currentLon: -79.8970, // Inicio Base
         
         mathDist(lat1, lon1, lat2, lon2) { const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180; const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2); return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); },
         mathDir(lat1, lon1, lat2, lon2) { const dLon = lon2 - lon1; const dLat = lat2 - lat1; let angle = Math.atan2(dLon, dLat) * 180 / Math.PI; if (angle < 0) angle += 360; if (angle >= 337.5 || angle < 22.5) return "N"; if (angle >= 22.5 && angle < 67.5) return "NE"; if (angle >= 67.5 && angle < 112.5) return "E"; if (angle >= 112.5 && angle < 157.5) return "SE"; if (angle >= 157.5 && angle < 202.5) return "S"; if (angle >= 202.5 && angle < 247.5) return "SO"; if (angle >= 247.5 && angle < 292.5) return "O"; return "NO"; },
@@ -729,7 +822,7 @@
               document.getElementById('hudSpeedVal').innerText = `${((pos.coords.speed || 0) * 3.6).toFixed(1)} km/h`;
               document.getElementById('hudAltVal').innerText = `${Math.round(pos.coords.altitude || 12)} m s.n.m.`;
               this.updateRadar();
-            }, () => { document.getElementById('gps-live-status').innerText = `🔴 Permiso GPS Denegado o sin señal.`; }, { enableHighAccuracy: true });
+            }, () => { document.getElementById('gps-live-status').innerText = `🔴 Permiso GPS Denegado o sin señal.`; }, { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 });
           }
         },
 
@@ -856,7 +949,7 @@
       };
 
       return {
-        AppCore, TacticalMap, CalendarModule,
+        AppCore, TacticalMap, CalendarModule, ReportsModule,
         init() {
           document.addEventListener('DOMContentLoaded', () => {
             Security.init(); AppCore.init(); Nemu.init(); MoonMonitor.init(); UvMonitor.init();
