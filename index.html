@@ -1,24 +1,1084 @@
-<!-- MÓDULO: UNIVERSO ACADÉMICO -->
-<div id="universo-academico" class="glass-card tab-content" style="display: none;"> <!-- Quita el display:none si quieres que sea visible por defecto -->
-  <div class="glass-header text-center">
-    <h2 class="gradient-text">Cosmos Académico</h2>
-    <p class="subtitle">Psicología - Semestre Actual</p>
-  </div>
-  
-  <div class="solar-system-container" id="solar-system-container">
-    <!-- El Sol y los planetas se inyectarán desde JavaScript -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0b0c10">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <title>Kido App</title>
+
+  <!-- SDK de Firebase para la Base de Datos -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <!-- Librería de Mapas Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    /* --- VARIABLES Y CONFIGURACIÓN BASE --- */
+    :root {
+      --bg-deep: #0b0c10;
+      --glass-bg: rgba(22, 27, 34, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --accent-cyan: #00f2fe;
+      --accent-blue: #4facfe;
+      --text-main: #f0f6fc;
+      --text-dim: #8b949e;
+      --text-muted: #9ca3af;
+      --btn-grad-start: #1f6feb;
+      --btn-grad-end: #1158c7;
+      --btn-shadow: #0d3d8a;
+    }
+
+    * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      margin: 0; padding: 0;
+      background-color: var(--bg-deep); color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      overflow-x: hidden; -webkit-font-smoothing: antialiased;
+    }
+
+    /* =========================================================================
+       GATOS GUARDIANES (ESTILO MUCHINEKO 2D)
+       ========================================================================= */
+    .muchi-wrapper { position: fixed; z-index: 100000; width: 90px; height: 70px; pointer-events: none; }
+    .muchi-inner { width: 100%; height: 100%; transition: transform 0.2s; }
+
+    #muchiCat1 { top: 15%; animation: runRight 12s linear infinite; }
+    #muchiCat1 .muchi-inner { animation: bounce 0.4s alternate infinite; }
+
+    #muchiCat2 { bottom: 25%; animation: runLeft 15s linear infinite; }
+    #muchiCat2 .muchi-inner { animation: bounce 0.5s alternate infinite; transform: scaleX(-1); }
+
+    .muchi-wrapper.falling .muchi-inner { animation: fallHeavy 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards !important; }
+
+    @keyframes runRight { 0% { left: -15%; } 100% { left: 115%; } }
+    @keyframes runLeft { 0% { right: -15%; } 100% { right: 115%; } }
+    @keyframes bounce { 0% { transform: translateY(0) scaleX(var(--dir, 1)); } 100% { transform: translateY(-20px) scaleX(var(--dir, 1)); } }
+    @keyframes fallHeavy { 0% { transform: translateY(0) scaleY(1); } 80% { transform: translateY(80vh) scaleY(1.1); } 100% { transform: translateY(80vh) scaleY(0.6) scaleX(1.3); } }
+
+    /* =========================================================================
+       PANTALLA DE BLOQUEO (BAUHAUS CIUDAD MINIMALISTA)
+       ========================================================================= */
+    .lock-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+      background-color: #F6F4EE; 
+    }
+
+    .bg-muchi-city {
+      background-image:
+        linear-gradient(to right, transparent 10%, #111111 10%, #111111 25%, transparent 25%, transparent 50%, #333333 50%, #333333 70%, transparent 70%),
+        linear-gradient(to right, transparent 5%, #777777 5%, #777777 20%, transparent 20%, transparent 35%, #BEB8AD 35%, #BEB8AD 60%, transparent 60%),
+        linear-gradient(to right, #E6E1D7 0%, #E6E1D7 15%, transparent 15%, transparent 60%, #E6E1D7 60%, #E6E1D7 85%, transparent 85%);
+      background-size: 100% 25%, 100% 45%, 100% 65%;
+      background-position: bottom;
+      background-repeat: no-repeat;
+    }
+
+    .lock-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    
+    .lock-glass-panel {
+      display: flex; flex-direction: column; align-items: center; padding: 20px;
+      background: rgba(246, 244, 238, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border: 2px solid #111; border-radius: 24px; box-shadow: 10px 10px 0px rgba(17, 17, 17, 0.1);
+    }
+
+    .lock-datetime { text-align: center; margin-bottom: 30px; color: #111; }
+    .lock-datetime h1 { margin: 0; font-size: 4.5rem; font-weight: 800; letter-spacing: -2px; }
+    .lock-datetime p { margin: 5px 0 0 0; font-size: 1.1rem; font-weight: 700; color: #333; text-transform: capitalize; }
+    .lock-header h2 { margin: 0 0 10px 0; font-size: 1.1rem; letter-spacing: 2px; color: #111; text-transform: uppercase; font-weight: 900; }
+
+    .pin-dots { display: flex; gap: 12px; margin-bottom: 35px; justify-content: center; min-height: 16px; }
+    .pin-dots .dot { width: 16px; height: 16px; border-radius: 50%; border: 3px solid #777; transition: all 0.2s ease; background: transparent; }
+    .pin-dots .dot.active { background: #111; border-color: #111; }
+    .pin-dots.error-shake { animation: shake 0.4s; }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
+    
+    .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 260px; }
+    .num-btn {
+      width: 70px; height: 70px; border-radius: 16px; border: 2px solid #111;
+      background: #F6F4EE; color: #111; font-size: 1.8rem; font-weight: 800; cursor: pointer;
+      box-shadow: 4px 4px 0px #111; transition: 0.1s;
+    }
+    .num-btn:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px transparent; background: #BEB8AD; }
+    .num-btn.action-btn { font-size: 1.4rem; background: #E6E1D7; }
+
+    /* --- CONTENEDOR PRINCIPAL Y VISTAS --- */
+    .app-viewport { max-width: 440px; margin: 0 auto; min-height: 100vh; padding: 20px 16px 110px 16px; }
+    .tab-view { display: none; opacity: 0; transform: translateY(8px); transition: opacity 0.25s ease, transform 0.25s ease; }
+    .tab-view.active { display: block; opacity: 1; transform: translateY(0); }
+    .nemu-header { margin-bottom: 20px; }
+    .nemu-header h1 { margin: 0; font-size: 1.6rem; letter-spacing: -0.5px; }
+    .nemu-header .subtitle { margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-dim); }
+    .sync-status { display: flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 0.75rem; color: var(--text-dim); }
+    .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #ef4444; }
+    .sync-dot.online { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+    .glass-card { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 18px; margin-bottom: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); }
+    .glass-card h3 { margin: 0 0 14px 0; font-size: 1.05rem; font-weight: 600; }
+    
+    /* --- MÓDULOS SOLAR Y LUNAR --- */
+    .sun-glass-card, .moon-glass-card { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 18px; margin-bottom: 16px; position: relative; overflow: hidden; }
+    @keyframes sunExtremePulse { 0% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 15px #f97316) drop-shadow(0 0 35px #ef4444); } 50% { transform: scale(1.2) rotate(180deg); filter: drop-shadow(0 0 30px #facc15) drop-shadow(0 0 50px #dc2626); } 100% { transform: scale(1) rotate(360deg); } }
+    @keyframes sunSleeping { 0% { transform: translateY(0px) rotate(-5deg); filter: drop-shadow(0 0 8px #38bdf8); } 100% { transform: translateY(-6px) rotate(5deg); filter: drop-shadow(0 0 18px #818cf8); } }
+    @keyframes moonFloat { 0% { transform: translateY(0px) rotate(0deg); filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6)); } 50% { transform: translateY(-8px) rotate(3deg); filter: drop-shadow(0 0 25px rgba(255, 255, 255, 1)); } 100% { transform: translateY(0px); } }
+    .sun-card-header { display: flex; justify-content: space-between; align-items: center; }
+    .sun-mood-icon { font-size: 2.8rem; display: inline-block; transition: all 0.5s ease; }
+    .moon-anim-icon { font-size: 2.8rem; display: inline-block; animation: moonFloat 4s ease-in-out infinite; }
+    .sun-uv-badge { font-size: 0.85rem; font-weight: 900; padding: 4px 12px; border-radius: 12px; color: #fff; display: inline-block; margin-top: 4px; }
+    .vitiligo-alert-box { background: rgba(0, 0, 0, 0.25); border: 1px solid var(--glass-border); border-radius: 16px; padding: 12px; margin-top: 12px; font-size: 0.78rem; line-height: 1.4; }
+
+    /* --- ESTADO DE ÁNIMO --- */
+    .mood-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 10px; margin-bottom: 14px; }
+    .mood-btn { display: flex; flex-direction: column; align-items: center; padding: 12px 4px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.04); cursor: pointer; color: var(--text-main); box-shadow: 0 4px 0 rgba(0,0,0,0.5); transition: 0.1s; }
+    .mood-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.5); background: rgba(0, 242, 254, 0.15); }
+    .mood-btn span { font-size: 1.8rem; margin-bottom: 6px; pointer-events: none; }
+    .mood-btn label { font-size: 0.65rem; text-align: center; font-weight: 700; pointer-events: none; text-transform: uppercase;}
+
+    /* --- CALENDARIO INTERACTIVO Y COLORES --- */
+    .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .cal-nav-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: #fff; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: 0.2s; }
+    .cal-nav-btn:active { background: var(--accent-cyan); color: #000; transform: scale(0.9); }
+    .cal-month-title { font-weight: 800; font-size: 1.1rem; text-transform: uppercase; color: var(--accent-cyan); letter-spacing: 1px; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
+    .cal-day-name { font-size: 0.65rem; color: var(--text-dim); font-weight: 900; text-transform: uppercase; margin-bottom: 4px; }
+    .cal-day { position: relative; padding: 10px 0; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid transparent; cursor: pointer; transition: 0.2s; font-size: 0.9rem; font-weight: 600; display: flex; flex-direction: column; align-items: center; }
+    .cal-day:active { transform: scale(0.9); background: rgba(255,255,255,0.1); }
+    .cal-day.today { border-color: var(--accent-cyan); background: rgba(0, 242, 254, 0.1); color: var(--accent-cyan); }
+    .cal-day.empty { visibility: hidden; }
+
+    /* Indicadores de Puntos en el Calendario */
+    .cal-day .dots-wrapper { position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; width: 80%; }
+    .cal-day .cal-dot { width: 5px; height: 5px; border-radius: 50%; }
+    .dot-cyan { background: #00f2fe; box-shadow: 0 0 5px #00f2fe; }
+    .dot-losartan { background: #ef4444; box-shadow: 0 0 6px #ef4444; animation: dotPulseRed 1.5s infinite; }
+    .dot-gallo { background: #22c55e; box-shadow: 0 0 6px #22c55e; animation: dotPulseGreen 1.5s infinite; }
+    .dot-mall { background: #f97316; box-shadow: 0 0 5px #f97316; }
+    .dot-casa { background: #3b82f6; box-shadow: 0 0 5px #3b82f6; }
+    .dot-bosque { background: #14b8a6; box-shadow: 0 0 5px #14b8a6; }
+    .dot-edu { background: #a855f7; box-shadow: 0 0 5px #a855f7; }
+    .dot-salida { background: #eab308; box-shadow: 0 0 5px #eab308; }
+
+    @keyframes dotPulseRed { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.4); opacity: 1; } }
+    @keyframes dotPulseGreen { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.4); opacity: 1; } }
+
+    /* MODAL LIQUID GLASS PARA CALENDARIO */
+    .glass-modal { position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center; justify-content: center; background: rgba(5, 7, 10, 0.7); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); opacity: 0; pointer-events: none; transition: 0.3s ease; }
+    .glass-modal.active { opacity: 1; pointer-events: auto; }
+    .glass-modal-content { background: rgba(18, 22, 28, 0.75); border: 1px solid var(--glass-border); border-radius: 24px; padding: 24px; width: 90%; max-width: 350px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); transform: scale(0.9); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; }
+    .glass-modal.active .glass-modal-content { transform: scale(1); }
+    .modal-title { font-size: 1.2rem; font-weight: 900; color: var(--accent-cyan); margin-bottom: 5px; text-transform: uppercase; }
+    .modal-subtitle { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 20px; }
+    
+    .opt-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    .opt-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: var(--text-main); padding: 8px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    
+    /* Colores Activos en el Modal */
+    .opt-btn.active.spec-cyan { background: #00f2fe; color: #000; border-color: #00f2fe; box-shadow: 0 0 10px rgba(0,242,254,0.5); }
+    .opt-btn.active.spec-mall { background: #f97316; color: #fff; border-color: #f97316; box-shadow: 0 0 10px rgba(249,115,22,0.5); }
+    .opt-btn.active.spec-casa { background: #3b82f6; color: #fff; border-color: #3b82f6; box-shadow: 0 0 10px rgba(59,130,246,0.5); }
+    .opt-btn.active.spec-bosque { background: #14b8a6; color: #fff; border-color: #14b8a6; box-shadow: 0 0 10px rgba(20,184,166,0.5); }
+    .opt-btn.active.spec-edu { background: #a855f7; color: #fff; border-color: #a855f7; box-shadow: 0 0 10px rgba(168,85,247,0.5); }
+    .opt-btn.active.spec-salida { background: #eab308; color: #000; border-color: #eab308; box-shadow: 0 0 10px rgba(234,179,8,0.5); }
+
+    /* Botones Especiales Medicación/Relax */
+    .opt-btn.spec-losartan { border-color: rgba(239, 68, 68, 0.5); color: #fca5a5; }
+    .opt-btn.spec-losartan.active { background: #ef4444; color: #fff; border-color: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.6); }
+    .opt-btn.spec-gallo { border-color: rgba(34, 197, 94, 0.5); color: #86efac; }
+    .opt-btn.spec-gallo.active { background: #22c55e; color: #fff; border-color: #22c55e; box-shadow: 0 0 15px rgba(34, 197, 94, 0.6); }
+
+    .custom-opt-box { display: flex; gap: 8px; margin-bottom: 20px; }
+    .custom-opt-box input { flex: 1; padding: 10px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); color: #fff; outline: none; }
+    .custom-opt-box button { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: #fff; padding: 0 14px; border-radius: 12px; cursor: pointer; font-weight: bold; }
+    .modal-actions { display: flex; gap: 10px; }
+    .modal-actions button { flex: 1; padding: 12px; border-radius: 14px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    .btn-cancel { background: rgba(255,255,255,0.1); color: #fff; }
+    .btn-save { background: linear-gradient(135deg, var(--btn-grad-start), var(--btn-grad-end)); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+
+    /* --- HISTORIAL Y OTROS --- */
+    .hist-row { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); margin-bottom: 8px; }
+    .hist-row .ic { font-size: 1.4rem; }
+    .hist-row .content { flex: 1; min-width: 0; font-size: 0.88rem; word-break: break-word; }
+    .hist-row small { color: var(--text-dim); display: block; margin-top: 4px; font-size: 0.75rem; }
+    .hist-row button { background: none; border: none; color: var(--text-dim); cursor: pointer; padding: 4px; }
+
+    textarea { width: 100%; height: 90px; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px; color: var(--text-main); font-size: 0.9rem; resize: none; outline: none; margin-bottom: 12px; }
+    .btn-3d { width: 100%; padding: 14px; border-radius: 14px; border: none; background: linear-gradient(135deg, var(--btn-grad-start), var(--btn-grad-end)); color: #fff; font-weight: 600; font-size: 0.95rem; cursor: pointer; box-shadow: 0 5px 0 var(--btn-shadow), 0 10px 15px rgba(0,0,0,0.4); transition: 0.1s; }
+    .btn-3d:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--btn-shadow); }
+    .btn-red { background: linear-gradient(135deg, #ff4b4b, #d32f2f); box-shadow: 0 5px 0 #9a0007, 0 10px 15px rgba(0,0,0,0.4); }
+    .btn-red:active { box-shadow: 0 1px 0 #9a0007; }
+
+    /* --- ZONA GPS TÁCTICA --- */
+    .gps-hud-card { background: rgba(10, 15, 30, 0.85); background-image: radial-gradient(circle at 10% 10%, rgba(56, 189, 248, 0.1) 0%, transparent 50%); backdrop-filter: blur(25px); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 28px; padding: 20px; margin-bottom: 24px; box-shadow: var(--glass-shadow); animation: hudGlowPulse 4s infinite; }
+    @keyframes hudGlowPulse { 0% { box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); border-color: rgba(56, 189, 248, 0.3); } 50% { box-shadow: 0 0 30px rgba(56, 189, 248, 0.5); border-color: rgba(56, 189, 248, 0.7); } 100% { box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); } }
+    .hud-title-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(56, 189, 248, 0.3); padding-bottom: 10px; margin-bottom: 14px; }
+    .hud-sat-status { font-size: 0.72rem; font-weight: 800; color: #22c55e; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.4); padding: 4px 10px; border-radius: 10px; }
+    .hud-grid-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
+    .hud-metric-box { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; padding: 10px 12px; text-align: left; }
+    .hud-label { font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+    .hud-val { font-size: 1.1rem; font-weight: 900; color: #38bdf8; font-family: monospace; text-shadow: 0 0 8px rgba(56, 189, 248, 0.6); }
+    .coords-hero-box { background: rgba(2, 132, 199, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 18px; padding: 12px; margin-bottom: 14px; text-align: center; }
+    .coords-hero-val { font-family: monospace; font-size: 1.05rem; font-weight: 900; color: #f8fafc; }
+    
+    .dragon-radar-frame { width: 260px; height: 260px; margin: 10px auto 16px auto; border-radius: 50%; background: linear-gradient(145deg, #cbd5e1, #64748b); border: 6px solid #475569; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.5); padding: 6px; position: relative; }
+    .dragon-radar-screen { width: 100%; height: 100%; border-radius: 50%; background: #022c22; background-image: linear-gradient(rgba(34, 197, 94, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(34, 197, 94, 0.3) 1px, transparent 1px); background-size: 20px 20px; background-position: center center; border: 2px solid #15803d; position: relative; overflow: hidden; box-shadow: inset 0 0 18px rgba(0,0,0,0.85); }
+    .radar-sweep-line { position: absolute; top: 50%; left: 50%; width: 50%; height: 50%; background: conic-gradient(from 0deg at 0% 0%, rgba(34, 197, 94, 0.45) 0deg, transparent 60deg); transform-origin: 0% 0%; animation: radarSweep 3s linear infinite; pointer-events: none; }
+    .radar-center-user { position: absolute; top: 50%; left: 50%; width: 10px; height: 10px; background: #38bdf8; border: 2px solid #fff; border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 10px #38bdf8; z-index: 5; }
+    .dragon-dot { position: absolute; width: 12px; height: 12px; background: #f97316; border: 1.5px solid #fff; border-radius: 50%; animation: dragonDotPulse 1.2s infinite ease-in-out; z-index: 4; }
+    @keyframes radarSweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes dragonDotPulse { 0% { transform: translate(-50%, -50%) scale(0.9); } 50% { transform: translate(-50%, -50%) scale(1.35); box-shadow: 0 0 16px #facc15; } 100% { transform: translate(-50%, -50%) scale(0.9); } }
+    
+    .leaflet-container { background: #0b0c10; font-family: inherit; }
+    .leaflet-layer, .leaflet-control-zoom-in, .leaflet-control-zoom-out, .leaflet-control-attribution { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); }
+    .animated-route-line { stroke-dasharray: 8, 8; animation: routeDashAnimation 1.2s linear infinite; }
+    @keyframes routeDashAnimation { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }
+
+    /* --- TARJETA CAZADOR Y PILARES --- */
+    .hunter-anime-card { background: #000; border: 4px solid #fff; border-radius: 12px; width: 100%; max-width: 320px; margin: 0 auto 24px auto; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7); overflow: hidden; display: flex; flex-direction: column; }
+    .h-top { background: #000; padding: 18px 20px 12px 20px; }
+    .h-logo-box { background: #fff; padding: 15px; margin-bottom: 15px; height: 140px; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
+    .h-barcode { height: 45px; width: 100%; background: repeating-linear-gradient( to right, #fff, #fff 3px, #000 3px, #000 7px, #fff 7px, #fff 11px, #000 11px, #000 15px, #fff 15px, #fff 21px, #000 21px, #000 28px, #fff 28px, #fff 31px, #000 31px, #000 36px ); }
+    .h-bottom { background: #8cbdf0; padding: 18px 15px; border-top: 4px solid #000; display: flex; flex-direction: column; gap: 10px; }
+    .h-slot { background: #fff; border: 2px solid #000; padding: 6px 10px; text-align: center; font-family: monospace; font-weight: 900; color: #000; font-size: 0.95rem; letter-spacing: 4px; box-shadow: 2px 2px 0px rgba(0,0,0,0.2); }
+    .h-slot-sm { font-size: 0.8rem; letter-spacing: 2px; }
+    
+    .section-title { font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); margin: 12px 0 10px 4px; }
+    .pillar-card { padding: 14px 16px; border-left: 3px solid var(--accent-blue); }
+    .pillar-header { display: flex; align-items: center; gap: 10px; }
+    .pillar-header h4 { margin: 0; font-size: 1rem; }
+    .pillar-desc { font-size: 0.82rem; color: var(--text-dim); margin: 6px 0 10px 0; }
+    .pillar-tags { display: flex; gap: 8px; }
+    .status-tag { font-size: 0.68rem; padding: 4px 8px; border-radius: 6px; background: rgba(255, 255, 255, 0.06); }
+    .status-tag.active-tag { background: rgba(0, 242, 254, 0.15); color: var(--accent-cyan); border: 1px solid rgba(0, 242, 254, 0.3); }
+
+    /* --- NAVEGACIÓN --- */
+    .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 400px; background: rgba(18, 22, 28, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 28px; display: flex; justify-content: space-around; padding: 6px 12px; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6); z-index: 100; }
+    .nav-tab { background: transparent; border: none; color: var(--text-dim); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 20px; border-radius: 16px; cursor: pointer; transition: 0.2s; }
+    .nav-tab.active { color: var(--accent-cyan); background: rgba(255, 255, 255, 0.06); }
+    .nav-icon { font-size: 1.2rem; }
+    .nav-label { font-size: 0.7rem; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <!-- TAMAGOTCHI GATOS GUARDIANES (2D VECTORIZADOS) -->
+  <div id="guardianCat1" class="muchi-wrapper" style="--dir: 1;">
+    <div class="muchi-inner">
+      <svg viewBox="0 0 100 80" width="100%" height="100%">
+        <!-- Cola -->
+        <path d="M15,45 Q5,35 10,20" fill="none" stroke="#111" stroke-width="8" stroke-linecap="round"/>
+        <!-- Cuerpo gordo -->
+        <ellipse cx="50" cy="45" rx="35" ry="25" fill="#F6F4EE" stroke="#111" stroke-width="4"/>
+        <path d="M25,30 Q35,15 50,25 Q40,40 25,30" fill="#111"/> <!-- Mancha -->
+        <!-- Patas -->
+        <rect x="25" y="60" width="10" height="15" rx="5" fill="#F6F4EE" stroke="#111" stroke-width="4"/>
+        <rect x="65" y="60" width="10" height="15" rx="5" fill="#F6F4EE" stroke="#111" stroke-width="4"/>
+        <!-- Cabeza -->
+        <circle cx="80" cy="35" r="16" fill="#F6F4EE" stroke="#111" stroke-width="4"/>
+        <path d="M75,22 L70,8 L82,18" fill="#111" stroke="#111" stroke-width="2"/> <!-- Oreja 1 -->
+        <path d="M86,22 L94,8 L78,18" fill="#F6F4EE" stroke="#111" stroke-width="3"/> <!-- Oreja 2 -->
+        <!-- Cara -->
+        <circle cx="86" cy="35" r="1.5" fill="#111"/>
+        <circle cx="76" cy="35" r="1.5" fill="#111"/>
+        <path d="M78,38 Q81,41 84,38" fill="none" stroke="#111" stroke-width="1.5"/>
+      </svg>
+    </div>
   </div>
 
-  <!-- Modal Liquid Glass para interactuar con la materia -->
-  <div id="planet-modal" class="glass-modal hidden">
-    <div class="glass-modal-content">
-      <h3 id="modal-subject">Materia</h3>
-      <div class="stars-display" id="stars-display"></div>
-      <p class="progress-text" id="progress-text">Progreso: 0/5 estrellas</p>
-      <div class="modal-actions">
-        <button class="glass-btn primary-btn" onclick="addSubjectStar()">Añadir Estrella ⭐</button>
-        <button class="glass-btn close-btn" onclick="closePlanetModal()">Cerrar</button>
+  <div id="guardianCat2" class="muchi-wrapper" style="--dir: -1;">
+    <div class="muchi-inner">
+      <svg viewBox="0 0 100 80" width="100%" height="100%">
+        <path d="M15,45 Q5,35 10,20" fill="none" stroke="#111" stroke-width="8" stroke-linecap="round"/>
+        <ellipse cx="50" cy="45" rx="35" ry="25" fill="#E6E1D7" stroke="#111" stroke-width="4"/>
+        <path d="M60,25 Q70,15 80,30 Q70,40 60,25" fill="#777777"/> <!-- Mancha gris -->
+        <rect x="25" y="60" width="10" height="15" rx="5" fill="#E6E1D7" stroke="#111" stroke-width="4"/>
+        <rect x="65" y="60" width="10" height="15" rx="5" fill="#E6E1D7" stroke="#111" stroke-width="4"/>
+        <circle cx="80" cy="35" r="16" fill="#F6F4EE" stroke="#111" stroke-width="4"/>
+        <path d="M75,22 L70,8 L82,18" fill="#777777" stroke="#111" stroke-width="2"/>
+        <path d="M86,22 L94,8 L78,18" fill="#F6F4EE" stroke="#111" stroke-width="3"/>
+        <circle cx="86" cy="35" r="1.5" fill="#111"/>
+        <circle cx="76" cy="35" r="1.5" fill="#111"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- PANTALLA DE SEGURIDAD (ESTILO BAUHAUS / CIUDAD) -->
+  <div id="lock-screen" class="lock-overlay bg-muchi-city">
+    <div class="lock-glass-panel">
+      <div class="lock-datetime">
+        <h1 id="lock-time">--:--</h1>
+        <p id="lock-date">Cargando fecha...</p>
+      </div>
+      <div class="lock-header"><h2>KIDO CORE</h2></div>
+      <div class="pin-dots" id="pin-dots-container"></div>
+      <div class="numpad">
+        <button class="num-btn" data-val="1">1</button>
+        <button class="num-btn" data-val="2">2</button>
+        <button class="num-btn" data-val="3">3</button>
+        <button class="num-btn" data-val="4">4</button>
+        <button class="num-btn" data-val="5">5</button>
+        <button class="num-btn" data-val="6">6</button>
+        <button class="num-btn" data-val="7">7</button>
+        <button class="num-btn" data-val="8">8</button>
+        <button class="num-btn" data-val="9">9</button>
+        <button class="num-btn action-btn" data-val="clear">C</button>
+        <button class="num-btn" data-val="0">0</button>
+        <button class="num-btn action-btn" data-val="enter">➔</button>
       </div>
     </div>
   </div>
-</div>
+
+  <!-- MODAL CALENDARIO (LIQUID GLASS) -->
+  <div class="glass-modal" id="cal-modal">
+    <div class="glass-modal-content">
+      <div class="modal-title" id="cal-modal-date">Día</div>
+      <div class="modal-subtitle">Selecciona tus ubicaciones o actividades:</div>
+      
+      <div class="opt-grid" id="cal-options-container">
+        <!-- Botones dinámicos se insertan aquí -->
+      </div>
+
+      <div class="custom-opt-box">
+        <input type="text" id="custom-cal-input" placeholder="Otra actividad/lugar...">
+        <button onclick="KidoApp.CalendarModule.addCustomOption()">+</button>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="document.getElementById('cal-modal').classList.remove('active')">Cancelar</button>
+        <button class="btn-save" onclick="KidoApp.CalendarModule.saveDayOptions()">Guardar Día</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="app-viewport">
+
+    <!-- PESTAÑA: DIARIO -->
+    <section id="tab-diario" class="tab-view active">
+      <header class="nemu-header">
+        <h1 id="nemu-greeting">Hola, Nivek</h1>
+        <div class="sync-status">
+          <div id="syncDot" class="sync-dot"></div>
+          <span id="syncText">Esperando conexión...</span>
+        </div>
+      </header>
+
+      <!-- MÓDULO CALENDARIO INTERACTIVO (Lunes a Domingo con Puntos Animados) -->
+      <div class="card glass-card">
+        <div class="cal-header">
+          <button class="cal-nav-btn" onclick="KidoApp.CalendarModule.prevMonth()">&lt;</button>
+          <div class="cal-month-title" id="cal-month-label">MES AÑO</div>
+          <button class="cal-nav-btn" onclick="KidoApp.CalendarModule.nextMonth()">&gt;</button>
+        </div>
+        
+        <div class="cal-grid">
+          <div class="cal-day-name">Lu</div><div class="cal-day-name">Ma</div><div class="cal-day-name">Mi</div>
+          <div class="cal-day-name">Ju</div><div class="cal-day-name">Vi</div><div class="cal-day-name">Sa</div><div class="cal-day-name">Do</div>
+        </div>
+        <div class="cal-grid" id="cal-days-container">
+          <!-- Días renderizados por JS -->
+        </div>
+      </div>
+
+      <!-- Módulo Lunar -->
+      <div id="moon-module" class="moon-glass-card" style="display: none;">
+        <div class="sun-card-header">
+          <div>
+            <div style="font-size: 0.95rem; font-weight: 900; color: var(--text-main);">🌙 Ciclo Lunar & Noche</div>
+            <div style="font-size: 0.73rem; color: var(--text-muted); font-weight: 600;">Estado del Satélite</div>
+            <span class="sun-uv-badge" id="moonPhaseBadge" style="background: #334155; border: 1px solid rgba(255,255,255,0.2);">Calculando...</span>
+          </div>
+          <span class="moon-anim-icon" id="moonIcon">🌕</span>
+        </div>
+        <div class="vitiligo-alert-box" style="border-color: rgba(255,255,255,0.1);">
+          <strong>💡 Dato Nocturno:</strong><br><span id="moonRandomFact" style="color: #cbd5e1;"></span>
+        </div>
+      </div>
+
+      <!-- Módulo Radiación UV -->
+      <div class="sun-glass-card">
+        <div class="sun-card-header">
+          <div>
+            <div style="font-size: 0.95rem; font-weight: 900; color: var(--text-main);">☀️ Radiación UV Guayaquil</div>
+            <div style="font-size: 0.73rem; color: var(--text-muted); font-weight: 600;">Prevención Vitiligo por Horas</div>
+            <span class="sun-uv-badge" id="sunUvBadge">Índice UV: 0</span>
+          </div>
+          <span class="sun-mood-icon" id="sunMoodIcon">😴</span>
+        </div>
+        <div class="vitiligo-alert-box">
+          <strong id="sunMoodTitle">Sol Durmiendo (Noche)</strong><br>
+          <span id="sunVitiligoAdvice">Sin radiación solar activa.</span>
+        </div>
+      </div>
+
+      <!-- Módulo Ánimo -->
+      <div class="card glass-card">
+        <h3>Estado de Ánimo</h3>
+        <div class="mood-grid">
+          <button class="mood-btn" data-mood="Feliz 😁"><span>😁</span><label>Feliz</label></button>
+          <button class="mood-btn" data-mood="Normal 😐"><span>😐</span><label>Normal</label></button>
+          <button class="mood-btn" data-mood="Triste 😢"><span>😢</span><label>Triste</label></button>
+          <button class="mood-btn" data-mood="Enfadado 😠"><span>😠</span><label>Enfadado</label></button>
+          <button class="mood-btn" data-mood="Cabrero 🤬"><span>🤬</span><label>Cabrero</label></button>
+          <button class="mood-btn" data-mood="Valiendo verga 💀"><span>💀</span><label>Valiendo verga</label></button>
+          <button class="mood-btn" data-mood="En la vrg 🫠"><span>🫠</span><label>En la vrg</label></button>
+          <button class="mood-btn" data-mood="Ya fue 🏳️"><span>🏳️</span><label>Ya fue</label></button>
+          <button class="mood-btn" data-mood="Pegado 🍃"><span>🍃</span><label>Pegado</label></button>
+          <button class="mood-btn" data-mood="En momano 🛸"><span>🛸</span><label>En momano</label></button>
+          <button class="mood-btn" data-mood="Chinote chaulin 😑"><span>😑</span><label>Chinote chaulin</label></button>
+        </div>
+      </div>
+
+      <div class="card glass-card">
+        <h3>Notas Mentales</h3>
+        <textarea id="mental-notes-input" placeholder="Captura rápida de pensamientos o tareas..."></textarea>
+        <button id="send-notes-btn" class="btn-3d">Guardar y Sincronizar</button>
+      </div>
+
+      <div class="card glass-card">
+        <h3>📍 Check-in de Ubicación</h3>
+        <p class="pillar-desc" style="margin-top:-8px; margin-bottom:14px;">Registra tus coordenadas en tiempo real con precisión GPS máxima.</p>
+        <button id="send-location-btn" class="btn-3d btn-red">
+          <span class="icono-latido" style="margin-right: 5px;">🛰️</span> Guardar Ruta Actual
+        </button>
+      </div>
+
+      <!-- ZONA GPS TÁCTICA HUD & MAPA -->
+      <div class="gps-hud-card">
+        <div class="hud-title-bar">
+          <div>
+            <span style="font-size: 0.95rem; font-weight: 900; color: #38bdf8;">🛰️ ZONA GPS & NAVEGACIÓN</span>
+            <div style="font-size: 0.72rem; color: var(--text-muted);">Telemetría Satelital de Guayaquil</div>
+          </div>
+          <span class="hud-sat-status">● EN VIVO</span>
+        </div>
+
+        <div class="dragon-radar-frame">
+          <div class="dragon-radar-screen" id="radarScreen">
+            <svg id="radarVectorSvg" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:3; pointer-events:none;"></svg>
+            <div class="radar-sweep-line"></div>
+            <div class="radar-center-user" title="Tu Ubicación Actual"></div>
+            <div id="radarDotsContainer"></div>
+          </div>
+        </div>
+        <div id="radarStatus" style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-bottom: 16px;">
+          🟠 Detectando historial en radar...
+        </div>
+
+        <div class="coords-hero-box">
+          <div style="font-size:0.68rem; color:var(--text-muted); font-weight:800; margin-bottom:2px;">POSICIÓN GPS ACTUAL</div>
+          <div class="coords-hero-val" id="hudCoordsVal">Lat: --.---- | Lon: --.----</div>
+        </div>
+
+        <div class="hud-grid-metrics">
+          <div class="hud-metric-box"><div class="hud-label">⛰️ Altitud Est.</div><div class="hud-val" id="hudAltVal">-- m</div></div>
+          <div class="hud-metric-box"><div class="hud-label">⚡ Velocidad</div><div class="hud-val" id="hudSpeedVal">-- km/h</div></div>
+          <div class="hud-metric-box"><div class="hud-label">🎯 Precisión</div><div class="hud-val" id="hudAccVal">± -- m</div></div>
+          <div class="hud-metric-box"><div class="hud-label">🧭 Orientación</div><div class="hud-val" id="hudDirVal">N/A</div></div>
+        </div>
+
+        <div style="margin-top: 14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:0.75rem; font-weight:800; color:var(--text-muted);">TRAYECTORIA VISUAL MAPA</span>
+            <button class="btn-3d btn-red" style="padding:4px 12px; font-size:0.68rem; width: auto;" onclick="KidoApp.TacticalMap.recenterMap()">🎯 Centrar</button>
+          </div>
+          <div id="tactical-map" style="height: 240px; width: 100%; border-radius: 20px; border: 1.5px solid rgba(56, 189, 248, 0.4); box-shadow: 0 0 15px rgba(0,0,0,0.5);"></div>
+          <div id="gps-live-status" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 8px; text-align: center;">Escaneando señal satelital en vivo...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PESTAÑA: HISTORIAL -->
+    <section id="tab-historial" class="tab-view">
+      <div class="nemu-header">
+        <h1>Historial en la Nube</h1>
+        <p class="subtitle">Sincronizado en tiempo real con Firebase</p>
+      </div>
+      <div id="cloud-history-container"></div>
+    </section>
+
+    <!-- PESTAÑA: NIVEK (CENTRAL DE REPORTES Y PILARES) -->
+    <section id="tab-nivek" class="tab-view">
+      <div class="hunter-anime-card">
+        <div class="h-top">
+          <div class="h-logo-box">
+            <svg viewBox="0 0 100 80" style="width:100%; max-height:100px;">
+              <path d="M5,0 L35,0 L50,30 L65,0 L95,0 L60,40 L95,80 L65,80 L50,50 L35,80 L5,80 L40,40 Z" fill="#000" />
+              <polygon points="50,12 72,40 50,68 28,40" fill="#d32f2f" />
+            </svg>
+          </div>
+          <div class="h-barcode"></div>
+        </div>
+        <div class="h-bottom">
+          <div class="h-slot">N I V E K</div>
+          <div class="h-slot h-slot-sm">2000-0519-EC</div>
+          <div class="h-slot h-slot-sm">GUASMO NORTE</div>
+          <div class="h-slot h-slot-sm">ESPECIALISTA / KX-9418</div>
+        </div>
+      </div>
+
+      <!-- CENTRAL DE REPORTES MANUALES -->
+      <div class="pillars-container" style="margin-bottom: 24px;">
+        <h3 class="section-title">Central de Reportes (Manual)</h3>
+
+        <article class="card glass-card pillar-card">
+          <div class="pillar-header">
+            <span class="pillar-icon" style="font-size:1.2rem;">📍</span>
+            <h4>Reporte de Rutas (GPS)</h4>
+          </div>
+          <p class="pillar-desc">Extrae las coordenadas y puntos de control registrados durante el día de hoy.</p>
+          <button class="btn-3d btn-red" style="padding:8px; font-size:0.8rem; margin-top:8px; width:100%;" onclick="KidoApp.ReportsModule.sendReport('gps')">Generar Informe</button>
+        </article>
+
+        <article class="card glass-card pillar-card">
+          <div class="pillar-header">
+            <span class="pillar-icon" style="font-size:1.2rem;">📅</span>
+            <h4>Reporte de Rutinas & Ánimo</h4>
+          </div>
+          <p class="pillar-desc">Consolida las actividades del calendario y los estados de ánimo registrados hoy.</p>
+          <button class="btn-3d" style="padding:8px; font-size:0.8rem; margin-top:8px; width:100%;" onclick="KidoApp.ReportsModule.sendReport('rutinas')">Generar Informe</button>
+        </article>
+
+        <article class="card glass-card pillar-card">
+          <div class="pillar-header">
+            <span class="pillar-icon" style="font-size:1.2rem;">📊</span>
+            <h4>Reporte General (Mensual)</h4>
+          </div>
+          <p class="pillar-desc">Vaciado completo de la base de datos de este mes. Incluye notas, GPS y calendario.</p>
+          <button class="btn-3d" style="background:linear-gradient(135deg, #0284c7, #0369a1); box-shadow: 0 5px 0 #0369a1; padding:8px; font-size:0.8rem; margin-top:8px; width:100%;" onclick="KidoApp.ReportsModule.sendReport('mensual')">Generar Informe</button>
+        </article>
+      </div>
+
+      <div class="pillars-container">
+        <h3 class="section-title">Ejes Operativos</h3>
+        <article class="card glass-card pillar-card">
+          <div class="pillar-header"><span class="pillar-icon icono-latido">❤️‍🔥</span><h4>Salud & Vitalidad</h4></div>
+          <p class="pillar-desc">Entrenamiento físico, acondicionamiento y balance neuromuscular.</p>
+          <div class="pillar-tags"><span class="status-tag">En Progreso</span><span class="metric-tag">Fuerza / Cardio</span></div>
+        </article>
+        <article class="card glass-card pillar-card">
+          <div class="pillar-header"><span class="pillar-icon">🧠</span><h4>Estudio & Investigación</h4></div>
+          <p class="pillar-desc">Exploración conceptual, lecturas avanzadas y desarrollo analítico.</p>
+          <div class="pillar-tags"><span class="status-tag active-tag">Activo</span><span class="metric-tag">Investigación</span></div>
+        </article>
+        <article class="card glass-card pillar-card">
+          <div class="pillar-header"><span class="pillar-icon">⚡</span><h4>Trabajo & Proyectos</h4></div>
+          <p class="pillar-desc">Dirección de iniciativas creativas, sistemas y flujos de automatización.</p>
+          <div class="pillar-tags"><span class="status-tag">Planificación</span><span class="metric-tag">Kido Corp</span></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- NAVEGACIÓN -->
+    <nav class="bottom-nav">
+      <button class="nav-tab active" data-target="tab-diario"><span class="nav-icon">📖</span><span class="nav-label">Diario</span></button>
+      <button class="nav-tab" data-target="tab-historial"><span class="nav-icon">🗂️</span><span class="nav-label">Historial</span></button>
+      <button class="nav-tab" data-target="tab-nivek"><span class="nav-icon">🃏</span><span class="nav-label">Nivek</span></button>
+    </nav>
+  </main>
+
+  <script>
+    const KidoApp = (() => {
+      
+      // 0. SISTEMA DE SEGURIDAD Y GATOS GUARDIANES
+      const Security = {
+        VALID_PINS: ["1234", "0931935795"], currentInput: "",
+        init() {
+          this.overlay = document.getElementById('lock-screen');
+          this.dotsContainer = document.getElementById('pin-dots-container');
+          this.buttons = document.querySelectorAll('.num-btn');
+          this.startClock(); this.bindEvents();
+        },
+        startClock() {
+          const updateTime = () => {
+            const now = new Date();
+            document.getElementById('lock-time').textContent = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('lock-date').textContent = now.toLocaleDateString('es-ES', { weekday: 'long', month: 'long', day: 'numeric' });
+          };
+          updateTime(); setInterval(updateTime, 1000);
+        },
+        bindEvents() {
+          this.buttons.forEach(btn => btn.addEventListener('click', (e) => {
+            if (navigator.vibrate) navigator.vibrate(15);
+            this.handleInput(e.currentTarget.dataset.val);
+          }));
+        },
+        handleInput(val) {
+          if (val === 'clear') { this.currentInput = ""; } else if (val === 'enter') { this.checkPin(); return; } else { if (this.currentInput.length < 10) this.currentInput += val; }
+          this.updateDots();
+          if (this.VALID_PINS.includes(this.currentInput)) setTimeout(() => this.checkPin(), 250);
+        },
+        updateDots() {
+          const dotsCount = Math.max(4, this.currentInput.length);
+          this.dotsContainer.innerHTML = '';
+          for(let i=0; i < dotsCount; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'dot' + (i < this.currentInput.length ? ' active' : '');
+            this.dotsContainer.appendChild(dot);
+          }
+        },
+        checkPin() {
+          if (this.VALID_PINS.includes(this.currentInput)) { 
+            this.overlay.classList.add('hidden'); 
+            TacticalMap.startTracking();
+            // Escondemos los gatos al desbloquear
+            const cat1 = document.getElementById('guardianCat1'); const cat2 = document.getElementById('guardianCat2');
+            if(cat1) cat1.style.display = 'none'; if(cat2) cat2.style.display = 'none';
+          } else {
+            this.dotsContainer.classList.add('error-shake');
+            if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
+            
+            const cat1 = document.getElementById('guardianCat1');
+            const cat2 = document.getElementById('guardianCat2');
+            if(cat1) cat1.classList.add('falling');
+            if(cat2) cat2.classList.add('falling');
+            
+            setTimeout(() => { 
+              this.dotsContainer.classList.remove('error-shake'); 
+              if(cat1) cat1.classList.remove('falling');
+              if(cat2) cat2.classList.remove('falling');
+              this.currentInput = ""; this.updateDots(); 
+            }, 600);
+          }
+        }
+      };
+
+      // 1. SISTEMA CENTRAL: FIREBASE & LOCAL
+      const AppCore = {
+        log: [], dbRef: null,
+        init() {
+          try { this.log = JSON.parse(localStorage.getItem('kido_log')) || []; } catch(e) {}
+          this.renderHistorial();
+
+          const firebaseConfig = {
+            apiKey: "AIzaSyDWlWiVBy2YVL7-8tYPXb0koYaTJQQSmzM",
+            authDomain: "artful-wind-485602-m4.firebaseapp.com",
+            databaseURL: "https://artful-wind-485602-m4-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "artful-wind-485602-m4",
+            storageBucket: "artful-wind-485602-m4.firebasestorage.app",
+            messagingSenderId: "788414406663",
+            appId: "1:788414406663:web:2e09773ae2b4fccd624aa2"
+          };
+
+          if(firebaseConfig.apiKey !== "TU_API_KEY") {
+            if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+            const db = firebase.database();
+            this.dbRef = db.ref("kido_core_0931935795/bitacora");
+
+            this.dbRef.on('value', (snapshot) => {
+              const data = snapshot.val();
+              if (data) {
+                this.log = data;
+                localStorage.setItem('kido_log', JSON.stringify(this.log));
+                this.renderHistorial();
+                CalendarModule.render(); 
+                document.getElementById('syncDot').className = 'sync-dot online';
+                document.getElementById('syncText').textContent = 'Sincronizado en la nube';
+              }
+            });
+          }
+        },
+
+        getAccurateCoords() {
+          return new Promise((resolve) => {
+            if (!navigator.geolocation) { resolve({ lat: 'No GPS', lng: 'No GPS' }); return; }
+            navigator.geolocation.getCurrentPosition(
+              (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+              (err) => resolve({ lat: TacticalMap.currentLat, lng: TacticalMap.currentLon }), 
+              { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 } 
+            );
+          });
+        },
+
+        async addRecord(kind, text, extraInfo = "") {
+          const timestamp = Date.now();
+          const dateISO = new Date(timestamp).toISOString();
+          let coords = { lat: null, lng: null };
+          
+          if(kind === 'gps' || kind === 'estado_animo' || kind === 'calendario' || kind === 'nota') {
+             coords = await this.getAccurateCoords();
+          }
+
+          const record = { id: timestamp, kind, text, dateISO, lat: coords.lat, lng: coords.lng, extra: extraInfo };
+          this.log.unshift(record);
+          if(this.log.length > 200) this.log.pop();
+          
+          localStorage.setItem('kido_log', JSON.stringify(this.log));
+          if(this.dbRef) this.dbRef.set(this.log);
+          this.renderHistorial();
+          CalendarModule.render();
+        },
+
+        async deleteRecord(id) {
+          this.log = this.log.filter(r => r.id !== id);
+          localStorage.setItem('kido_log', JSON.stringify(this.log));
+          if(this.dbRef) this.dbRef.set(this.log);
+          this.renderHistorial();
+          CalendarModule.render();
+        },
+
+        renderHistorial() {
+          const container = document.getElementById('cloud-history-container');
+          if(!container) return;
+          if(this.log.length === 0) { container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-dim);">No hay registros.</div>'; return; }
+
+          const icons = { 'estado_animo': '🎭', 'nota': '📝', 'gps': '📍', 'calendario': '📅' };
+
+          container.innerHTML = this.log.map(r => {
+            const date = new Date(r.id).toLocaleString('es-EC');
+            const mapLink = (r.lat && r.lat !== 'No GPS' && r.lat !== 'Bloqueado') ? ` <a style="color:var(--accent-cyan); text-decoration:none;" target="_blank" href="https://maps.google.com/?q=${r.lat},${r.lng}">[Mapa]</a>` : '';
+            return `
+            <div class="hist-row">
+              <span class="ic">${icons[r.kind] || '•'}</span>
+              <div class="content"><strong>${r.text}</strong>${mapLink}<small>${date}</small></div>
+              <button onclick="KidoApp.AppCore.deleteRecord(${r.id})">✕</button>
+            </div>`;
+          }).join('');
+          TacticalMap.drawCloudRoutes();
+        }
+      };
+
+      // =========================================================
+      // CENTRAL DE REPORTES (NIVEK TAB)
+      // =========================================================
+      const ReportsModule = {
+        async sendReport(type) {
+          if(navigator.vibrate) navigator.vibrate(30);
+          const localNow = new Date();
+          const localDateStr = localNow.toLocaleDateString('es-EC'); 
+
+          const isToday = (ts) => new Date(ts).toLocaleDateString('es-EC') === localDateStr;
+          const isThisMonth = (ts) => {
+             const d = new Date(ts);
+             return d.getMonth() === localNow.getMonth() && d.getFullYear() === localNow.getFullYear();
+          };
+
+          let logs = []; let title = ""; let content = `Resumen Inteligente Kido App (${localDateStr}):\n\n`;
+
+          if (type === 'gps') {
+            logs = AppCore.log.filter(r => r.kind === 'gps' && isToday(r.id));
+            title = `Reporte de Rutas GPS (${localDateStr})`;
+            if (logs.length === 0) return alert('No hay rutas GPS guardadas el día de hoy.');
+            logs.reverse().forEach(r => { content += `- ${new Date(r.id).toLocaleTimeString('es-EC')}: ${r.text} | Coordenadas: ${r.lat}, ${r.lng}\n`; });
+          } 
+          else if (type === 'rutinas') {
+            logs = AppCore.log.filter(r => (r.kind === 'calendario' || r.kind === 'estado_animo') && isToday(r.id));
+            title = `Reporte de Rutinas y Ánimo (${localDateStr})`;
+            if (logs.length === 0) return alert('No hay rutinas ni estados de ánimo guardados el día de hoy.');
+            logs.reverse().forEach(r => { content += `- ${new Date(r.id).toLocaleTimeString('es-EC')}: [${r.kind.toUpperCase()}] ${r.text}\n`; });
+          } 
+          else if (type === 'mensual') {
+            logs = AppCore.log.filter(r => isThisMonth(r.id));
+            const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            title = `Reporte General Mensual (${monthNames[localNow.getMonth()]} ${localNow.getFullYear()})`;
+            if (logs.length === 0) return alert('No hay registros guardados en lo que va de este mes.');
+            logs.reverse().forEach(r => { content += `- ${new Date(r.id).toLocaleDateString('es-EC')} ${new Date(r.id).toLocaleTimeString('es-EC')}: [${r.kind.toUpperCase()}] ${r.text}\n`; });
+          }
+
+          try {
+            await fetch('https://formsubmit.co/ajax/Albankevine845@gmail.com', {
+              method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+              body: JSON.stringify({ _subject: `Kido App: ${title}`, reporte: content })
+            });
+            alert("✅ ¡Reporte generado y enviado a tu correo!");
+          } catch(e) { alert("❌ Error al enviar el reporte. Verifica tu conexión."); }
+        }
+      };
+
+      // =========================================================
+      // MÓDULO CALENDARIO INTERACTIVO (LUNES A DOMINGO & PUNTOS ANIMADOS)
+      // =========================================================
+      const CalendarModule = {
+        currentDate: new Date(),
+        selectedFullDate: null,
+        
+        init() { this.render(); },
+        
+        render() {
+          const year = this.currentDate.getFullYear();
+          const month = this.currentDate.getMonth(); 
+          
+          const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+          document.getElementById('cal-month-label').innerText = `${monthNames[month]} ${year}`;
+          
+          let firstDay = new Date(year, month, 1).getDay();
+          firstDay = firstDay === 0 ? 6 : firstDay - 1; 
+
+          const daysInMonth = new Date(year, month + 1, 0).getDate();
+          const container = document.getElementById('cal-days-container');
+          container.innerHTML = '';
+
+          for (let i = 0; i < firstDay; i++) {
+            container.innerHTML += `<div class="cal-day empty"></div>`;
+          }
+
+          const today = new Date();
+          const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+          for (let day = 1; day <= daysInMonth; day++) {
+            const loopDateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+            const isToday = (loopDateStr === todayStr) ? 'today' : '';
+            
+            const dayLogs = AppCore.log.filter(r => r.kind === 'calendario' && r.extra === loopDateStr);
+            let activeDots = new Set();
+
+            if (dayLogs.length > 0) {
+              const text = dayLogs.map(r => r.text).join(' ').toLowerCase();
+              if (text.includes('losartán')) activeDots.add('dot-losartan');
+              if (text.includes('gallo')) activeDots.add('dot-gallo');
+              if (text.includes('mall del fortín')) activeDots.add('dot-mall');
+              if (text.includes('casa')) activeDots.add('dot-casa');
+              if (text.includes('bosque')) activeDots.add('dot-bosque');
+              if (text.includes('iam') || text.includes('ups')) activeDots.add('dot-edu');
+              if (text.includes('salida')) activeDots.add('dot-salida');
+              
+              if(activeDots.size === 0) activeDots.add('dot-cyan');
+            }
+
+            let dotsHtml = '';
+            if(activeDots.size > 0) {
+              dotsHtml = `<div class="dots-wrapper">`;
+              Array.from(activeDots).forEach(d => { dotsHtml += `<div class="cal-dot ${d}"></div>`; });
+              dotsHtml += `</div>`;
+            }
+            
+            container.innerHTML += `<div class="cal-day ${isToday}" onclick="KidoApp.CalendarModule.openModal(${year}, ${month}, ${day})">${day}${dotsHtml}</div>`;
+          }
+        },
+
+        prevMonth() { this.currentDate.setMonth(this.currentDate.getMonth() - 1); this.render(); },
+        nextMonth() { this.currentDate.setMonth(this.currentDate.getMonth() + 1); this.render(); },
+
+        openModal(year, month, day) {
+          if(navigator.vibrate) navigator.vibrate(15);
+          const dateObj = new Date(year, month, day);
+          const dayOfWeek = dateObj.getDay(); // 0 = Dom
+          this.selectedFullDate = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+          
+          const optionsNames = { 0: "Domingo", 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado" };
+          document.getElementById('cal-modal-date').innerText = `${optionsNames[dayOfWeek]}, ${day}`;
+          
+          let presetOptions = [];
+          if (dayOfWeek >= 1 && dayOfWeek <= 5) presetOptions = [
+            { text: "Mall del Fortín", cls: "spec-mall" },
+            { text: "Casa", cls: "spec-casa" },
+            { text: "Casa wdd", cls: "spec-casa" },
+            { text: "bosque", cls: "spec-bosque" },
+            { text: "ups", cls: "spec-edu" }
+          ];
+          else if (dayOfWeek === 6) presetOptions = [
+            { text: "casa", cls: "spec-casa" },
+            { text: "IAM", cls: "spec-edu" },
+            { text: "casa rafi", cls: "spec-casa" }
+          ];
+          else if (dayOfWeek === 0) presetOptions = [
+            { text: "salida", cls: "spec-salida" }
+          ];
+
+          const optContainer = document.getElementById('cal-options-container');
+          
+          let optionsHtml = presetOptions.map(opt => `<button class="opt-btn ${opt.cls}" onclick="this.classList.toggle('active')">${opt.text}</button>`).join('');
+          
+          optionsHtml += `<button class="opt-btn spec-losartan" onclick="this.classList.toggle('active')">💊 Losartán 100 mg</button>`;
+          optionsHtml += `<button class="opt-btn spec-gallo" onclick="this.classList.toggle('active')">🌿 Gallo</button>`;
+          
+          optContainer.innerHTML = optionsHtml;
+          
+          document.getElementById('custom-cal-input').value = '';
+          document.getElementById('cal-modal').classList.add('active');
+        },
+
+        addCustomOption() {
+          const val = document.getElementById('custom-cal-input').value.trim();
+          if(val) {
+            document.getElementById('cal-options-container').innerHTML += `<button class="opt-btn spec-cyan active" onclick="this.classList.toggle('active')">${val}</button>`;
+            document.getElementById('custom-cal-input').value = '';
+          }
+        },
+
+        saveDayOptions() {
+          const activeBtns = document.querySelectorAll('#cal-options-container .opt-btn.active');
+          if(activeBtns.length === 0) { document.getElementById('cal-modal').classList.remove('active'); return; }
+          
+          if(navigator.vibrate) navigator.vibrate(20);
+          const selections = Array.from(activeBtns).map(b => b.innerText);
+          const text = `Rutina (${this.selectedFullDate}): ` + selections.join(", ");
+          
+          AppCore.addRecord('calendario', text, this.selectedFullDate);
+          document.getElementById('cal-modal').classList.remove('active');
+        }
+      };
+
+      // ZONA TÁCTICA MAPAS & RADAR
+      const TacticalMap = {
+        map: null, marker: null, routeLine: null, markers: [],
+        currentLat: -2.2530, currentLon: -79.8970, // Inicio Base
+        
+        mathDist(lat1, lon1, lat2, lon2) { const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180; const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2); return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); },
+        mathDir(lat1, lon1, lat2, lon2) { const dLon = lon2 - lon1; const dLat = lat2 - lat1; let angle = Math.atan2(dLon, dLat) * 180 / Math.PI; if (angle < 0) angle += 360; if (angle >= 337.5 || angle < 22.5) return "N"; if (angle >= 22.5 && angle < 67.5) return "NE"; if (angle >= 67.5 && angle < 112.5) return "E"; if (angle >= 112.5 && angle < 157.5) return "SE"; if (angle >= 157.5 && angle < 202.5) return "S"; if (angle >= 202.5 && angle < 247.5) return "SO"; if (angle >= 247.5 && angle < 292.5) return "O"; return "NO"; },
+
+        startTracking() {
+          if (!this.map) {
+            this.map = L.map('tactical-map').setView([this.currentLat, this.currentLon], 14);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(this.map);
+            setTimeout(() => { this.map.invalidateSize(); }, 500);
+            this.marker = L.marker([this.currentLat, this.currentLon]).addTo(this.map).bindPopup('<b>Tu Posición Activa</b>').openPopup();
+            this.drawCloudRoutes();
+          }
+
+          if ("geolocation" in navigator) {
+            navigator.geolocation.watchPosition((pos) => {
+              this.currentLat = pos.coords.latitude; this.currentLon = pos.coords.longitude;
+              this.marker.setLatLng([this.currentLat, this.currentLon]);
+              document.getElementById('gps-live-status').innerText = `🟢 Señal Activa: Lat ${this.currentLat.toFixed(4)}, Lon ${this.currentLon.toFixed(4)}`;
+              
+              document.getElementById('hudCoordsVal').innerText = `Lat: ${this.currentLat.toFixed(4)} | Lon: ${this.currentLon.toFixed(4)}`;
+              document.getElementById('hudAccVal').innerText = `± ${Math.round(pos.coords.accuracy || 4)} m`;
+              document.getElementById('hudSpeedVal').innerText = `${((pos.coords.speed || 0) * 3.6).toFixed(1)} km/h`;
+              document.getElementById('hudAltVal').innerText = `${Math.round(pos.coords.altitude || 12)} m s.n.m.`;
+              this.updateRadar();
+            }, () => { document.getElementById('gps-live-status').innerText = `🔴 Permiso GPS Denegado o sin señal.`; }, { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 });
+          }
+        },
+
+        recenterMap() { if (this.map) this.map.panTo([this.currentLat, this.currentLon]); },
+
+        drawCloudRoutes() {
+          if (!this.map) return;
+          this.markers.forEach(m => this.map.removeLayer(m)); this.markers = [];
+          if (this.routeLine) this.map.removeLayer(this.routeLine);
+
+          let routeLatLngs = [];
+          const reversedLogs = [...AppCore.log].reverse();
+          reversedLogs.forEach(r => {
+            if (r.lat && r.lng && r.lat !== 'No GPS' && r.lat !== 'Bloqueado') {
+              const lt = parseFloat(r.lat); const ln = parseFloat(r.lng); routeLatLngs.push([lt, ln]);
+              const m = L.marker([lt, ln]).addTo(this.map).bindPopup(`<b>${r.text}</b><br>${new Date(r.id).toLocaleString('es-EC')}`);
+              this.markers.push(m);
+            }
+          });
+
+          if (routeLatLngs.length >= 2) this.routeLine = L.polyline(routeLatLngs, { color: '#38bdf8', weight: 4, opacity: 0.9, className: 'animated-route-line' }).addTo(this.map);
+          this.updateRadar();
+        },
+
+        updateRadar() {
+          const container = document.getElementById('radarDotsContainer');
+          const vectorSvg = document.getElementById('radarVectorSvg');
+          if (!container || !vectorSvg) return;
+          container.innerHTML = ''; vectorSvg.innerHTML = '';
+          
+          let validPoints = []; const center = 130; const radarRadiusPx = 125; const maxDistanceKm = 18;
+
+          AppCore.log.forEach(r => {
+            if (r.lat && r.lng && r.lat !== 'No GPS' && r.lat !== 'Bloqueado') {
+              const itemLat = parseFloat(r.lat); const itemLon = parseFloat(r.lng);
+              const distKm = this.mathDist(this.currentLat, this.currentLon, itemLat, itemLon);
+              const dirStr = this.mathDir(this.currentLat, this.currentLon, itemLat, itemLon);
+              const deltaLatKm = (itemLat - this.currentLat) * 111;
+              const deltaLonKm = (itemLon - this.currentLon) * 111 * Math.cos(this.currentLat * Math.PI / 180);
+              const x = center + (deltaLonKm / maxDistanceKm) * radarRadiusPx;
+              const y = center - (deltaLatKm / maxDistanceKm) * radarRadiusPx;
+              const distFromCenter = Math.sqrt(Math.pow(x - center, 2) + Math.pow(y - center, 2));
+
+              if (distFromCenter <= radarRadiusPx) validPoints.push({ x, y, title: r.text, distKm, dirStr });
+            }
+          });
+
+          let svgPath = '';
+          validPoints.forEach((pt, idx) => {
+            if (idx === 0) svgPath += `M ${pt.x} ${pt.y} `; else svgPath += `L ${pt.x} ${pt.y} `;
+            const dot = document.createElement('div'); dot.className = 'dragon-dot';
+            dot.style.left = `${pt.x}px`; dot.style.top = `${pt.y}px`; dot.title = `${pt.title} | ${pt.distKm.toFixed(1)} km al ${pt.dirStr}`;
+            container.appendChild(dot);
+          });
+          if (validPoints.length >= 2) vectorSvg.innerHTML = `<path d="${svgPath}" fill="none" stroke="#22c55e" stroke-width="2" stroke-dasharray="4,4"/>`;
+
+          document.getElementById('radarStatus').innerText = `🟠 ${validPoints.length} Registros en radar (Radio 18 km)`;
+          if(validPoints.length > 0 && validPoints[0].dirStr) document.getElementById('hudDirVal').innerText = validPoints[0].dirStr;
+        }
+      };
+
+      // 4. OTROS MÓDULOS (Nemu, Moon, Uv)
+      const Nemu = {
+        init() {
+          const h = new Date().getHours();
+          document.getElementById('nemu-greeting').textContent = `${(h<5||h>=19?'Buenas noches':h<12?'Buenos días':'Buenas tardes')}, Nivek`;
+        }
+      };
+
+      const MoonMonitor = {
+        facts: ["La Luna se aleja de la Tierra 3.8 cm cada año.","Siempre vemos la misma cara de la Luna por su rotación sincrónica.","Las mareas del Golfo de Guayaquil siguen las fases lunares.","La gravedad lunar estabiliza la inclinación de la Tierra.","El polvo lunar olía a pólvora.","Un ciclo lunar dura unos 29.5 días."],
+        init() { this.updateMoon(); setInterval(() => this.updateMoon(), 3600000); },
+        updateMoon() {
+          const h = new Date().getHours(); const m = document.getElementById('moon-module');
+          if(!m) return;
+          if (h >= 18 || h < 6) { m.style.display = 'block'; document.getElementById('moonPhaseBadge').innerText = `Activado en Noche`; document.getElementById('moonRandomFact').innerText = this.facts[new Date().getDay() % this.facts.length]; } 
+          else { m.style.display = 'none'; }
+        }
+      };
+
+      const UvMonitor = {
+        init() { this.updateSun(); setInterval(() => this.updateSun(), 900000); },
+        updateSun() {
+          const h = new Date().getHours();
+          const d = [[6, '😴', 'UV 0 (Noche)', '#3b82f6', 'Sol Durmiendo', 'Cero exposición solar.'],[9, '🌅', 'UV 2-3 (Bajo)', '#22c55e', 'Sol Matutino', 'Aplica protector en manchas de vitiligo.'],[11, '☀️', 'UV 5-7 (Moderado)', '#eab308', 'Sol Activo', 'FPS 50+ necesario.'],[16, '🔥', 'UV 9-12+ (EXTREMO)', '#dc2626', 'ALERTA SOLAR', 'RIESGO VITILIGO! Gafas y gorra.'],[18, '🌆', 'UV 2-4 (Bajando)', '#f97316', 'Sol Descendiendo', 'Radiación disminuyendo.'],[24, '😴', 'UV 0 (Noche)', '#1e293b', 'Noche Estrellada', 'Piel segura.']].find(t => h < t[0]);
+          document.getElementById('sunMoodIcon').innerText = d[1]; document.getElementById('sunUvBadge').innerText = d[2]; document.getElementById('sunUvBadge').style.background = d[3]; document.getElementById('sunMoodTitle').innerText = d[4]; document.getElementById('sunVitiligoAdvice').innerText = d[5];
+        }
+      };
+
+      const FormHandlers = {
+        init() {
+          document.querySelectorAll('.mood-btn').forEach(btn => { btn.addEventListener('click', (e) => { if (navigator.vibrate) navigator.vibrate(20); AppCore.addRecord('estado_animo', e.currentTarget.dataset.mood); }); });
+          const btnNotes = document.getElementById('send-notes-btn');
+          if(btnNotes) {
+            btnNotes.addEventListener('click', async () => {
+              const input = document.getElementById('mental-notes-input'); const text = input.value.trim(); if (!text) return;
+              if (navigator.vibrate) navigator.vibrate(40); btnNotes.disabled = true; btnNotes.textContent = 'Sincronizando a la Nube...';
+              await AppCore.addRecord('nota', text);
+              input.value = ''; btnNotes.textContent = '¡Completado!'; setTimeout(() => { btnNotes.textContent = 'Guardar y Sincronizar'; btnNotes.disabled = false; }, 1500);
+            });
+          }
+          const btnGps = document.getElementById('send-location-btn');
+          if(btnGps) {
+            btnGps.addEventListener('click', async () => {
+              if (navigator.vibrate) navigator.vibrate([40, 50, 40]); btnGps.disabled = true; btnGps.innerHTML = '🛰️ Triangulando y subiendo...';
+              await AppCore.addRecord('gps', '📍 Check-in Manual');
+              btnGps.innerHTML = '¡Ruta Guardada en la Nube!'; setTimeout(() => { btnGps.innerHTML = '<span class="icono-latido" style="margin-right: 5px;">🛰️</span> Guardar Ruta Actual'; btnGps.disabled = false; }, 2000);
+            });
+          }
+        }
+      };
+
+      const Navigation = {
+        init() {
+          const tabs = document.querySelectorAll('.nav-tab'); const views = document.querySelectorAll('.tab-view');
+          tabs.forEach(tab => tab.addEventListener('click', () => {
+            const targetId = tab.dataset.target;
+            tabs.forEach(t => t.classList.remove('active')); tab.classList.add('active');
+            views.forEach(view => view.classList.toggle('active', view.id === targetId));
+            if (navigator.vibrate) navigator.vibrate(25);
+            if(targetId === 'tab-diario' && TacticalMap.map) { setTimeout(() => TacticalMap.map.invalidateSize(), 300); }
+          }));
+        }
+      };
+
+      return {
+        AppCore, TacticalMap, CalendarModule, ReportsModule,
+        init() {
+          document.addEventListener('DOMContentLoaded', () => {
+            Security.init(); AppCore.init(); Nemu.init(); MoonMonitor.init(); UvMonitor.init();
+            CalendarModule.init(); FormHandlers.init(); Navigation.init();
+          });
+        }
+      };
+    })();
+
+    KidoApp.init();
+  </script>
+</body>
+</html>
